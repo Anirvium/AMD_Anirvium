@@ -42,16 +42,16 @@ Analyze a synthetic high-risk SaaS support queue centered on `T-001`, an enterpr
 Current status:
 
 ```text
-Real AMD benchmark pending. Scripts and runbook are prepared. Sample files are marked as sample and are not claimed as verified AMD execution.
+Real AMD/vLLM benchmark completed on AMD Developer Cloud using the 48GB text profile.
 ```
 
-Plan:
+Verified path:
 
 1. Start vLLM/ROCm on AMD Developer Cloud.
-2. Set `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL`.
-3. Run `amd/run_agent_benchmark.sh` in `MODE=llm`.
-4. Save logs to `amd/logs/benchmark_amd_real_<date>.json`.
-5. Capture screenshots under `amd/screenshots/`.
+2. Serve `Qwen/Qwen3-8B` as `anirvium-text`.
+3. Run `amd/benchmark_agent_eval.py` in `--mode llm`.
+4. Save logs under `amd/logs/benchmark_llm_*.json`.
+5. Use the FastAPI backend and graph-discovery endpoint for live product proof.
 
 ## What Judges Should Inspect
 
@@ -70,4 +70,3 @@ Plan:
 - [ ] AMD benchmark logs when GPU access is available
 - [ ] AMD screenshots when GPU access is available
 - [ ] Optional hosted URL
-

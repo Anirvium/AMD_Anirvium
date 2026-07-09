@@ -28,9 +28,26 @@ curl http://localhost:8000/demo/winning-run
 
 Then start the frontend and click `Load Winning Demo`.
 
-Current AMD status: real AMD GPU execution is pending. The vLLM/ROCm scripts, benchmark runner, and evidence paths are prepared. Sample benchmark files are marked as sample and are not claimed as verified AMD execution.
+Current AMD status: real AMD GPU execution has been validated on AMD Developer Cloud through vLLM/ROCm with the 48GB Qwen3-8B profile. The benchmark logs in `amd/logs/benchmark_llm_*.json` capture the verified run metrics; older `benchmark_mock_*` files remain deterministic local samples.
 
 Do not use real customer data. No secrets are committed; use `.env.example` only.
+
+## One-Command Docker Demo
+
+Judges can run the product from GitHub without installing Python or Node locally:
+
+```bash
+docker compose up --build
+```
+
+Open:
+
+```text
+Frontend: http://localhost:5173
+Backend:  http://localhost:8000
+```
+
+This default container path runs the full product in deterministic mock mode with synthetic data, Redis, and Qdrant. It is the safest GitHub evaluation path. The AMD/vLLM GPU path is a separate runtime mode described in [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md).
 
 ## Why This Matters
 
@@ -104,6 +121,14 @@ The mock run selects high-priority synthetic tickets:
 - `T-008` enterprise integration failure.
 
 ## Local Setup
+
+Containerized setup:
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:5173`.
 
 Backend:
 

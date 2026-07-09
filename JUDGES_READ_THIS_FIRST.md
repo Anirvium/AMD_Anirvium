@@ -26,6 +26,22 @@ The workflow shows:
 
 ## Run Backend
 
+Fastest containerized path:
+
+```bash
+docker compose up --build
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+The Docker path runs the full dashboard, FastAPI backend, Redis, and Qdrant in deterministic synthetic-data mode.
+
+Manual backend path:
+
 ```bash
 cd backend
 uv run uvicorn app.main:app --port 8000
@@ -101,16 +117,13 @@ The evaluation contains scorecard metrics, rich failure diagnosis, and concrete 
 Current status:
 
 ```text
-Real AMD benchmark pending. Scripts and runbook are prepared. Sample files are marked as sample and are not claimed as verified AMD execution.
+Real AMD/vLLM benchmark completed on the observed 48GB AMD Developer Cloud runtime.
 ```
 
-Future real evidence paths:
+Evidence paths:
 
-- `amd/logs/benchmark_amd_real_<date>.json`
-- `amd/benchmark_results_real.md`
-- `amd/screenshots/vllm_running.png`
-- `amd/screenshots/benchmark_output.png`
-- `amd/screenshots/dashboard_amd_panel.png`
+- `amd/logs/benchmark_llm_20260709210044.json`
+- `amd/logs/benchmark_llm_20260709212533.json`
+- API proof: `/runs/latest/trajectory/graph-discovery`
 
 See [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md).
-

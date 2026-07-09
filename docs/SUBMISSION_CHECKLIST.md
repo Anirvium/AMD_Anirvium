@@ -1,6 +1,9 @@
 # Submission Checklist
 
 - [ ] GitHub repository URL is public or accessible to judges.
+- [ ] `docker compose up --build` starts the frontend, backend, Redis, and Qdrant for judge evaluation.
+- [ ] Frontend is visible at `http://localhost:5173`.
+- [ ] Backend is visible at `http://localhost:8000/health`.
 - [ ] README explains product, architecture, setup, demo flow, metrics, and AMD usage.
 - [ ] Demo video is recorded.
 - [ ] Slide deck PDF is exported.
