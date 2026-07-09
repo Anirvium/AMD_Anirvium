@@ -22,6 +22,7 @@ class TrajectorySpan(BaseModel):
     agent_name: str
     input_summary: str
     output_summary: str
+    reasoning_summary: str = ""
     full_output: Dict[str, Any]
     tools_used: List[str] = Field(default_factory=list)
     evidence_ids: List[str] = Field(default_factory=list)
@@ -58,4 +59,3 @@ class TrajectoryResponse(BaseModel):
     run_id: str
     spans: List[TrajectorySpan]
     graph: TrajectoryGraph
-

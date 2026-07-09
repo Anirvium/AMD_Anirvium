@@ -14,7 +14,7 @@ It is still not a fully production-grade agent platform because real GPU inferen
 
 ## What Is Ready
 
-- Backend trajectory pipeline with 12 governed support-agent steps: attachment evidence, triage, retrieval, policy, escalation, drafting, compliance, human handoff, critic, reflection, learning extraction, and optimizer.
+- Backend trajectory pipeline with 13 governed support-agent steps: planner, attachment evidence, triage, retrieval, policy, escalation, drafting, compliance, human handoff, critic, reflection, learning extraction, and optimizer.
 - Curated customer-support KB layers:
   - policies
   - procedures

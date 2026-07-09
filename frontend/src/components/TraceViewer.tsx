@@ -26,6 +26,9 @@ export default function TraceViewer({ spans }: TraceViewerProps) {
               <span className="confidence">{Math.round(span.confidence * 100)}%</span>
             </div>
             <p className="trace-output">{span.output_summary}</p>
+            {span.reasoning_summary && (
+              <p className="trace-reasoning">{span.reasoning_summary}</p>
+            )}
             <div className="trace-metrics">
               <span><Timer size={14} />{span.latency_ms} ms</span>
               <span><Gauge size={14} />{span.tokens_in + span.tokens_out} tokens</span>

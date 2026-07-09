@@ -2,15 +2,39 @@
 
 Anirvium AI runs locally in deterministic mock mode and is prepared to switch to AMD Developer Cloud GPU-backed inference through vLLM/ROCm exposing an OpenAI-compatible API.
 
-On the single MI300X 192GB notebook, use runtime profiles. Validate text inference first. Vision is intentionally deferred until the text trajectory benchmark has real AMD logs.
+Use runtime profiles. Validate visible GPU memory before launch: some hackathon notebooks expose the intended MI300X 192GB device, while others may expose a smaller 48GB GPU profile. Vision is intentionally deferred until the text trajectory benchmark has real AMD logs.
 
 ## A. AMD GPU Runbook
 
 ### 1. Start vLLM/ROCm
 
-On the AMD Developer Cloud GPU machine:
+On the AMD Developer Cloud GPU machine, first check visible VRAM:
 
 ```bash
+rocm-smi --showproductname --showmeminfo vram --showdriverversion
+/opt/venv/bin/python - <<'PY'
+import torch
+for i in range(torch.cuda.device_count()):
+    p = torch.cuda.get_device_properties(i)
+    print(i, p.name, round(p.total_memory / 1024**3, 2), "GiB")
+PY
+```
+
+For a 48GB runtime, start the reliable 7B profile:
+
+```bash
+source /opt/venv/bin/activate
+export PYTHON_BIN=/opt/venv/bin/python
+export HF_HOME=/workspace/.cache/huggingface
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+PROFILE=text_48gb bash amd/run_runtime_profile.sh
+```
+
+For a confirmed MI300X 192GB runtime, start the full profile:
+
+```bash
+source /opt/venv/bin/activate
+export PYTHON_BIN=/opt/venv/bin/python
 PROFILE=text bash amd/run_runtime_profile.sh
 ```
 
@@ -27,7 +51,7 @@ export LLM_BASE_URL=http://localhost:8001/v1
 export LLM_API_KEY=dummy
 export LLM_MODEL=anirvium-text
 export LLM_PROVIDER=openai_compatible
-export AMD_RUNTIME_PROFILE=text
+export AMD_RUNTIME_PROFILE=text_48gb
 ```
 
 For critic/model-as-judge review:
@@ -54,10 +78,10 @@ python amd/smoke_vllm_openai.py --base-url http://localhost:8001/v1 --model anir
 ```bash
 LLM_BASE_URL=http://localhost:8001/v1 \
 LLM_API_KEY=dummy \
-LLM_MODEL=<model-running-on-vllm> \
+LLM_MODEL=anirvium-text \
 MODE=llm \
 DATASET=customer_support \
-TICKETS=8 \
+TICKETS=6 \
 REPEATS=3 \
 bash amd/run_agent_benchmark.sh
 ```
@@ -112,7 +136,7 @@ Current files:
 
 - `amd/run_vllm_rocm.sh`: prepared vLLM/ROCm launch script.
 - `amd/run_runtime_profile.sh`: prepared text, critic, embedding, and reranker runtime profile launcher. Image/video model loading is deferred.
-- `amd/RUNTIME_PROFILES.md`: model profile instructions for one MI300X.
+- `amd/RUNTIME_PROFILES.md`: model profile instructions for 48GB and MI300X 192GB runtimes.
 - `amd/run_agent_benchmark.sh`: prepared benchmark wrapper.
 - `amd/benchmark_agent_eval.py`: prepared trajectory benchmark script.
 - `amd/benchmark_results_sample.md`: sample-only local development values.

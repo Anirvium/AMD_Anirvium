@@ -11,6 +11,18 @@ case "${PROFILE}" in
     export MAX_MODEL_LEN="${MAX_MODEL_LEN:-32768}"
     export GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.88}"
     ;;
+  text_48gb)
+    export MODEL_ID="${MODEL_ID:-Qwen/Qwen3-8B}"
+    export SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-anirvium-text}"
+    export MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+    export GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.75}"
+    ;;
+  text_48gb_14b)
+    export MODEL_ID="${MODEL_ID:-Qwen/Qwen3-14B}"
+    export SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-anirvium-text}"
+    export MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+    export GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.78}"
+    ;;
   critic)
     export MODEL_ID="${MODEL_ID:-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B}"
     export SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-anirvium-critic}"
@@ -32,7 +44,7 @@ case "${PROFILE}" in
     export VLLM_TASK="${VLLM_TASK:-score}"
     ;;
   *)
-    echo "Unknown PROFILE=${PROFILE}. Use text, critic, embedding, or reranker." >&2
+    echo "Unknown PROFILE=${PROFILE}. Use text, text_48gb, text_48gb_14b, critic, embedding, or reranker." >&2
     exit 2
     ;;
 esac

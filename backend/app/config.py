@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     llm_base_url: str = "http://localhost:8001/v1"
     llm_api_key: str = ""
     llm_model: str = "mock-trajectory-model"
-    llm_text_model: str = "Qwen/Qwen3-30B-A3B-Instruct-2507"
+    llm_text_model: str = "Qwen/Qwen3-14B"
     llm_critic_model: str = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
     llm_embedding_model: str = "Qwen/Qwen3-Embedding-4B"
     llm_reranker_model: str = "Qwen/Qwen3-Reranker-4B"

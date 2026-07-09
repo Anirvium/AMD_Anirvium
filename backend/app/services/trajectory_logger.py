@@ -44,6 +44,7 @@ class TrajectoryLogger:
             agent_name=agent_name,
             input_summary=input_summary,
             output_summary=full_output.get("summary", f"{agent_name} completed."),
+            reasoning_summary=full_output.get("reasoning_summary", full_output.get("summary", "")),
             full_output=full_output,
             tools_used=full_output.get("tools_used", []),
             evidence_ids=evidence_ids,

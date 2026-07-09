@@ -12,6 +12,7 @@ from app.agents.escalation_agent import EscalationAgent
 from app.agents.human_escalation_agent import HumanEscalationAgent
 from app.agents.learning_extraction_agent import LearningExtractionAgent
 from app.agents.optimizer_agent import OptimizerAgent
+from app.agents.planner_agent import PlannerAgent
 from app.agents.policy_agent import PolicyCheckerAgent
 from app.agents.reflection_agent import ReflectionAgent
 from app.agents.response_agent import ResponseDraftingAgent
@@ -57,6 +58,7 @@ class AgentRunner:
         spans: List[TrajectorySpan] = []
 
         agents = [
+            PlannerAgent(),
             VisualEvidenceAgent(self.model_router),
             TriageAgent(),
             KnowledgeRetrievalAgent(),
@@ -179,6 +181,7 @@ class AgentRunner:
                     "primary_trace_store": "custom_json_trajectory_logger",
                     "span_count": len(spans),
                     "event_sources": [
+                        "planner_contract",
                         "agent_span",
                         "tool_action",
                         "evidence_card",
@@ -189,6 +192,7 @@ class AgentRunner:
                         "reflection_signal",
                         "learning_artifact",
                         "optimizer_recommendation",
+                        "trajectory_property_graph",
                     ],
                     "production_export_path": "otel_otlp_optional_after_gpu_validation",
                 },
@@ -282,6 +286,8 @@ class AgentRunner:
 
     def _input_summary(self, agent_name: str, tickets: List[SupportTicket], context: Dict[str, Any]) -> str:
         ids = ", ".join(ticket.ticket_id for ticket in tickets)
+        if agent_name == "Planner Agent":
+            return f"Build a plan-driven support workflow, stop conditions, and evidence contract for tickets: {ids}."
         if agent_name == "Knowledge Retrieval Agent":
             return f"Retrieve KB and policy evidence for selected tickets: {ids}."
         if agent_name == "Attachment Evidence Agent":

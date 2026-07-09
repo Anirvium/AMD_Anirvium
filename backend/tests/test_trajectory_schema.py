@@ -8,6 +8,7 @@ def test_trajectory_span_contains_required_observability_fields() -> None:
         agent_name="Policy Checker Agent",
         input_summary="Check policies.",
         output_summary="Approval required.",
+        reasoning_summary="Policy summary: refund confirmation requires approval.",
         full_output={"summary": "Approval required."},
         tools_used=["policy_rules_engine"],
         evidence_ids=["POL-001"],
@@ -24,4 +25,4 @@ def test_trajectory_span_contains_required_observability_fields() -> None:
     assert span.approval_state == ApprovalState.APPROVAL_REQUIRED
     assert span.evidence_ids == ["POL-001"]
     assert span.risk_flags == ["REFUND_APPROVAL_REQUIRED"]
-
+    assert span.reasoning_summary.startswith("Policy summary")

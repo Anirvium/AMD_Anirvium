@@ -7,6 +7,7 @@ MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
 GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.90}"
 SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-${MODEL_ID}}"
 VLLM_TASK="${VLLM_TASK:-}"
+PYTHON_BIN="${PYTHON_BIN:-python}"
 
 echo "Starting OpenAI-compatible vLLM server on ROCm"
 echo "Model: ${MODEL_ID}"
@@ -19,7 +20,7 @@ if [[ -n "${VLLM_TASK}" ]]; then
   echo "Task: ${VLLM_TASK}"
 fi
 
-python -m vllm.entrypoints.openai.api_server \
+"${PYTHON_BIN}" -m vllm.entrypoints.openai.api_server \
   --host 0.0.0.0 \
   --port "${PORT}" \
   --model "${MODEL_ID}" \

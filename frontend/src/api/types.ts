@@ -59,6 +59,7 @@ export interface TrajectorySpan {
   agent_name: string;
   input_summary: string;
   output_summary: string;
+  reasoning_summary?: string;
   full_output: Record<string, unknown>;
   tools_used: string[];
   evidence_ids: string[];

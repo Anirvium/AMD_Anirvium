@@ -46,7 +46,8 @@ See [repo-structure.txt](repo-structure.txt) for the repository map and [archite
 flowchart LR
   UI[React Dashboard] --> API[FastAPI API]
   API --> Runner[Agent Runner]
-  Runner --> Attachment[Attachment Evidence Agent]
+  Runner --> Planner[Planner Agent]
+  Planner --> Attachment[Attachment Evidence Agent]
   Attachment --> Triage[Intake / Triage Agent]
   Triage --> Retrieval[Knowledge Retrieval Agent]
   Retrieval --> Policy[Policy Checker Agent]
@@ -59,6 +60,7 @@ flowchart LR
   Reflection --> Learning[Learning Extraction Agent]
   Learning --> Optimizer[Optimizer Agent]
   Runner --> Logger[Trajectory Logger JSON]
+  Logger --> GraphDiscovery[Property Graph Discovery Export]
   Critic --> Eval[Deterministic Evaluation Engine]
   Eval --> Diagnosis[Failure Diagnosis Engine]
   Diagnosis --> Reflection
@@ -71,8 +73,10 @@ flowchart LR
 ## Features
 
 - Multi-agent support queue analysis.
+- Plan-driven Planner Agent with evidence contracts, stop conditions, and public reasoning summaries.
 - Attachment evidence extraction for images, screenshots, documents, logs, and metadata without loading an image/video model in the text-first GPU path.
 - Structured JSON span logging for every agent step.
+- Property graph discovery export for trajectory paths, evidence, tools, risks, diagnosis, and final actions.
 - Text and visual evidence IDs attached to retrieval, policy checks, responses, and evaluations.
 - Approval-state model for sensitive refund, security, deletion, compensation, and SLA cases.
 - Compliance agent for legal, regulatory, company policy, privacy, and evidence-grounding checks.
@@ -198,8 +202,10 @@ bash amd/run_agent_benchmark.sh
 
 Runtime profiles:
 
-- `text`: `Qwen/Qwen3-30B-A3B-Instruct-2507`
-- `critic`: `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B`
+- `text_48gb`: `Qwen/Qwen3-8B` reliable 48GB profile
+- `text_48gb_14b`: `Qwen/Qwen3-14B` target 48GB profile
+- `text`: `Qwen/Qwen3-30B-A3B-Instruct-2507` full 192GB profile
+- `critic`: `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` full 192GB critic profile
 
 Image/video model loading is deferred until the text trajectory benchmark is verified.
 

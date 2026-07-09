@@ -7,19 +7,22 @@ def test_agent_runner_generates_full_multi_agent_trajectory() -> None:
 
     assert result.status == "completed"
     assert len(result.selected_ticket_ids) == 5
-    assert len(result.trajectory) == 12
-    assert result.graph.nodes[0].label == "Attachment Evidence Agent"
-    assert result.graph.edges[-1].target == "step_012"
+    assert len(result.trajectory) == 13
+    assert result.graph.nodes[0].label == "Planner Agent"
+    assert result.graph.edges[-1].target == "step_013"
     assert len(result.final_actions) == 5
     agent_names = [span.agent_name for span in result.trajectory]
+    assert "Planner Agent" in agent_names
     assert "Compliance Agent" in agent_names
     assert "Human Escalation Agent" in agent_names
     assert "Reflection Agent" in agent_names
     assert "Learning Extraction Agent" in agent_names
     assert result.visual_evidence_cards
     assert result.evaluation.recommendations
-    assert result.evaluation.details["agent_step_count"] == 12
+    assert result.evaluation.details["agent_step_count"] == 13
+    assert result.trajectory[0].reasoning_summary
     assert "compliance_decision" in result.metadata["observability"]["event_sources"]
+    assert "trajectory_property_graph" in result.metadata["observability"]["event_sources"]
 
 
 def test_agent_runner_promotes_attachments_to_evidence_cards() -> None:

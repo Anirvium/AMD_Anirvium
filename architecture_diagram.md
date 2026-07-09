@@ -30,6 +30,7 @@ flowchart LR
   subgraph Runner["Trajectory Intelligence Runtime"]
     AgentRunner["Agent Runner"]
     Logger["Trajectory Logger"]
+    GraphDiscovery["Property Graph Discovery"]
     EvalEngine["Evaluation Engine"]
     Diagnosis["Failure Diagnosis Engine"]
     OptimizerService["Optimization Engine"]
@@ -38,18 +39,19 @@ flowchart LR
   end
 
   subgraph Agents["Multi-Agent Workflow"]
-    Visual["1. Attachment Evidence Agent"]
-    Triage["2. Intake / Triage Agent"]
-    Retrieval["3. Knowledge Retrieval Agent"]
-    Policy["4. Policy Checker Agent"]
-    Escalation["5. Escalation Agent"]
-    Response["6. Response Drafting Agent"]
-    Compliance["7. Compliance Agent"]
-    Handoff["8. Human Escalation Agent"]
-    Critic["9. Critic / Evaluator Agent"]
-    Reflection["10. Reflection Agent"]
-    Learning["11. Learning Extraction Agent"]
-    OptimizerAgent["12. Optimizer Agent"]
+    Planner["1. Planner Agent"]
+    Visual["2. Attachment Evidence Agent"]
+    Triage["3. Intake / Triage Agent"]
+    Retrieval["4. Knowledge Retrieval Agent"]
+    Policy["5. Policy Checker Agent"]
+    Escalation["6. Escalation Agent"]
+    Response["7. Response Drafting Agent"]
+    Compliance["8. Compliance Agent"]
+    Handoff["9. Human Escalation Agent"]
+    Critic["10. Critic / Evaluator Agent"]
+    Reflection["11. Reflection Agent"]
+    Learning["12. Learning Extraction Agent"]
+    OptimizerAgent["13. Optimizer Agent"]
   end
 
   subgraph Data["Synthetic Local Data"]
@@ -94,7 +96,8 @@ flowchart LR
   Evaluation --> RunStore
   Benchmarks --> Logs
 
-  AgentRunner --> Visual
+  AgentRunner --> Planner
+  Planner --> Visual
   Visual --> Triage
   Triage --> Retrieval
   Retrieval --> Policy
@@ -109,6 +112,7 @@ flowchart LR
 
   AgentRunner --> Logger
   Logger --> RunStore
+  Logger --> GraphDiscovery
 
   Critic --> EvalEngine
   EvalEngine --> Diagnosis
@@ -141,6 +145,7 @@ sequenceDiagram
   participant Manager as Support Manager
   participant API as FastAPI /runs
   participant Runner as Agent Runner
+  participant Planner as Planner Agent
   participant Visual as Attachment Evidence Agent
   participant Triage as Triage Agent
   participant Retrieval as Retrieval Agent
@@ -157,6 +162,8 @@ sequenceDiagram
 
   Manager->>API: Analyze high-priority support queue
   API->>Runner: Create run
+  Runner->>Planner: Build plan, evidence contract, and stop conditions
+  Planner-->>Runner: Public reasoning summary and workflow plan
   Runner->>Visual: Extract attachment findings, text, logs, and metadata
   Visual-->>Runner: Attachment evidence cards and policy-check flags
   Runner->>Triage: Classify urgency, sentiment, SLA risk

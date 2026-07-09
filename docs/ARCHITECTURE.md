@@ -10,20 +10,21 @@ The FastAPI backend exposes tickets, runs, trajectories, evaluations, and AMD be
 
 Agent order:
 
-1. Attachment Evidence Agent
-2. Intake / Triage Agent
-3. Knowledge Retrieval Agent
-4. Policy Checker Agent
-5. Escalation Agent
-6. Response Drafting Agent
-7. Compliance Agent
-8. Human Escalation Agent
-9. Critic / Evaluator Agent
-10. Reflection Agent
-11. Learning Extraction Agent
-12. Optimizer Agent
+1. Planner Agent
+2. Attachment Evidence Agent
+3. Intake / Triage Agent
+4. Knowledge Retrieval Agent
+5. Policy Checker Agent
+6. Escalation Agent
+7. Response Drafting Agent
+8. Compliance Agent
+9. Human Escalation Agent
+10. Critic / Evaluator Agent
+11. Reflection Agent
+12. Learning Extraction Agent
+13. Optimizer Agent
 
-Each span records run ID, step ID, parent step, agent name, summaries, full output, tools, evidence IDs, latency, token estimates, model name, confidence, risk flags, approval state, and timestamp.
+Each span records run ID, step ID, parent step, agent name, summaries, public reasoning summary, full output, tools, evidence IDs, latency, token estimates, model name, confidence, risk flags, approval state, and timestamp.
 
 ## Data
 
@@ -43,6 +44,15 @@ No real customer data is required or included.
 The default evaluator is deterministic. It measures task completion, evidence grounding, policy compliance, hallucination risk, escalation quality, actionability, missing information, customer tone, token efficiency, latency efficiency, and overall score.
 
 The diagnosis engine maps metrics and trajectory outputs into failure categories. The reflection agent reviews repeated mistakes, the learning extraction agent converts human handoffs and transcript/satisfaction placeholders into improvement artifacts, and the optimizer converts those findings into workflow changes such as mandatory evidence checklists, approval gates, owner requirements, escalation thresholds, and token-reduction handoffs.
+
+## Graph Discovery
+
+The run API exports a property graph view of every trajectory:
+
+- `GET /runs/latest/trajectory/graph-discovery`
+- `GET /runs/{run_id}/trajectory/graph-discovery`
+
+This local graph export models runs, spans, tools, evidence, risk flags, diagnosis items, and final actions. Neo4j is optional for advanced discovery; the demo does not require a live Neo4j service.
 
 ## LLM Provider
 

@@ -41,7 +41,7 @@ Focus on `T-001`: enterprise outage, ACME Corp, angry sentiment, churn risk, and
 
 The timeline shows the support-agent path:
 
-attachment evidence -> triage -> retrieval -> policy -> escalation -> response -> compliance -> human escalation -> critic -> reflection -> learning extraction -> optimizer.
+planner -> attachment evidence -> triage -> retrieval -> policy -> escalation -> response -> compliance -> human escalation -> critic -> reflection -> learning extraction -> optimizer.
 
 ## 6. Inspect Trace Viewer
 
@@ -56,6 +56,7 @@ Check each span for:
 - confidence
 - risk flags
 - approval state
+- public reasoning summary
 - compliance status and handoff decisions where available
 
 ## 7. Inspect Evaluation Scorecard

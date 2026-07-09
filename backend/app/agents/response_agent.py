@@ -19,7 +19,7 @@ class ResponseDraftingAgent:
         model_name = (
             model_router.route(ModelRole.TEXT_AGENT).model_name
             if model_router
-            else "Qwen/Qwen3-30B-A3B-Instruct-2507"
+            else "Qwen/Qwen3-14B"
         )
         llm_used = False
 
