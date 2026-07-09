@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from app.agents.response_agent import ResponseDraftingAgent
-from app.services.llm_client import LLMResponse
+from app.services.llm_client import LLMResponse, strip_private_reasoning
 
 
 class FakeLLM:
@@ -28,3 +28,8 @@ def test_response_agent_llm_path_accepts_safe_response() -> None:
 
     assert result.startswith("Hi Customer")
     assert result != "Fallback safe response."
+
+
+def test_private_reasoning_is_stripped_from_llm_text() -> None:
+    assert strip_private_reasoning("<think>private planning</think>Final answer") == "Final answer"
+    assert strip_private_reasoning("<think>unfinished private planning") == ""

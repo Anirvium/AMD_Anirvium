@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import Dict, List, Protocol
 
 import httpx
@@ -22,6 +23,17 @@ class LLMClient(Protocol):
 
     def generate(self, messages: List[Dict[str, str]], temperature: float = 0.1) -> LLMResponse:
         ...
+
+
+_THINK_BLOCK_RE = re.compile(r"<think>.*?</think>", flags=re.IGNORECASE | re.DOTALL)
+_INCOMPLETE_THINK_RE = re.compile(r"<think>.*$", flags=re.IGNORECASE | re.DOTALL)
+
+
+def strip_private_reasoning(text: str) -> str:
+    without_closed_blocks = _THINK_BLOCK_RE.sub("", text)
+    without_incomplete_block = _INCOMPLETE_THINK_RE.sub("", without_closed_blocks)
+    cleaned = without_incomplete_block.replace("</think>", "")
+    return " ".join(cleaned.split())
 
 
 def estimate_tokens(value: object) -> int:
@@ -65,9 +77,10 @@ class OpenAICompatibleLLMClient:
             response.raise_for_status()
             data = response.json()
         content = data["choices"][0]["message"]["content"]
+        cleaned_content = strip_private_reasoning(content)
         usage = data.get("usage", {})
         return LLMResponse(
-            text=content,
+            text=cleaned_content,
             model_name=self.settings.llm_model,
             tokens_in=usage.get("prompt_tokens", estimate_tokens(messages)),
             tokens_out=usage.get("completion_tokens", estimate_tokens(content)),
@@ -79,4 +92,3 @@ def build_llm_client() -> LLMClient:
     if settings.llm_provider.lower() in {"openai", "openai_compatible", "llm"}:
         return OpenAICompatibleLLMClient(settings)
     return MockLLMClient()
-

@@ -20,8 +20,9 @@ class CriticEvaluatorAgent:
         diagnosis = self.diagnosis_engine.diagnose(context, metrics, spans)
         context["metrics"] = metrics
         context["diagnosis"] = diagnosis
+        llm_client = context.get("llm_client")
         model_router = context.get("model_router")
-        model_name = (
+        model_name = getattr(llm_client, "model_name", None) or (
             model_router.route(ModelRole.CRITIC_AGENT).model_name
             if model_router
             else "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
