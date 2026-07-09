@@ -14,7 +14,7 @@ It is still not a fully production-grade agent platform because real GPU inferen
 
 ## What Is Ready
 
-- Backend trajectory pipeline with eight steps.
+- Backend trajectory pipeline with 12 governed support-agent steps: attachment evidence, triage, retrieval, policy, escalation, drafting, compliance, human handoff, critic, reflection, learning extraction, and optimizer.
 - Curated customer-support KB layers:
   - policies
   - procedures
@@ -76,7 +76,7 @@ MODE=llm DATASET=customer_support TICKETS=6 REPEATS=3 bash amd/run_agent_benchma
 - Image/video model loading is removed from the active GPU plan. Attachment evidence remains deterministic until text inference is verified.
 - Qdrant is wired but not mandatory in local mock mode. For final demo, run Qdrant if the notebook supports Docker or use the local vector fallback.
 - Embeddings currently use deterministic local vectors for pre-GPU readiness. Replace with Qwen embedding endpoint once the embedding profile is available.
-- Human approval UI is not implemented; approval states are deterministic backend outputs.
+- Human approval and escalation visibility is implemented for the demo, but a durable human task workflow is not productionized yet.
 - Runs are stored as JSON files locally, not SQLite/Postgres.
 - No authentication or tenant isolation.
 

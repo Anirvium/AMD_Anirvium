@@ -23,3 +23,5 @@ def test_customer_support_run_uses_curated_kb_evidence() -> None:
     assert any(evidence_id.startswith("POL-CS-") for evidence_id in used_evidence)
     assert approval_states["CS-003"] == "APPROVAL_REQUIRED"
     assert approval_states["CS-006"] == "APPROVAL_REQUIRED"
+    assert any(action.human_escalation_required for action in result.final_actions)
+    assert result.evaluation.details["human_handoff_count"] >= 1

@@ -27,6 +27,12 @@ export interface FinalAction {
   evidence_ids: string[];
   risk_flags: string[];
   next_action: string;
+  confidence_score?: number;
+  compliance_status?: string;
+  human_escalation_required?: boolean;
+  handoff_team?: string | null;
+  handoff_reason?: string | null;
+  handoff_summary?: string | null;
 }
 
 export interface VisualEvidenceCard {

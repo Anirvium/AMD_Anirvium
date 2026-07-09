@@ -6,10 +6,14 @@ from pathlib import Path
 from typing import Any, Dict, List
 from uuid import uuid4
 
+from app.agents.compliance_agent import ComplianceAgent
 from app.agents.critic_agent import CriticEvaluatorAgent
 from app.agents.escalation_agent import EscalationAgent
+from app.agents.human_escalation_agent import HumanEscalationAgent
+from app.agents.learning_extraction_agent import LearningExtractionAgent
 from app.agents.optimizer_agent import OptimizerAgent
 from app.agents.policy_agent import PolicyCheckerAgent
+from app.agents.reflection_agent import ReflectionAgent
 from app.agents.response_agent import ResponseDraftingAgent
 from app.agents.retrieval_agent import KnowledgeRetrievalAgent
 from app.agents.triage_agent import TriageAgent
@@ -59,6 +63,8 @@ class AgentRunner:
             PolicyCheckerAgent(),
             EscalationAgent(),
             ResponseDraftingAgent(),
+            ComplianceAgent(),
+            HumanEscalationAgent(),
         ]
 
         parent_step_id = None
@@ -86,6 +92,30 @@ class AgentRunner:
         spans.append(critic_span)
         parent_step_id = critic_span.step_id
 
+        reflection = ReflectionAgent()
+        reflection_span = self._run_agent_step(
+            run_id=run_id,
+            step_index=len(spans) + 1,
+            parent_step_id=parent_step_id,
+            agent_name=reflection.name,
+            input_summary="Review completed support responses, diagnose repeated mistakes, and propose durable behavior improvements.",
+            execute=lambda: reflection.run(context),
+        )
+        spans.append(reflection_span)
+        parent_step_id = reflection_span.step_id
+
+        learning = LearningExtractionAgent()
+        learning_span = self._run_agent_step(
+            run_id=run_id,
+            step_index=len(spans) + 1,
+            parent_step_id=parent_step_id,
+            agent_name=learning.name,
+            input_summary="Extract reusable learning artifacts from human handoffs, trajectory logs, transcripts, and satisfaction signals.",
+            execute=lambda: learning.run(context),
+        )
+        spans.append(learning_span)
+        parent_step_id = learning_span.step_id
+
         optimizer = OptimizerAgent()
         optimizer_span = self._run_agent_step(
             run_id=run_id,
@@ -109,6 +139,10 @@ class AgentRunner:
                 "agent_step_count": len(spans),
                 "model_name": self.llm_client.model_name,
                 "provider": self.settings.llm_provider,
+                "compliance_status_counts": self._count_by_key(context.get("final_actions", []), "compliance_status"),
+                "human_handoff_count": sum(1 for action in context.get("final_actions", []) if action.get("human_escalation_required")),
+                "learning_artifact_count": len(context.get("learning_artifacts", [])),
+                "reflection_count": len(context.get("reflections", [])),
             },
         )
         result = RunResult(
@@ -149,7 +183,11 @@ class AgentRunner:
                         "tool_action",
                         "evidence_card",
                         "policy_decision",
+                        "compliance_decision",
+                        "human_handoff",
                         "evaluation_signal",
+                        "reflection_signal",
+                        "learning_artifact",
                         "optimizer_recommendation",
                     ],
                     "production_export_path": "otel_otlp_optional_after_gpu_validation",
@@ -246,8 +284,6 @@ class AgentRunner:
         ids = ", ".join(ticket.ticket_id for ticket in tickets)
         if agent_name == "Knowledge Retrieval Agent":
             return f"Retrieve KB and policy evidence for selected tickets: {ids}."
-        if agent_name == "Visual Evidence Agent":
-            return f"Extract structured evidence cards from multimodal attachments for tickets: {ids}."
         if agent_name == "Attachment Evidence Agent":
             return f"Extract lightweight attachment evidence cards without an image/video model for tickets: {ids}."
         if agent_name == "Policy Checker Agent":
@@ -256,7 +292,22 @@ class AgentRunner:
             return f"Route selected tickets to the right owner, urgency, and next action: {ids}."
         if agent_name == "Response Drafting Agent":
             return f"Draft customer-safe replies using policy constraints and escalation outputs for tickets: {ids}."
+        if agent_name == "Compliance Agent":
+            return f"Check drafted replies against legal, regulatory, company, privacy, and evidence rules for tickets: {ids}."
+        if agent_name == "Human Escalation Agent":
+            return f"Route low-confidence, blocked, or approval-required support cases to human review for tickets: {ids}."
+        if agent_name == "Reflection Agent":
+            return f"Reflect on completed support responses and repeated failure patterns for tickets: {ids}."
+        if agent_name == "Learning Extraction Agent":
+            return f"Extract learning artifacts from handoffs, trajectory logs, transcripts, and satisfaction signals for tickets: {ids}."
         return f"Classify selected support tickets: {ids}."
+
+    def _count_by_key(self, rows: List[Dict[str, Any]], key: str) -> Dict[str, int]:
+        counts: Dict[str, int] = {}
+        for row in rows:
+            value = str(row.get(key, "UNKNOWN"))
+            counts[value] = counts.get(value, 0) + 1
+        return counts
 
     def _build_winning_demo_payload(self, result: RunResult) -> Dict[str, Any]:
         tickets_by_id = {ticket.ticket_id: ticket for ticket in load_tickets()}

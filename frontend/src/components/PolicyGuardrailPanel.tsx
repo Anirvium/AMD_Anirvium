@@ -8,9 +8,13 @@ interface PolicyGuardrailPanelProps {
 export default function PolicyGuardrailPanel({ run }: PolicyGuardrailPanelProps) {
   const actions = run?.final_actions ?? [];
   const approvalRequired = actions.filter((action) => action.approval_state === "APPROVAL_REQUIRED");
-  const escalated = actions.filter((action) => action.approval_state === "ESCALATED");
+  const humanHandoffs = actions.filter((action) => action.human_escalation_required);
+  const complianceReview = actions.filter((action) => ["BLOCKED", "REVIEW_REQUIRED"].includes(action.compliance_status ?? ""));
   const riskFlags = Array.from(new Set(actions.flatMap((action) => action.risk_flags)));
-  const policySpans = run?.trajectory.filter((span) => span.agent_name.toLowerCase().includes("policy") || span.approval_state !== "DRAFT_RECOMMENDATION") ?? [];
+  const policySpans = run?.trajectory.filter((span) => {
+    const name = span.agent_name.toLowerCase();
+    return name.includes("policy") || name.includes("compliance") || name.includes("human") || span.approval_state !== "DRAFT_RECOMMENDATION";
+  }) ?? [];
 
   return (
     <section className="panel policy-panel">
@@ -35,12 +39,37 @@ export default function PolicyGuardrailPanel({ run }: PolicyGuardrailPanelProps)
         </div>
         <div>
           <ShieldCheck size={17} />
-          <span>Escalated safely</span>
-          <strong>{escalated.length}</strong>
+          <span>Compliance review</span>
+          <strong>{complianceReview.length}</strong>
+        </div>
+        <div>
+          <LockKeyhole size={17} />
+          <span>Human handoffs</span>
+          <strong>{humanHandoffs.length}</strong>
         </div>
       </div>
 
       <div className="policy-list">
+        {actions.length > 0 && (
+          <article>
+            <div>
+              <strong>Compliance + human escalation agent</strong>
+              <span className="approval approval-draft_recommendation">{humanHandoffs.length} human handoff(s)</span>
+            </div>
+            <p>
+              {complianceReview.length
+                ? `${complianceReview.length} drafted action(s) require compliance or approval review before send.`
+                : "All current drafts passed material compliance checks after safe rewrite filters."}
+            </p>
+            <div className="evidence-row">
+              {actions.map((action) => (
+                <span key={action.ticket_id}>
+                  {action.ticket_id}: {(action.compliance_status ?? "NOT_CHECKED").replaceAll("_", " ")}
+                </span>
+              ))}
+            </div>
+          </article>
+        )}
         {(policySpans.length ? policySpans : run?.trajectory.slice(0, 3) ?? []).map((span) => (
           <article key={span.step_id}>
             <div>

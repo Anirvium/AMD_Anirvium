@@ -29,6 +29,12 @@ class FinalAction(BaseModel):
     evidence_ids: List[str] = Field(default_factory=list)
     risk_flags: List[str] = Field(default_factory=list)
     next_action: str
+    confidence_score: float = Field(default=0.86, ge=0.0, le=1.0)
+    compliance_status: str = "NOT_CHECKED"
+    human_escalation_required: bool = False
+    handoff_team: Optional[str] = None
+    handoff_reason: Optional[str] = None
+    handoff_summary: Optional[str] = None
 
 
 class RunResult(BaseModel):

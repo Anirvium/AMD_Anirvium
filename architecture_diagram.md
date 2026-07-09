@@ -7,11 +7,12 @@ flowchart LR
   subgraph Frontend["React / Vite Dashboard"]
     UI["Dashboard Workspace"]
     Queue["Ticket Queue"]
-    Graph["Trajectory Graph"]
-    Trace["Trace Viewer"]
-    VisualPanel["Visual Evidence Panel"]
+    Chat["Support Chat Console"]
+    Timeline["Trajectory Timeline"]
+    Trace["Tool / Trace Viewer"]
+    EvidencePanel["Evidence Panel"]
+    Guardrails["Compliance / Handoff Guardrails"]
     Scores["Evaluation Scorecards"]
-    AMDPanel["AMD Benchmark Panel"]
   end
 
   subgraph API["FastAPI Backend"]
@@ -37,14 +38,18 @@ flowchart LR
   end
 
   subgraph Agents["Multi-Agent Workflow"]
-    Visual["1. Visual Evidence Agent"]
+    Visual["1. Attachment Evidence Agent"]
     Triage["2. Intake / Triage Agent"]
     Retrieval["3. Knowledge Retrieval Agent"]
     Policy["4. Policy Checker Agent"]
     Escalation["5. Escalation Agent"]
     Response["6. Response Drafting Agent"]
-    Critic["7. Critic / Evaluator Agent"]
-    OptimizerAgent["8. Optimizer Agent"]
+    Compliance["7. Compliance Agent"]
+    Handoff["8. Human Escalation Agent"]
+    Critic["9. Critic / Evaluator Agent"]
+    Reflection["10. Reflection Agent"]
+    Learning["11. Learning Extraction Agent"]
+    OptimizerAgent["12. Optimizer Agent"]
   end
 
   subgraph Data["Synthetic Local Data"]
@@ -59,17 +64,18 @@ flowchart LR
     VLLM["vLLM OpenAI-Compatible Server"]
     ROCm["ROCm Runtime"]
     GPU["AMD Developer Cloud GPU"]
-    Profiles["Text / Vision / Critic Runtime Profiles"]
+    Profiles["Text / Critic Runtime Profiles"]
     Benchmark["Benchmark Scripts"]
     Logs["Benchmark Logs / Screenshots"]
   end
 
   UI --> Queue
-  UI --> Graph
+  UI --> Chat
+  UI --> Timeline
   UI --> Trace
-  UI --> VisualPanel
+  UI --> EvidencePanel
+  UI --> Guardrails
   UI --> Scores
-  UI --> AMDPanel
 
   UI --> Tickets
   UI --> Demo
@@ -94,14 +100,20 @@ flowchart LR
   Retrieval --> Policy
   Policy --> Escalation
   Escalation --> Response
-  Response --> Critic
-  Critic --> OptimizerAgent
+  Response --> Compliance
+  Compliance --> Handoff
+  Handoff --> Critic
+  Critic --> Reflection
+  Reflection --> Learning
+  Learning --> OptimizerAgent
 
   AgentRunner --> Logger
   Logger --> RunStore
 
   Critic --> EvalEngine
   EvalEngine --> Diagnosis
+  Diagnosis --> Reflection
+  Diagnosis --> Learning
   Diagnosis --> OptimizerService
   OptimizerService --> OptimizerAgent
 
@@ -129,32 +141,44 @@ sequenceDiagram
   participant Manager as Support Manager
   participant API as FastAPI /runs
   participant Runner as Agent Runner
-  participant Visual as Visual Evidence Agent
+  participant Visual as Attachment Evidence Agent
   participant Triage as Triage Agent
   participant Retrieval as Retrieval Agent
   participant Policy as Policy Agent
   participant Escalation as Escalation Agent
   participant Response as Response Agent
+  participant Compliance as Compliance Agent
+  participant Handoff as Human Escalation Agent
   participant Critic as Critic Agent
+  participant Reflection as Reflection Agent
+  participant Learning as Learning Extraction Agent
   participant Optimizer as Optimizer Agent
   participant Store as Run Store
 
   Manager->>API: Analyze high-priority support queue
   API->>Runner: Create run
-  Runner->>Visual: Extract attachment findings, OCR text, visual clues
-  Visual-->>Runner: VIS evidence cards and policy-check flags
+  Runner->>Visual: Extract attachment findings, text, logs, and metadata
+  Visual-->>Runner: Attachment evidence cards and policy-check flags
   Runner->>Triage: Classify urgency, sentiment, SLA risk
   Triage-->>Runner: Ticket classifications and risk flags
   Runner->>Retrieval: Retrieve KB and policy evidence
-  Retrieval-->>Runner: KB, policy, and visual evidence IDs
+  Retrieval-->>Runner: KB, policy, and attachment evidence IDs
   Runner->>Policy: Apply refund, security, SLA, and evidence rules
   Policy-->>Runner: Approval states and policy constraints
   Runner->>Escalation: Select owner, route, urgency, next action
   Escalation-->>Runner: Escalation recommendation
   Runner->>Response: Draft safe customer response
   Response-->>Runner: Final actions and approval state
+  Runner->>Compliance: Check legal, regulatory, company, privacy, and evidence rules
+  Compliance-->>Runner: Compliance status and safe rewrites
+  Runner->>Handoff: Apply confidence threshold and approval routing
+  Handoff-->>Runner: Human handoff decision and summary
   Runner->>Critic: Evaluate full trajectory
   Critic-->>Runner: Scorecard and failure diagnosis
+  Runner->>Reflection: Review completed responses and repeated mistakes
+  Reflection-->>Runner: Reflection signals and durable improvements
+  Runner->>Learning: Extract lessons from human handoffs and transcripts
+  Learning-->>Runner: Learning artifacts and eval-case suggestions
   Runner->>Optimizer: Recommend workflow improvements
   Optimizer-->>Runner: Prompt, routing, checklist, and threshold fixes
   Runner->>Store: Persist structured trajectory JSON
@@ -167,15 +191,21 @@ sequenceDiagram
 ```mermaid
 flowchart TD
   Span["Structured Agent Spans"] --> Evidence["Evidence Grounding Check"]
-  Span --> VisualEvidence["Visual Evidence Check"]
+  Span --> AttachmentEvidence["Attachment Evidence Check"]
   Span --> Policy["Policy Compliance Check"]
+  Span --> Handoff["Human Handoff Check"]
+  Span --> Reflection["Reflection Check"]
+  Span --> Learning["Learning Artifact Check"]
   Span --> Escalation["Escalation Quality Check"]
   Span --> Efficiency["Token / Latency Efficiency Check"]
   Span --> Tone["Customer Tone Check"]
 
   Evidence --> Metrics["Deterministic Scorecard"]
-  VisualEvidence --> Metrics
+  AttachmentEvidence --> Metrics
   Policy --> Metrics
+  Handoff --> Metrics
+  Reflection --> Metrics
+  Learning --> Metrics
   Escalation --> Metrics
   Efficiency --> Metrics
   Tone --> Metrics

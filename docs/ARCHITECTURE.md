@@ -16,8 +16,12 @@ Agent order:
 4. Policy Checker Agent
 5. Escalation Agent
 6. Response Drafting Agent
-7. Critic / Evaluator Agent
-8. Optimizer Agent
+7. Compliance Agent
+8. Human Escalation Agent
+9. Critic / Evaluator Agent
+10. Reflection Agent
+11. Learning Extraction Agent
+12. Optimizer Agent
 
 Each span records run ID, step ID, parent step, agent name, summaries, full output, tools, evidence IDs, latency, token estimates, model name, confidence, risk flags, approval state, and timestamp.
 
@@ -38,7 +42,7 @@ No real customer data is required or included.
 
 The default evaluator is deterministic. It measures task completion, evidence grounding, policy compliance, hallucination risk, escalation quality, actionability, missing information, customer tone, token efficiency, latency efficiency, and overall score.
 
-The diagnosis engine maps metrics and trajectory outputs into failure categories. The optimizer converts those findings into workflow changes such as mandatory evidence checklists, approval gates, owner requirements, escalation thresholds, and token-reduction handoffs.
+The diagnosis engine maps metrics and trajectory outputs into failure categories. The reflection agent reviews repeated mistakes, the learning extraction agent converts human handoffs and transcript/satisfaction placeholders into improvement artifacts, and the optimizer converts those findings into workflow changes such as mandatory evidence checklists, approval gates, owner requirements, escalation thresholds, and token-reduction handoffs.
 
 ## LLM Provider
 
@@ -63,11 +67,11 @@ On AMD Developer Cloud, run vLLM with ROCm using `amd/run_runtime_profile.sh`, t
 The React dashboard is a product workspace:
 
 - ticket queue
-- support-agent run console
+- chat-first support-agent run console
 - final recommended actions
-- trajectory graph
-- trace viewer
+- trajectory timeline
+- tool trace viewer
+- compliance and human-handoff guardrails
 - evaluation scorecards
 - failure diagnosis
 - optimization recommendations
-- AMD benchmark panel

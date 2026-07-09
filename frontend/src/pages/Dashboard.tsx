@@ -61,9 +61,10 @@ export default function Dashboard() {
 
   const criticalIssues = run?.evaluation.diagnosis.filter((item) => ["HIGH", "CRITICAL"].includes(item.severity)).length ?? 0;
   const policyGates = run?.final_actions.filter((action) => action.approval_state === "APPROVAL_REQUIRED").length ?? 0;
+  const humanHandoffs = run?.final_actions.filter((action) => action.human_escalation_required).length ?? 0;
   const evidenceUsed = run ? new Set(run.final_actions.flatMap((action) => action.evidence_ids)).size : 0;
   const totalLatency = run?.trajectory.reduce((total, span) => total + span.latency_ms, 0) ?? 0;
-  const escalationRate = run?.final_actions.length ? Math.round((policyGates / run.final_actions.length) * 100) : 0;
+  const escalationRate = run?.final_actions.length ? Math.round((humanHandoffs / run.final_actions.length) * 100) : 0;
   const customerTone = run ? Math.round(run.evaluation.metrics.customer_tone * 100) : 0;
 
   return (

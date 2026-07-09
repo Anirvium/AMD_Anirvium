@@ -37,11 +37,11 @@ curl http://localhost:8000/demo/winning-run
 
 Focus on `T-001`: enterprise outage, ACME Corp, angry sentiment, churn risk, and SLA deadline under 60 minutes.
 
-## 5. Inspect Trajectory Graph
+## 5. Inspect Trajectory Timeline
 
-The graph shows the agent path:
+The timeline shows the support-agent path:
 
-Triage -> retrieval -> policy -> escalation -> response -> critic -> optimizer.
+attachment evidence -> triage -> retrieval -> policy -> escalation -> response -> compliance -> human escalation -> critic -> reflection -> learning extraction -> optimizer.
 
 ## 6. Inspect Trace Viewer
 
@@ -56,6 +56,7 @@ Check each span for:
 - confidence
 - risk flags
 - approval state
+- compliance status and handoff decisions where available
 
 ## 7. Inspect Evaluation Scorecard
 
@@ -85,6 +86,6 @@ Each recommendation includes:
 - implementation hint
 - priority
 
-## 10. Inspect AMD Benchmark Readiness Panel
+## 10. Inspect AMD Benchmark Readiness Evidence
 
 The AMD runtime evidence should say `AMD execution pending` until real AMD Developer Cloud logs and screenshots are attached. It should only say `Verified AMD run` after real evidence exists. AMD proof belongs in the runbook/submission evidence, not the primary customer-support product UI.

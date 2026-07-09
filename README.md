@@ -46,17 +46,22 @@ See [repo-structure.txt](repo-structure.txt) for the repository map and [archite
 flowchart LR
   UI[React Dashboard] --> API[FastAPI API]
   API --> Runner[Agent Runner]
-  Runner --> Triage[Intake / Triage Agent]
-  Triage --> Attachment[Attachment Evidence Agent]
-  Attachment --> Retrieval[Knowledge Retrieval Agent]
+  Runner --> Attachment[Attachment Evidence Agent]
+  Attachment --> Triage[Intake / Triage Agent]
+  Triage --> Retrieval[Knowledge Retrieval Agent]
   Retrieval --> Policy[Policy Checker Agent]
   Policy --> Escalation[Escalation Agent]
   Escalation --> Response[Response Drafting Agent]
-  Response --> Critic[Critic / Evaluator Agent]
-  Critic --> Optimizer[Optimizer Agent]
+  Response --> Compliance[Compliance Agent]
+  Compliance --> Handoff[Human Escalation Agent]
+  Handoff --> Critic[Critic / Evaluator Agent]
+  Critic --> Reflection[Reflection Agent]
+  Reflection --> Learning[Learning Extraction Agent]
+  Learning --> Optimizer[Optimizer Agent]
   Runner --> Logger[Trajectory Logger JSON]
   Critic --> Eval[Deterministic Evaluation Engine]
   Eval --> Diagnosis[Failure Diagnosis Engine]
+  Diagnosis --> Reflection
   Diagnosis --> Optimizer
   Runner --> Data[(Synthetic tickets, KB, policies)]
   Runner --> LLM[OpenAI-compatible LLM Client]
@@ -70,10 +75,14 @@ flowchart LR
 - Structured JSON span logging for every agent step.
 - Text and visual evidence IDs attached to retrieval, policy checks, responses, and evaluations.
 - Approval-state model for sensitive refund, security, deletion, compensation, and SLA cases.
+- Compliance agent for legal, regulatory, company policy, privacy, and evidence-grounding checks.
+- Human escalation agent that routes low-confidence, approval-required, or compliance-review cases with handoff summaries.
+- Learning extraction agent that turns human handoffs, transcripts, satisfaction signals, and resolution logs into reusable improvement artifacts.
+- Reflection agent that reviews completed responses and repeated mistake patterns before optimization.
 - Deterministic evaluation metrics for grounding, policy, hallucination risk, escalation, actionability, tone, tokens, and latency.
 - Failure diagnosis for missing evidence, weak responses, missed escalation, unsafe actions, low confidence, and excessive token usage.
 - Optimization recommendations with target agent, root cause, concrete fix, implementation hint, and expected metric lift.
-- React dashboard with queue, run console, final actions, trajectory graph, trace viewer, scorecards, diagnosis, optimizer, and AMD benchmark panel.
+- React dashboard with chat-first support console, trajectory timeline, tool traces, compliance/handoff guardrails, evidence, final safe drafts, scorecards, diagnosis, and optimizer recommendations.
 - AMD benchmark scripts for vLLM/ROCm OpenAI-compatible inference.
 
 ## Demo Flow
