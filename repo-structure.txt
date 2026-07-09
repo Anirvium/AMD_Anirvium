@@ -1,0 +1,249 @@
+Anirvium AI Repository Structure
+================================
+
+Purpose
+-------
+This repository contains the complete hackathon prototype for Anirvium AI:
+a trajectory intelligence platform for enterprise support agents.
+
+Top-Level Layout
+----------------
+.
+├── .env.example
+├── .gitignore
+├── IMPLEMENTATION_PLAN.md
+├── IMPLEMENTATION_DELTA_PLAN.md
+├── JUDGES_READ_THIS_FIRST.md
+├── README.md
+├── SUBMISSION_SUMMARY.md
+├── architecture_diagram.md
+├── repo-structure.txt
+├── docker-compose.yml
+├── amd/
+├── backend/
+├── docs/
+├── examples/
+└── frontend/
+
+Core Files
+----------
+README.md
+  Main product, setup, architecture, AMD usage, evaluation, and submission guide.
+
+IMPLEMENTATION_PLAN.md
+  Phase-by-phase build plan and definition of done.
+
+IMPLEMENTATION_DELTA_PLAN.md
+  Delta plan for judge-readiness improvements.
+
+JUDGES_READ_THIS_FIRST.md
+  Fast judge walkthrough of what the project is, how to run it, and what to inspect.
+
+SUBMISSION_SUMMARY.md
+  Concise hackathon submission summary and artifact checklist.
+
+architecture_diagram.md
+  Renderable Mermaid architecture diagrams for the product and data flow.
+
+repo-structure.txt
+  Human-readable repository map for judges, reviewers, and contributors.
+
+.env.example
+  Safe environment variable template. No secrets are committed.
+
+docker-compose.yml
+  Optional local container path for backend and frontend.
+
+Backend
+-------
+backend/
+├── Dockerfile
+├── pyproject.toml
+├── requirements.txt
+├── uv.lock
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── main.py
+│   ├── agents/
+│   │   ├── critic_agent.py
+│   │   ├── escalation_agent.py
+│   │   ├── optimizer_agent.py
+│   │   ├── policy_agent.py
+│   │   ├── response_agent.py
+│   │   ├── retrieval_agent.py
+│   │   └── triage_agent.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── routes_demo.py
+│   │   ├── routes_evaluations.py
+│   │   ├── routes_runs.py
+│   │   └── routes_tickets.py
+│   ├── data/
+│   │   ├── synthetic_customers.json
+│   │   ├── synthetic_kb.json
+│   │   ├── synthetic_policies.json
+│   │   └── synthetic_tickets.json
+│   ├── schemas/
+│   │   ├── evaluation.py
+│   │   ├── run.py
+│   │   ├── ticket.py
+│   │   └── trajectory.py
+│   └── services/
+│       ├── agent_runner.py
+│       ├── data_loader.py
+│       ├── diagnosis.py
+│       ├── evaluator.py
+│       ├── llm_client.py
+│       ├── optimizer.py
+│       ├── runtime.py
+│       └── trajectory_logger.py
+└── tests/
+    ├── test_approval_states.py
+    ├── test_agent_runner.py
+    ├── test_demo_winning_run.py
+    ├── test_diagnosis_schema.py
+    ├── test_evaluation_metric_bounds.py
+    ├── test_evaluator.py
+    ├── test_optimizer_recommendations.py
+    └── test_trajectory_schema.py
+
+Backend Responsibilities
+------------------------
+- FastAPI application and API routes.
+- Synthetic enterprise support tickets, customers, KB articles, and policies.
+- Deterministic 7-agent support workflow.
+- Structured trajectory span logging.
+- Evaluation, failure diagnosis, and optimization engines.
+- Mock and OpenAI-compatible LLM provider abstraction.
+
+Frontend
+--------
+frontend/
+├── Dockerfile
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    ├── styles.css
+    ├── vite-env.d.ts
+    ├── api/
+    │   ├── client.ts
+    │   └── types.ts
+    ├── components/
+    │   ├── AmdBenchmarkPanel.tsx
+    │   ├── EvaluationScorecard.tsx
+    │   ├── FailureDiagnosis.tsx
+    │   ├── FinalActions.tsx
+    │   ├── OptimizationPanel.tsx
+    │   ├── RunConsole.tsx
+    │   ├── TicketQueue.tsx
+    │   ├── TraceViewer.tsx
+    │   └── TrajectoryGraph.tsx
+    └── pages/
+        └── Dashboard.tsx
+
+Frontend Responsibilities
+-------------------------
+- Enterprise support operations dashboard.
+- Ticket queue display.
+- Agent run console.
+- Final action and safe response review.
+- React Flow trajectory visualization.
+- Trace, evidence, latency, token, risk, and approval-state inspection.
+- Evaluation scorecards, failure diagnosis, optimizer, and AMD benchmark panel.
+
+AMD Proof Folder
+----------------
+amd/
+├── README_AMD_USAGE.md
+├── benchmark_agent_eval.py
+├── benchmark_results_sample.md
+├── run_agent_benchmark.sh
+├── run_vllm_rocm.sh
+├── logs/
+│   └── .gitkeep
+└── screenshots/
+    └── .gitkeep
+
+AMD Responsibilities
+--------------------
+- Explain AMD Developer Cloud usage and claim boundary.
+- Start vLLM/ROCm OpenAI-compatible inference endpoint.
+- Run trajectory benchmark in mock or LLM mode.
+- Capture tokens/sec, latency, throughput, ticket count, agent-step count,
+  trajectory score, policy compliance, evidence grounding, and token efficiency.
+
+Docs
+----
+docs/
+├── ARCHITECTURE.md
+├── DEMO_SCRIPT.md
+├── EVALUATION_METRICS.md
+├── FINAL_TEAM_PITCH_DECK.md
+├── JUDGE_WALKTHROUGH.md
+├── PRODUCT_NARRATIVE.md
+├── SLIDE_DECK_OUTLINE.md
+└── SUBMISSION_CHECKLIST.md
+
+Docs Responsibilities
+---------------------
+- Architecture explanation.
+- 3-minute demo video script.
+- 10-slide deck outline.
+- Hackathon submission checklist.
+
+Examples
+--------
+examples/
+├── after_optimized_agent.json
+├── before_agent_failure.json
+├── judge_demo_run.json
+├── sample_evaluation.json
+├── sample_run_input.json
+└── sample_trajectory.json
+
+Examples Responsibilities
+-------------------------
+- Provide judge-readable sample request, trajectory, and evaluation artifacts.
+- Make the product understandable without needing the demo video.
+
+Ignored / Generated Locally
+---------------------------
+.uv-cache/
+backend/.venv/
+backend/.pytest_cache/
+backend/app/data/runs/*.json
+amd/logs/*.json
+node_modules/
+frontend/dist/
+.env
+
+Primary Local Commands
+----------------------
+Backend tests:
+  cd backend && uv run pytest
+
+Backend server:
+  cd backend && uv run uvicorn app.main:app --port 8000
+
+Frontend:
+  cd frontend && npm install && npm run dev
+
+Mock benchmark:
+  MODE=mock TICKETS=8 REPEATS=3 bash amd/run_agent_benchmark.sh
+
+Winning demo endpoint:
+  curl http://localhost:8000/demo/winning-run
+
+AMD vLLM benchmark:
+  LLM_BASE_URL=http://localhost:8001/v1 \
+  LLM_API_KEY=dummy \
+  LLM_MODEL=<model-running-on-vllm> \
+  MODE=llm \
+  TICKETS=8 \
+  REPEATS=3 \
+  bash amd/run_agent_benchmark.sh

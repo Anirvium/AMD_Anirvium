@@ -1,0 +1,21 @@
+# Submission Checklist
+
+- [ ] GitHub repository URL is public or accessible to judges.
+- [ ] README explains product, architecture, setup, demo flow, metrics, and AMD usage.
+- [ ] Demo video is recorded.
+- [ ] Slide deck PDF is exported.
+- [ ] AMD usage is visible in README and `amd/README_AMD_USAGE.md`.
+- [ ] AMD vLLM/ROCm benchmark log is generated and committed or linked.
+- [ ] `python amd/smoke_vllm_openai.py --model anirvium-text` passes in the AMD notebook.
+- [ ] `MODE=llm DATASET=customer_support TICKETS=6 REPEATS=3 bash amd/run_agent_benchmark.sh` completes.
+- [ ] `/demo/customer-support-run` returns curated `POL-CS-*`, `PROC-CS-*`, and `TMPL-CS-*` evidence IDs.
+- [ ] `/kb/vector/status` and `/kb/search?q=withdrawal%20processed` are captured for the demo.
+- [ ] `/memory/status` shows local or Redis-backed memory readiness.
+- [ ] Dashboard screenshot is saved under `amd/screenshots/`.
+- [ ] No real customer data is included.
+- [ ] No secrets are committed.
+- [ ] `.env.example` is present.
+- [ ] Backend tests pass with `cd backend && uv run pytest`.
+- [ ] Frontend builds with `cd frontend && npm install && npm run build`.
+- [ ] Hosted URL is included if available.
+- [ ] Slide deck highlights problem, product, architecture, AMD compute, and market.

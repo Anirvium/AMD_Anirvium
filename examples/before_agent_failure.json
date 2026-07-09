@@ -1,0 +1,59 @@
+{
+  "example_type": "before_agent_failure",
+  "ticket_id": "T-001",
+  "summary": "Flawed support-agent trajectory for an enterprise SLA outage.",
+  "input": {
+    "customer_name": "ACME Corp",
+    "plan": "enterprise",
+    "issue_type": "production_outage",
+    "priority": "critical",
+    "sentiment": "angry",
+    "sla_deadline": "under_60_minutes"
+  },
+  "trajectory": [
+    {
+      "agent_name": "Triage Agent",
+      "output_summary": "Marked ticket as outage but did not identify SLA breach risk.",
+      "evidence_ids": [],
+      "risk_flags": ["CUSTOMER_SENTIMENT_RISK"],
+      "confidence": 0.64
+    },
+    {
+      "agent_name": "Retrieval Agent",
+      "output_summary": "Retrieved generic outage article only.",
+      "evidence_ids": ["KB-001"],
+      "risk_flags": [],
+      "confidence": 0.68
+    },
+    {
+      "agent_name": "Escalation Agent",
+      "output_summary": "Suggested engineering review but did not assign owner or urgency.",
+      "evidence_ids": ["KB-001"],
+      "risk_flags": ["MISSING_ESCALATION_OWNER"],
+      "confidence": 0.61
+    },
+    {
+      "agent_name": "Response Agent",
+      "output_summary": "Drafted vague customer response.",
+      "evidence_ids": ["KB-001"],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "draft_response": "We are looking into this and will get back to you soon.",
+      "confidence": 0.58
+    }
+  ],
+  "failures": [
+    "missed SLA owner assignment",
+    "weak evidence grounding",
+    "vague customer response",
+    "no explicit escalation owner",
+    "no clear update cadence"
+  ],
+  "scorecard": {
+    "evidence_grounding": 0.35,
+    "policy_compliance": 0.6,
+    "escalation_quality": 0.25,
+    "actionability": 0.2,
+    "overall_score": 42.0
+  }
+}
+

@@ -1,0 +1,255 @@
+[
+  {
+    "id": "POL-CS-VERIFY-001",
+    "title": "Mandatory verification before restricted-account recovery",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "verification",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": true,
+    "trigger": "Customer asks to unblock or restore account access while verification is pending or required.",
+    "allowed_actions": [
+      "Explain that account restrictions depend on verification completion.",
+      "Request missing verification documents or direct the customer to the verification flow.",
+      "Route unclear or disputed cases to the verification team."
+    ],
+    "prohibited_actions": [
+      "Promise account unblocking before verification review is complete.",
+      "Share internal investigation details.",
+      "Bypass mandatory verification because the customer is upset or high value."
+    ],
+    "evidence_required": ["verification_status", "restriction_reason", "latest_customer_request"],
+    "approval_state": "APPROVAL_REQUIRED",
+    "source_refs": [
+      "docs/kb/source_material/customer_support_operations_anonymized.md",
+      "docs/kb/source_material/remaining_docs/batch_6.md",
+      "docs/kb/source_material/remaining_docs/templates_customer_concerns.md"
+    ]
+  },
+  {
+    "id": "POL-CS-PAY-001",
+    "title": "Delayed deposit evidence gate",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "deposits",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": true,
+    "trigger": "Customer reports that a deposit has not appeared.",
+    "allowed_actions": [
+      "Check elapsed time, payment method, amount, and transaction status.",
+      "If the normal timeframe has not passed, explain the wait window.",
+      "If the timeframe has passed, request successful payment proof and create or update a financial-operations task."
+    ],
+    "prohibited_actions": [
+      "Confirm funds were received without payment evidence.",
+      "Blame a payment provider without evidence.",
+      "Promise an exact credit time without financial-operations confirmation."
+    ],
+    "evidence_required": ["payment_method", "transaction_timestamp", "amount", "payment_proof", "task_status"],
+    "approval_state": "DRAFT_RECOMMENDATION",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_1.md",
+      "docs/kb/source_material/remaining_docs/templates_priority_calls_concern.md"
+    ]
+  },
+  {
+    "id": "POL-CS-PAY-002",
+    "title": "Processed withdrawal not received proof gate",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "withdrawals",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": true,
+    "trigger": "Customer says a withdrawal is marked processed but funds are not visible in their account.",
+    "allowed_actions": [
+      "Check processed date, payment method, and method-specific settlement window.",
+      "Request a bank statement or official bank response when the waiting window has passed.",
+      "Escalate with proof if a tracking reference cannot locate the funds."
+    ],
+    "prohibited_actions": [
+      "Tell the customer the withdrawal failed if the system says processed.",
+      "Guarantee reversal or instant credit.",
+      "Expose internal payment-limit calculations."
+    ],
+    "evidence_required": ["withdrawal_status", "processed_date", "payment_method", "bank_statement_or_response", "tracking_reference"],
+    "approval_state": "DRAFT_RECOMMENDATION",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_3.md",
+      "docs/kb/source_material/remaining_docs/batch_6.md",
+      "docs/kb/source_material/remaining_docs/templates_customer_concerns.md"
+    ]
+  },
+  {
+    "id": "POL-CS-PAY-003",
+    "title": "Withdrawal limits are not disclosed",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "withdrawals",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": true,
+    "trigger": "Customer asks for the exact withdrawal limit, limit logic, or why a payment method is unavailable.",
+    "allowed_actions": [
+      "Explain that available methods are shown in the withdrawal section.",
+      "Suggest using an available payment method.",
+      "Route exceptions to financial operations when the customer provides evidence of a valid issue."
+    ],
+    "prohibited_actions": [
+      "Disclose internal withdrawal-limit amount or calculation logic.",
+      "Promise a limit increase.",
+      "Advise customers to bypass controls."
+    ],
+    "evidence_required": ["payment_method_status", "withdrawal_error", "customer_region_or_method"],
+    "approval_state": "APPROVAL_REQUIRED",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_3.md",
+      "docs/kb/source_material/remaining_docs/batch_4.md",
+      "docs/kb/source_material/remaining_docs/templates_priority_calls_concern.md"
+    ]
+  },
+  {
+    "id": "POL-CS-BONUS-001",
+    "title": "Bonus funds and promo code claims require account evidence",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "bonuses",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "medium",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": true,
+    "trigger": "Customer asks about bonus availability, removal, turnover, withdrawal impact, or applying a new promo code.",
+    "allowed_actions": [
+      "Explain general bonus mechanics.",
+      "Check active bonus status before describing account-specific availability.",
+      "Clarify that removing a bonus may affect virtual funds and that new offers depend on available promo codes."
+    ],
+    "prohibited_actions": [
+      "Promise a bonus will be granted.",
+      "Guarantee a promo code is available without account evidence.",
+      "Hide withdrawal or turnover implications."
+    ],
+    "evidence_required": ["active_bonus_status", "promo_code_availability", "bonus_terms"],
+    "approval_state": "DRAFT_RECOMMENDATION",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/bonus.md",
+      "docs/kb/source_material/remaining_docs/batch_6.md"
+    ]
+  },
+  {
+    "id": "POL-CS-ACCESS-001",
+    "title": "Cross-account disclosure is prohibited",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "account_access",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": true,
+    "trigger": "Customer contacts support from one email or account and asks about another account.",
+    "allowed_actions": [
+      "Explain that account-specific details can only be shared through the registered contact channel.",
+      "Ask the customer to contact support from the registered email or complete identity verification.",
+      "Route suspicious access patterns to account security."
+    ],
+    "prohibited_actions": [
+      "Share another account's details.",
+      "Merge or change account identity without verification.",
+      "Send sensitive account status to an unverified contact."
+    ],
+    "evidence_required": ["registered_contact", "requester_contact", "identity_verification_status"],
+    "approval_state": "APPROVAL_REQUIRED",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_1.md",
+      "docs/kb/source_material/remaining_docs/batch_5.md",
+      "docs/kb/source_material/remaining_docs/templates_customer_concerns.md"
+    ]
+  },
+  {
+    "id": "POL-CS-CHANNEL-001",
+    "title": "Channel tone and closure discipline",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "channel_ops",
+    "audience": "customer_safe",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "medium",
+    "requires_evidence": false,
+    "requires_approval": false,
+    "allowed_for_generation": true,
+    "trigger": "Any customer-facing support response.",
+    "allowed_actions": [
+      "Acknowledge the concern in the customer's channel and language.",
+      "State the next action and expected follow-up path.",
+      "Close only after confirming resolution or explaining the pending next step."
+    ],
+    "prohibited_actions": [
+      "Use unsupported certainty.",
+      "Send generic template language that ignores the customer's issue.",
+      "Close a live chat without giving the customer a clear next step."
+    ],
+    "evidence_required": ["customer_issue", "channel", "next_action"],
+    "approval_state": "DRAFT_RECOMMENDATION",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/customer_support_workflow.md",
+      "docs/kb/source_material/remaining_docs/chat_document.md",
+      "docs/kb/source_material/remaining_docs/call_transcript.md"
+    ]
+  },
+  {
+    "id": "POL-CS-PRIORITY-001",
+    "title": "Priority support does not bypass policy",
+    "layer": "policies",
+    "chunk_type": "policy",
+    "domain": "priority_support",
+    "audience": "mixed",
+    "channel": "call",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": true,
+    "trigger": "High-touch or priority support customer asks for account, payment, bonus, verification, or exception handling.",
+    "allowed_actions": [
+      "Use stronger empathy and faster routing.",
+      "Escalate with clear ownership and evidence.",
+      "Keep all verification, payment, and disclosure rules active."
+    ],
+    "prohibited_actions": [
+      "Override policy because the customer is priority.",
+      "Promise an exception before the owning team approves it.",
+      "Reveal internal review or limit logic."
+    ],
+    "evidence_required": ["priority_context", "case_domain", "required_policy_evidence"],
+    "approval_state": "APPROVAL_REQUIRED",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/templates_priority_calls_concern.md",
+      "docs/kb/source_material/remaining_docs/customer_support_workflow.md"
+    ]
+  }
+]

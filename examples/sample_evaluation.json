@@ -1,0 +1,41 @@
+{
+  "run_id": "run_sample",
+  "metrics": {
+    "task_completion": 1.0,
+    "evidence_grounding": 1.0,
+    "policy_compliance": 1.0,
+    "hallucination_risk": 0.08,
+    "escalation_quality": 1.0,
+    "actionability": 1.0,
+    "missing_information": 0.4,
+    "customer_tone": 1.0,
+    "token_efficiency": 1.0,
+    "latency_efficiency": 1.0,
+    "overall_score": 85.2
+  },
+  "diagnosis": [
+    {
+      "category": "weak_response",
+      "severity": "medium",
+      "ticket_id": "T-001",
+      "message": "High-urgency response does not state a customer update cadence.",
+      "evidence_ids": ["KB-001", "KB-003", "POL-003", "POL-005", "KB-006"],
+      "suggested_fix": "Require a next-update field for critical and high-priority customer replies."
+    }
+  ],
+  "recommendations": [
+    {
+      "recommendation_id": "OPT-002",
+      "title": "Require owner and update cadence for urgent cases",
+      "change_type": "mandatory_check",
+      "rationale": "Critical support replies need an assigned owner and clear update cadence to reduce escalation ambiguity.",
+      "expected_impact": "+6 actionability points and lower SLA risk",
+      "before": "High-urgency drafts can omit next-update timing.",
+      "after": "Critical and high-priority drafts include owner, route, urgency, and next-update timing.",
+      "related_ticket_ids": ["T-001"],
+      "priority": "high"
+    }
+  ],
+  "summary": "Trajectory health score 85.2/100 across 5 selected tickets."
+}
+

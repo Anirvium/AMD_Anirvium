@@ -1,0 +1,45 @@
+[
+  {
+    "id": "KB-001",
+    "title": "Outage troubleshooting workflow",
+    "tags": ["outage", "availability", "incident"],
+    "summary": "Collect impact scope, incident timeline, status-page state, and recent deployment context before escalating.",
+    "body": "For production availability incidents, verify affected region, error class, customer impact count, incident start time, and current workaround. Attach status-page evidence and route confirmed production outages to engineering incident response."
+  },
+  {
+    "id": "KB-002",
+    "title": "Refund and duplicate charge handling",
+    "tags": ["billing", "refund", "invoice"],
+    "summary": "Billing disputes require invoice verification and billing approval before written refund confirmation.",
+    "body": "Support may acknowledge a billing concern and gather invoice details. Support must not promise a refund, credit, or reversal before billing approves the transaction review."
+  },
+  {
+    "id": "KB-003",
+    "title": "Enterprise SLA escalation",
+    "tags": ["sla", "enterprise", "escalation"],
+    "summary": "Enterprise critical incidents inside the SLA window require immediate owner assignment and engineering or success escalation.",
+    "body": "Critical or high-priority enterprise tickets approaching an SLA deadline must receive an explicit owner, urgency classification, escalation route, and customer update cadence."
+  },
+  {
+    "id": "KB-004",
+    "title": "Security and data deletion workflow",
+    "tags": ["security", "deletion", "identity"],
+    "summary": "Security-sensitive requests require identity verification and security escalation before confirmation.",
+    "body": "Agents must verify requestor identity and account authority before deletion, access revocation, or security confirmation. Security operations owns the final action and audit trail."
+  },
+  {
+    "id": "KB-005",
+    "title": "Integration bug triage",
+    "tags": ["integration", "bug", "api", "sync"],
+    "summary": "Integration failures should capture connector, auth changes, error payload, timestamps, and business impact.",
+    "body": "For integration failures, collect connector name, recent credential changes, error codes, retry state, and deadline impact. Premium and enterprise integration blockers should route to engineering support."
+  },
+  {
+    "id": "KB-006",
+    "title": "Tone and customer communication policy",
+    "tags": ["tone", "communication", "safe-response"],
+    "summary": "Customer messages should be calm, specific, grounded in evidence, and avoid commitments that require approval.",
+    "body": "Use direct language, acknowledge urgency, state what is known, identify the next action, cite evidence internally, and avoid unsupported commitments or legal, security, refund, or compensation promises."
+  }
+]
+

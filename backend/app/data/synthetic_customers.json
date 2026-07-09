@@ -1,0 +1,43 @@
+[
+  {
+    "customer_id": "C-1001",
+    "customer_name": "ACME Corp",
+    "plan": "enterprise",
+    "arr_usd": 420000,
+    "success_owner": "Mina Rao",
+    "support_tier": "platinum"
+  },
+  {
+    "customer_id": "C-1002",
+    "customer_name": "Northstar Retail",
+    "plan": "business",
+    "arr_usd": 84000,
+    "success_owner": "Jon Bell",
+    "support_tier": "standard"
+  },
+  {
+    "customer_id": "C-1003",
+    "customer_name": "Vector Labs",
+    "plan": "pro",
+    "arr_usd": 18000,
+    "success_owner": "Nadia Kim",
+    "support_tier": "standard"
+  },
+  {
+    "customer_id": "C-1004",
+    "customer_name": "HelioBank",
+    "plan": "enterprise",
+    "arr_usd": 690000,
+    "success_owner": "Priya Santos",
+    "support_tier": "platinum"
+  },
+  {
+    "customer_id": "C-1008",
+    "customer_name": "Orchid Markets",
+    "plan": "enterprise",
+    "arr_usd": 510000,
+    "success_owner": "Leo Martins",
+    "support_tier": "platinum"
+  }
+]
+

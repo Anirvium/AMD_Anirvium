@@ -1,0 +1,170 @@
+[
+  {
+    "ticket_id": "T-001",
+    "customer_id": "C-1001",
+    "customer_name": "ACME Corp",
+    "plan": "enterprise",
+    "issue_type": "production_outage",
+    "priority": "critical",
+    "message": "Our production workspace is unavailable for all EU users. We have 42 minutes before our contractual SLA window is breached and leadership is asking whether we should move providers.",
+    "created_at": "2026-07-07T08:04:00Z",
+    "sla_deadline": "2026-07-07T09:00:00Z",
+    "sentiment": "angry",
+    "previous_interactions": [
+      "Customer reported intermittent errors yesterday.",
+      "Support suggested status-page monitoring and requested impact count."
+    ],
+    "attachments": [
+      {
+        "filename": "status-page-screenshot.png",
+        "type": "image/png",
+        "contains_customer_data": false
+      }
+    ],
+    "expected_evidence_ids": ["KB-001", "KB-003", "POL-003", "POL-005", "KB-006"]
+  },
+  {
+    "ticket_id": "T-002",
+    "customer_id": "C-1002",
+    "customer_name": "Northstar Retail",
+    "plan": "business",
+    "issue_type": "billing_refund",
+    "priority": "high",
+    "message": "We were charged twice for the annual plan and need a refund today. Your agent already said we would receive a credit, but our finance team needs written confirmation.",
+    "created_at": "2026-07-07T07:48:00Z",
+    "sla_deadline": "2026-07-07T17:00:00Z",
+    "sentiment": "frustrated",
+    "previous_interactions": [
+      "Prior response mentioned a likely credit without billing approval."
+    ],
+    "attachments": [
+      {
+        "filename": "invoice-redacted.pdf",
+        "type": "application/pdf",
+        "contains_customer_data": false
+      }
+    ],
+    "expected_evidence_ids": ["KB-002", "POL-001", "POL-004", "POL-005", "KB-006"]
+  },
+  {
+    "ticket_id": "T-003",
+    "customer_id": "C-1003",
+    "customer_name": "Vector Labs",
+    "plan": "pro",
+    "issue_type": "churn_risk",
+    "priority": "high",
+    "message": "This is the fourth time our automations have failed this month. If nobody explains the root cause, we are cancelling before renewal.",
+    "created_at": "2026-07-07T06:35:00Z",
+    "sla_deadline": "2026-07-08T06:35:00Z",
+    "sentiment": "angry",
+    "previous_interactions": [
+      "Three automation failure tickets in the prior 30 days.",
+      "Customer success flagged renewal risk."
+    ],
+    "attachments": [],
+    "expected_evidence_ids": ["KB-005", "KB-006", "POL-005"]
+  },
+  {
+    "ticket_id": "T-004",
+    "customer_id": "C-1004",
+    "customer_name": "HelioBank",
+    "plan": "enterprise",
+    "issue_type": "security_data_deletion",
+    "priority": "high",
+    "message": "We need immediate deletion of a former employee's data and confirmation that the account cannot be accessed. Please complete this today for audit reasons.",
+    "created_at": "2026-07-07T08:20:00Z",
+    "sla_deadline": "2026-07-07T14:20:00Z",
+    "sentiment": "urgent",
+    "previous_interactions": [
+      "Customer asked about identity verification requirements last week."
+    ],
+    "attachments": [
+      {
+        "filename": "audit-request-redacted.txt",
+        "type": "text/plain",
+        "contains_customer_data": false
+      }
+    ],
+    "expected_evidence_ids": ["KB-004", "POL-002", "POL-005", "KB-006"]
+  },
+  {
+    "ticket_id": "T-005",
+    "customer_id": "C-1005",
+    "customer_name": "SoloStack",
+    "plan": "free",
+    "issue_type": "bug_report",
+    "priority": "medium",
+    "message": "The dashboard filter resets every time I refresh. I am on the free plan and can reproduce it in two browsers.",
+    "created_at": "2026-07-07T05:50:00Z",
+    "sla_deadline": "2026-07-10T05:50:00Z",
+    "sentiment": "neutral",
+    "previous_interactions": [],
+    "attachments": [
+      {
+        "filename": "console-log.txt",
+        "type": "text/plain",
+        "contains_customer_data": false
+      }
+    ],
+    "expected_evidence_ids": ["KB-005", "KB-006"]
+  },
+  {
+    "ticket_id": "T-006",
+    "customer_id": "C-1006",
+    "customer_name": "Atlas BioSystems",
+    "plan": "enterprise",
+    "issue_type": "feature_request",
+    "priority": "medium",
+    "message": "We need SAML group mapping before expanding to another division. Can your team confirm roadmap timing?",
+    "created_at": "2026-07-07T03:15:00Z",
+    "sla_deadline": "2026-07-09T03:15:00Z",
+    "sentiment": "constructive",
+    "previous_interactions": [
+      "Account team noted expansion opportunity."
+    ],
+    "attachments": [],
+    "expected_evidence_ids": ["KB-006", "POL-005"]
+  },
+  {
+    "ticket_id": "T-007",
+    "customer_id": "C-1007",
+    "customer_name": "Pebble Studio",
+    "plan": "free",
+    "issue_type": "duplicate_low_priority",
+    "priority": "low",
+    "message": "I sent this already, but where do I change my email notification settings?",
+    "created_at": "2026-07-07T02:05:00Z",
+    "sla_deadline": "2026-07-12T02:05:00Z",
+    "sentiment": "neutral",
+    "previous_interactions": [
+      "Duplicate of T-0069 from the same requester."
+    ],
+    "attachments": [],
+    "expected_evidence_ids": ["KB-006"]
+  },
+  {
+    "ticket_id": "T-008",
+    "customer_id": "C-1008",
+    "customer_name": "Orchid Markets",
+    "plan": "enterprise",
+    "issue_type": "integration_failure",
+    "priority": "critical",
+    "message": "Our Salesforce sync has been blocked for two hours and our sales team cannot update pipeline data. This affects a board reporting deadline today.",
+    "created_at": "2026-07-07T07:25:00Z",
+    "sla_deadline": "2026-07-07T10:25:00Z",
+    "sentiment": "urgent",
+    "previous_interactions": [
+      "Integration token was rotated last night.",
+      "Customer is on premium support."
+    ],
+    "attachments": [
+      {
+        "filename": "sync-error-redacted.json",
+        "type": "application/json",
+        "contains_customer_data": false
+      }
+    ],
+    "expected_evidence_ids": ["KB-005", "KB-003", "POL-003", "POL-005", "KB-006"]
+  }
+]
+

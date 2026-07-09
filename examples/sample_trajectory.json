@@ -1,0 +1,67 @@
+{
+  "run_id": "run_sample",
+  "spans": [
+    {
+      "run_id": "run_sample",
+      "step_id": "step_001",
+      "parent_step_id": null,
+      "agent_name": "Intake / Triage Agent",
+      "input_summary": "Classify selected support tickets: T-001, T-002, T-003, T-004, T-008.",
+      "output_summary": "Classified 5 support tickets and identified SLA, sentiment, churn, billing, and security risk.",
+      "tools_used": ["priority_rules", "sentiment_rules", "sla_window_rules"],
+      "evidence_ids": [],
+      "latency_ms": 3,
+      "tokens_in": 35,
+      "tokens_out": 420,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.9,
+      "risk_flags": ["SLA_BREACH_RISK", "CUSTOMER_SENTIMENT_RISK"],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-07T09:00:00Z"
+    },
+    {
+      "run_id": "run_sample",
+      "step_id": "step_002",
+      "parent_step_id": "step_001",
+      "agent_name": "Knowledge Retrieval Agent",
+      "input_summary": "Retrieve KB and policy evidence for selected tickets: T-001, T-002, T-003, T-004, T-008.",
+      "output_summary": "Retrieved grounded evidence for 5 tickets.",
+      "tools_used": ["local_kb_search", "policy_catalog_lookup"],
+      "evidence_ids": ["KB-001", "KB-002", "KB-003", "KB-004", "KB-005", "KB-006", "POL-001", "POL-002", "POL-003", "POL-004", "POL-005"],
+      "latency_ms": 4,
+      "tokens_in": 42,
+      "tokens_out": 690,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.92,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-07T09:00:01Z"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "step_001",
+        "label": "Intake / Triage Agent",
+        "status": "risk",
+        "score": 0.9,
+        "risk_flags": ["SLA_BREACH_RISK", "CUSTOMER_SENTIMENT_RISK"]
+      },
+      {
+        "id": "step_002",
+        "label": "Knowledge Retrieval Agent",
+        "status": "success",
+        "score": 0.92,
+        "risk_flags": []
+      }
+    ],
+    "edges": [
+      {
+        "source": "step_001",
+        "target": "step_002",
+        "label": "passes structured context"
+      }
+    ]
+  }
+}
+

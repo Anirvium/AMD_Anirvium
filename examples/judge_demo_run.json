@@ -1,0 +1,88 @@
+{
+  "example_type": "judge_demo_run",
+  "input": {
+    "endpoint": "GET /demo/winning-run",
+    "selection_mode": "selected",
+    "selected_ticket_ids": ["T-001", "T-002", "T-004", "T-008"],
+    "primary_ticket": "T-001"
+  },
+  "final_result": {
+    "primary_ticket_id": "T-001",
+    "recommended_escalation": "Engineering incident response + Customer Success",
+    "owner": "Engineering Incident Commander with Mina Rao",
+    "approval_state": "APPROVAL_REQUIRED",
+    "evidence_ids": ["KB-001", "KB-003", "POL-003", "POL-005", "KB-006"]
+  },
+  "trajectory": {
+    "agent_steps": [
+      "Intake / Triage Agent",
+      "Knowledge Retrieval Agent",
+      "Policy Checker Agent",
+      "Escalation Agent",
+      "Response Drafting Agent",
+      "Critic / Evaluator Agent",
+      "Optimizer Agent"
+    ],
+    "observability_fields": [
+      "run_id",
+      "step_id",
+      "parent_step_id",
+      "agent_name",
+      "input_summary",
+      "output_summary",
+      "tools_used",
+      "evidence_ids",
+      "latency_ms",
+      "tokens_in",
+      "tokens_out",
+      "confidence",
+      "risk_flags",
+      "approval_state",
+      "timestamp"
+    ]
+  },
+  "scorecard": {
+    "task_completion": 1.0,
+    "evidence_grounding": 1.0,
+    "policy_compliance": 1.0,
+    "escalation_quality": 1.0,
+    "overall_score": "generated_by_backend"
+  },
+  "diagnosis": [
+    {
+      "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+      "severity": "MEDIUM",
+      "affected_agent": "Response Drafting Agent",
+      "business_impact": "Urgent customers may remain uncertain about ownership and timing.",
+      "recommended_fix": "Require a next-update field for critical and high-priority customer replies.",
+      "metric_impact": ["missing_information", "customer_tone", "actionability"],
+      "confidence": 0.88
+    }
+  ],
+  "optimizations": [
+    {
+      "recommendation_id": "OPT-002",
+      "target_agent": "Escalation Agent",
+      "problem": "High-risk tickets can have an escalation route but no customer-visible update cadence.",
+      "root_cause": "The escalation schema has owner and next_action but the response drafting rule does not require next_update timing.",
+      "fix": "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets.",
+      "expected_metric_lift": {
+        "actionability": "+0.12",
+        "missing_information": "-0.20"
+      },
+      "priority": "HIGH"
+    }
+  ],
+  "amd_status": {
+    "status": "AMD execution pending",
+    "real_evidence_available": false,
+    "future_real_evidence_paths": [
+      "amd/logs/benchmark_amd_real_<date>.json",
+      "amd/benchmark_results_real.md",
+      "amd/screenshots/vllm_running.png",
+      "amd/screenshots/benchmark_output.png",
+      "amd/screenshots/dashboard_amd_panel.png"
+    ]
+  }
+}
+

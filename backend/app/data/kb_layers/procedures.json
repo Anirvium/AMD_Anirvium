@@ -1,0 +1,220 @@
+[
+  {
+    "id": "PROC-CS-DEP-001",
+    "title": "Deposit not visible triage",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "deposits",
+    "audience": "internal_only",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": false,
+    "steps": [
+      "Confirm payment method, amount, currency, and transaction timestamp.",
+      "Compare elapsed time with the method-specific waiting window.",
+      "Check whether a financial-operations task already exists.",
+      "If the waiting window has not passed, explain the pending timeframe to the customer.",
+      "If the waiting window has passed, request successful payment proof and create or update the task.",
+      "Return only the customer-safe status and next step."
+    ],
+    "handoff_target": "financial_operations",
+    "customer_safe_summary": "We will check the deposit status and request payment proof if the normal processing window has passed.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_1.md",
+      "docs/kb/source_material/remaining_docs/templates_customer_concerns.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-WDR-001",
+    "title": "Processed withdrawal not received",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "withdrawals",
+    "audience": "internal_only",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": false,
+    "steps": [
+      "Confirm withdrawal status, processed date, amount, and payment method.",
+      "Check whether the settlement window has passed.",
+      "If the window is still active, explain the expected waiting period.",
+      "If the window has passed, request a complete bank statement for the relevant date range.",
+      "If a tracking reference was provided and the bank cannot locate funds, request the bank's official response.",
+      "Escalate the proof package to financial operations."
+    ],
+    "handoff_target": "financial_operations",
+    "customer_safe_summary": "We will verify the processed withdrawal details and request bank proof if the normal receiving window has passed.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_3.md",
+      "docs/kb/source_material/remaining_docs/batch_6.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-VERIFY-001",
+    "title": "Mandatory verification support flow",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "verification",
+    "audience": "mixed",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": false,
+    "steps": [
+      "Check whether verification is voluntary, mandatory, pending, rejected, or completed.",
+      "Identify the missing document category without exposing internal review notes.",
+      "Direct the customer to upload the required documents through the approved flow.",
+      "Explain the expected review window when all documents are uploaded.",
+      "Escalate to the verification team if status conflicts or the customer disputes the decision.",
+      "Do not promise account reactivation."
+    ],
+    "handoff_target": "verification_team",
+    "customer_safe_summary": "Verification protects the account and transactions; restrictions can be reviewed after the required documents are submitted.",
+    "source_refs": [
+      "docs/kb/source_material/customer_support_operations_anonymized.md",
+      "docs/kb/source_material/remaining_docs/batch_6.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-ACCESS-001",
+    "title": "Password and account-access recovery",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "account_access",
+    "audience": "customer_safe",
+    "channel": "chat",
+    "language": "en",
+    "risk_level": "medium",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": true,
+    "steps": [
+      "Confirm the customer is asking about their own account.",
+      "Guide the customer to the password recovery flow.",
+      "Recommend checking email delivery, spam folders, and registered contact details.",
+      "If the registered email is inaccessible, route to account verification.",
+      "Avoid changing account contact details without identity verification."
+    ],
+    "handoff_target": "account_security",
+    "customer_safe_summary": "Use the password recovery flow first; contact or ownership changes require identity verification.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/batch_4.md",
+      "docs/kb/source_material/remaining_docs/templates_customer_concerns.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-BONUS-001",
+    "title": "Bonus question handling",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "bonuses",
+    "audience": "mixed",
+    "channel": "any",
+    "language": "en",
+    "risk_level": "medium",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": false,
+    "steps": [
+      "Check active bonus state and promo-code availability for the customer.",
+      "Identify whether the customer asks about bonus receipt, turnover, withdrawal impact, or removal.",
+      "Explain general mechanics without promising eligibility.",
+      "If a bonus was removed, explain that a new offer depends on available promo codes.",
+      "If financial impact is disputed, route to the responsible support queue with account evidence."
+    ],
+    "handoff_target": "support_operations",
+    "customer_safe_summary": "Bonus availability and progress depend on the customer's active offer and account status.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/bonus.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-CHAT-001",
+    "title": "Live chat operating flow",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "channel_ops",
+    "audience": "internal_only",
+    "channel": "chat",
+    "language": "en",
+    "risk_level": "medium",
+    "requires_evidence": false,
+    "requires_approval": false,
+    "allowed_for_generation": false,
+    "steps": [
+      "Greet and identify the issue concisely.",
+      "Ask only for information needed for the next step.",
+      "Use hold language when checking systems or consulting another queue.",
+      "Transfer only with context, not as an unexplained handoff.",
+      "Confirm whether the customer needs anything else before closure.",
+      "Tag the conversation with the correct issue category."
+    ],
+    "handoff_target": "support_operations",
+    "customer_safe_summary": "Chat responses should be concise, warm, and explicit about the next step.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/chat_document.md",
+      "docs/kb/source_material/remaining_docs/customer_support_workflow.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-CALL-001",
+    "title": "Bilingual support call flow",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "channel_ops",
+    "audience": "internal_only",
+    "channel": "call",
+    "language": "mixed",
+    "risk_level": "medium",
+    "requires_evidence": true,
+    "requires_approval": false,
+    "allowed_for_generation": false,
+    "steps": [
+      "Open with a warm greeting and confirm the customer's issue.",
+      "Use the customer's language preference where possible.",
+      "Verify account context before discussing account-specific status.",
+      "Explain pending payment or verification windows in simple language.",
+      "Avoid internal-only language on the call.",
+      "Close with the next step and expected follow-up channel."
+    ],
+    "handoff_target": "support_operations",
+    "customer_safe_summary": "Calls should combine empathy, verification discipline, and a clear next step in the customer's preferred language.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/call_transcript.md"
+    ]
+  },
+  {
+    "id": "PROC-CS-PRIORITY-001",
+    "title": "Priority support escalation flow",
+    "layer": "procedures",
+    "chunk_type": "procedure",
+    "domain": "priority_support",
+    "audience": "internal_only",
+    "channel": "call",
+    "language": "en",
+    "risk_level": "high",
+    "requires_evidence": true,
+    "requires_approval": true,
+    "allowed_for_generation": false,
+    "steps": [
+      "Acknowledge urgency and customer value without promising a different policy outcome.",
+      "Identify the governing domain: verification, payment, bonus, account access, complaint, or technical issue.",
+      "Attach required evidence before escalation.",
+      "Assign the owning queue and expected follow-up path.",
+      "Keep approval gates active for refunds, restrictions, limits, and sensitive disclosures."
+    ],
+    "handoff_target": "priority_support_queue",
+    "customer_safe_summary": "Priority handling accelerates ownership and empathy; it does not bypass verification, payment, or disclosure controls.",
+    "source_refs": [
+      "docs/kb/source_material/remaining_docs/templates_priority_calls_concern.md"
+    ]
+  }
+]

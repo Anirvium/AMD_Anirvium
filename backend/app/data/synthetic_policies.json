@@ -1,0 +1,38 @@
+[
+  {
+    "id": "POL-001",
+    "title": "Refund approval threshold",
+    "category": "billing",
+    "requires_approval": true,
+    "rule": "Refunds, credits, and reversals require billing approval before support provides written confirmation."
+  },
+  {
+    "id": "POL-002",
+    "title": "Security and data deletion approval",
+    "category": "security",
+    "requires_approval": true,
+    "rule": "Data deletion, access revocation, and security confirmation require identity verification and security escalation."
+  },
+  {
+    "id": "POL-003",
+    "title": "Enterprise SLA escalation",
+    "category": "sla",
+    "requires_approval": false,
+    "rule": "Enterprise critical tickets approaching SLA breach require immediate engineering or customer-success escalation with an assigned owner."
+  },
+  {
+    "id": "POL-004",
+    "title": "No compensation promises",
+    "category": "communication",
+    "requires_approval": true,
+    "rule": "Support agents must not promise compensation, credits, refunds, or legal remedies without documented approval."
+  },
+  {
+    "id": "POL-005",
+    "title": "Evidence citation requirement",
+    "category": "quality",
+    "requires_approval": false,
+    "rule": "Agent recommendations must cite internal KB or policy evidence IDs for each material claim."
+  }
+]
+

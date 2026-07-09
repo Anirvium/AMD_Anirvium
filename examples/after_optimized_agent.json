@@ -1,0 +1,60 @@
+{
+  "example_type": "after_optimized_agent",
+  "ticket_id": "T-001",
+  "summary": "Improved trajectory after Anirvium AI optimization recommendations.",
+  "input": {
+    "customer_name": "ACME Corp",
+    "plan": "enterprise",
+    "issue_type": "production_outage",
+    "priority": "critical",
+    "sentiment": "angry",
+    "sla_deadline": "under_60_minutes"
+  },
+  "trajectory": [
+    {
+      "agent_name": "Triage Agent",
+      "output_summary": "Classified as critical enterprise outage with SLA breach and churn risk.",
+      "evidence_ids": [],
+      "risk_flags": ["SLA_BREACH_RISK", "CUSTOMER_SENTIMENT_RISK", "CHURN_RISK"],
+      "confidence": 0.9
+    },
+    {
+      "agent_name": "Retrieval Agent",
+      "output_summary": "Retrieved outage, enterprise SLA, evidence citation, and tone policies.",
+      "evidence_ids": ["KB-001", "KB-003", "POL-003", "POL-005", "KB-006"],
+      "risk_flags": [],
+      "confidence": 0.92
+    },
+    {
+      "agent_name": "Policy Agent",
+      "output_summary": "Applied enterprise SLA escalation policy and kept action approval-aware.",
+      "evidence_ids": ["KB-003", "POL-003", "POL-005"],
+      "approval_state": "APPROVAL_REQUIRED",
+      "confidence": 0.91
+    },
+    {
+      "agent_name": "Escalation Agent",
+      "output_summary": "Assigned engineering incident response and customer success owner.",
+      "owner": "Engineering Incident Commander with Mina Rao",
+      "recommended_escalation": "Engineering incident response + Customer Success",
+      "evidence_ids": ["KB-001", "KB-003", "POL-003"],
+      "confidence": 0.88
+    },
+    {
+      "agent_name": "Response Agent",
+      "output_summary": "Drafted safe, grounded customer response with owner and next action.",
+      "approval_state": "APPROVAL_REQUIRED",
+      "draft_response": "Hi ACME Corp team, we understand the urgency of the production outage and SLA risk. We are routing this to Engineering incident response + Customer Success with Engineering Incident Commander and Mina Rao assigned. We will verify affected region, impact scope, and incident timeline before the next update. Internal evidence: KB-001, KB-003, POL-003, POL-005, KB-006.",
+      "evidence_ids": ["KB-001", "KB-003", "POL-003", "POL-005", "KB-006"],
+      "confidence": 0.86
+    }
+  ],
+  "scorecard": {
+    "evidence_grounding": 1.0,
+    "policy_compliance": 1.0,
+    "escalation_quality": 1.0,
+    "actionability": 1.0,
+    "overall_score": 91.0
+  }
+}
+

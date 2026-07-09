@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+backend/.venv/
+.uv-cache/
+backend/app/data/runs/*.json
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Local env and generated output
+.env
+*.log
+amd/logs/*.json
+!amd/logs/.gitkeep
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
