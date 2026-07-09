@@ -20,7 +20,7 @@ for i in range(torch.cuda.device_count()):
 PY
 ```
 
-For a 48GB runtime, start the reliable 7B profile:
+For a 48GB runtime, start the reliable Qwen3-8B profile:
 
 ```bash
 source /opt/venv/bin/activate
