@@ -21,7 +21,7 @@ Use `PROFILE=text` only when the runtime reports roughly 192GB and `gfx942`.
 
 ## Model Ranking For 48GB
 
-1. `Qwen/Qwen3-14B` BF16 or quantized via vLLM
+1. `Qwen/Qwen3-14B` BF16 first, FP8 only after a clean 8B proof
    - Target quality model for the final 48GB demo.
    - Use after the Qwen3-8B smoke test and benchmark pass.
    - Use `MAX_MODEL_LEN=8192` and conservative GPU utilization.
@@ -36,7 +36,8 @@ Use `PROFILE=text` only when the runtime reports roughly 192GB and `gfx942`.
    - Emergency fallback if Qwen3 chat templates or ROCm/vLLM behavior cause friction.
 
 4. Quantized 14B variants, if already available in the AMD image
-   - AWQ or FP8 may help, but quantization kernel support can vary across ROCm/vLLM builds.
+   - FP8 is the preferred quantization experiment on ROCm/vLLM.
+   - Treat AWQ as high-risk on AMD unless the active image proves kernel support.
    - Do not spend hackathon time debugging quantization unless Qwen3-8B proof is already complete.
 
 5. `Qwen/Qwen3-30B-A3B-Instruct-2507`

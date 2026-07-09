@@ -40,7 +40,7 @@ This lets the agent reason flexibly while the product remains governed by determ
 
 Target:
 
-- `Qwen/Qwen3-14B` served as `anirvium-text`, preferably quantized only if a compatible artifact is already available.
+- `Qwen/Qwen3-14B` served as `anirvium-text` in BF16 first; try FP8 only if the active ROCm/vLLM image and artifact support it cleanly.
 
 Guaranteed path:
 
