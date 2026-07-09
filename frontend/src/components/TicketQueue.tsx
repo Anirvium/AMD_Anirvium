@@ -4,6 +4,7 @@ import type { SupportTicket } from "../api/types";
 interface TicketQueueProps {
   tickets: SupportTicket[];
   selectedTicketIds: string[];
+  onToggleTicket?: (ticketId: string) => void;
 }
 
 function slaLabel(ticket: SupportTicket) {
@@ -13,7 +14,7 @@ function slaLabel(ticket: SupportTicket) {
   return "Low";
 }
 
-export default function TicketQueue({ tickets, selectedTicketIds }: TicketQueueProps) {
+export default function TicketQueue({ tickets, selectedTicketIds, onToggleTicket }: TicketQueueProps) {
   return (
     <section className="panel queue-panel">
       <div className="panel-heading">
@@ -40,7 +41,11 @@ export default function TicketQueue({ tickets, selectedTicketIds }: TicketQueueP
             {tickets.map((ticket) => {
               const selected = selectedTicketIds.includes(ticket.ticket_id);
               return (
-                <tr key={ticket.ticket_id} className={selected ? "selected-row" : ""}>
+                <tr
+                  key={ticket.ticket_id}
+                  className={`${selected ? "selected-row" : ""} ${onToggleTicket ? "clickable-row" : ""}`}
+                  onClick={() => onToggleTicket?.(ticket.ticket_id)}
+                >
                   <td>
                     <strong>{ticket.ticket_id}</strong>
                     <span>{ticket.issue_type.replaceAll("_", " ")}</span>
@@ -76,4 +81,3 @@ export default function TicketQueue({ tickets, selectedTicketIds }: TicketQueueP
     </section>
   );
 }
-

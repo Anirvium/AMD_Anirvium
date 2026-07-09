@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Bot, Clock3, GitBranch, MessageSquareText, ShieldCheck, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Bot, Clock3, GitBranch, Loader2, MessageSquareText, Play, RotateCcw, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 import { fetchCustomerSupportDemo, fetchCustomerSupportTickets, runSupportAgent } from "../api/client";
 import type { RunResult, SupportTicket } from "../api/types";
 import CustomerAgentWorkspace from "../components/CustomerAgentWorkspace";
@@ -18,17 +18,39 @@ export default function Dashboard() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [run, setRun] = useState<RunResult | null>(null);
   const [lastQuery, setLastQuery] = useState("");
+  const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void fetchCustomerSupportTickets().then(setTickets).catch((err) => setError(err.message));
+    let cancelled = false;
+
+    async function bootstrapDemo() {
+      setIsRunning(true);
+      setError(null);
+      try {
+        const [supportTickets, demo] = await Promise.all([fetchCustomerSupportTickets(), fetchCustomerSupportDemo()]);
+        if (cancelled) return;
+        setTickets(supportTickets);
+        setRun(demo.run);
+        setSelectedTicketIds(demo.run.selected_ticket_ids);
+        setLastQuery(demo.selected_tickets[0]?.message ?? demo.scenario.manager_prompt);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Unable to load live demo data");
+      } finally {
+        if (!cancelled) setIsRunning(false);
+      }
+    }
+
+    void bootstrapDemo();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const selectedTicketIds = useMemo(
-    () => run?.selected_ticket_ids ?? tickets.filter((ticket) => ["high", "critical"].includes(ticket.priority)).map((ticket) => ticket.ticket_id),
-    [run, tickets]
-  );
+  const activeTicketIds = selectedTicketIds.length
+    ? selectedTicketIds
+    : tickets.filter((ticket) => ["high", "critical"].includes(ticket.priority)).map((ticket) => ticket.ticket_id);
 
   async function handleCustomerQuery(ticketIds: string[], query: string) {
     setIsRunning(true);
@@ -37,6 +59,7 @@ export default function Dashboard() {
     try {
       const result = await runSupportAgent(ticketIds, query);
       setRun(result);
+      setSelectedTicketIds(result.selected_ticket_ids);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Support agent failed");
     } finally {
@@ -51,12 +74,30 @@ export default function Dashboard() {
       const [demo, supportTickets] = await Promise.all([fetchCustomerSupportDemo(), fetchCustomerSupportTickets()]);
       setTickets(supportTickets);
       setRun(demo.run);
+      setSelectedTicketIds(demo.run.selected_ticket_ids);
       setLastQuery(demo.selected_tickets[0]?.message ?? "");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Customer support demo failed");
     } finally {
       setIsRunning(false);
     }
+  }
+
+  async function handleRunSelectedQueue() {
+    const ids = activeTicketIds.length ? activeTicketIds : tickets.slice(0, 2).map((ticket) => ticket.ticket_id);
+    const query = `Analyze and resolve selected support cases: ${ids.join(", ")}. Apply evidence, policy, approval, escalation, and improvement loops.`;
+    await handleCustomerQuery(ids, query);
+  }
+
+  function handleToggleTicket(ticketId: string) {
+    setSelectedTicketIds((current) => {
+      if (current.includes(ticketId)) return current.filter((id) => id !== ticketId);
+      return [...current, ticketId];
+    });
+  }
+
+  function handleResetSelection() {
+    setSelectedTicketIds(tickets.filter((ticket) => ["high", "critical"].includes(ticket.priority)).map((ticket) => ticket.ticket_id));
   }
 
   const criticalIssues = run?.evaluation.diagnosis.filter((item) => ["HIGH", "CRITICAL"].includes(item.severity)).length ?? 0;
@@ -83,6 +124,31 @@ export default function Dashboard() {
       </header>
 
       {error && <div className="error-banner">{error}</div>}
+
+      <section className="live-command-bar">
+        <div className="live-command-status">
+          <span className={`run-state ${isRunning ? "running" : run ? "ready" : "idle"}`}>
+            {isRunning ? <Loader2 size={15} className="spin" /> : <Sparkles size={15} />}
+            {isRunning ? "Agent running" : run ? "Live run loaded" : "Ready"}
+          </span>
+          <strong>{run?.run_id ?? "No run yet"}</strong>
+          <small>{activeTicketIds.length} selected case{activeTicketIds.length === 1 ? "" : "s"} · {run?.trajectory.length ?? 0} trajectory spans</small>
+        </div>
+        <div className="command-actions">
+          <button className="primary-button" onClick={handleRunSelectedQueue} disabled={isRunning || tickets.length === 0}>
+            <Play size={16} />
+            Run selected cases
+          </button>
+          <button className="secondary-button" onClick={handleLoadCustomerSupportDemo} disabled={isRunning}>
+            <Sparkles size={16} />
+            Reload judge demo
+          </button>
+          <button className="secondary-button" onClick={handleResetSelection} disabled={isRunning || tickets.length === 0}>
+            <RotateCcw size={16} />
+            Select high risk
+          </button>
+        </div>
+      </section>
 
       <section className="kpi-strip">
         <article>
@@ -155,7 +221,7 @@ export default function Dashboard() {
           <TraceViewer spans={run?.trajectory ?? []} />
           <FailureDiagnosis diagnosis={run?.evaluation.diagnosis ?? []} />
           <OptimizationPanel recommendations={run?.evaluation.recommendations ?? []} />
-          <TicketQueue tickets={tickets} selectedTicketIds={selectedTicketIds} />
+          <TicketQueue tickets={tickets} selectedTicketIds={activeTicketIds} onToggleTicket={handleToggleTicket} />
         </div>
       </details>
 
