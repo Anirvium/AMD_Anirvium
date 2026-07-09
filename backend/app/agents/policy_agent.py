@@ -25,6 +25,16 @@ class PolicyCheckerAgent:
                 ticket_flags.append("REFUND_APPROVAL_REQUIRED")
                 constraints.append("Do not promise refund, credit, or reversal before billing approval.")
 
+            if ticket.issue_type in {"deposit_missing", "withdrawal_processed_missing"}:
+                approval_state = ApprovalState.APPROVAL_REQUIRED.value
+                ticket_flags.append("FINANCIAL_REVIEW_APPROVAL_REQUIRED")
+                constraints.append("Do not promise deposit crediting, withdrawal release, bank receipt, or payment reversal before financial review approval.")
+
+            if ticket.issue_type == "bonus_dispute":
+                approval_state = ApprovalState.APPROVAL_REQUIRED.value
+                ticket_flags.append("BONUS_POLICY_APPROVAL_REQUIRED")
+                constraints.append("Do not promise bonus restoration, promo eligibility, or policy exceptions before bonus policy review.")
+
             if ticket.issue_type == "security_data_deletion":
                 approval_state = ApprovalState.APPROVAL_REQUIRED.value
                 ticket_flags.append("SECURITY_APPROVAL_REQUIRED")

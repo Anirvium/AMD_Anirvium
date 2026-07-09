@@ -39,16 +39,19 @@ class EvaluationEngine:
         sensitive_tickets = [
             ticket
             for ticket in tickets
-            if ticket.issue_type in {"billing_refund", "security_data_deletion"}
+            if ticket.issue_type in {"billing_refund", "deposit_missing", "withdrawal_processed_missing", "bonus_dispute", "security_data_deletion"}
             or ticket.issue_type in {"verification_restriction", "cross_account_access", "priority_policy_exception"}
             or (ticket.plan == "enterprise" and ticket.priority in {"high", "critical"})
         ]
-        compliant_sensitive = 0
-        for ticket in sensitive_tickets:
-            action = action_by_ticket.get(ticket.ticket_id, {})
-            if action.get("approval_state") in {"APPROVAL_REQUIRED", "ESCALATED"}:
-                compliant_sensitive += 1
-        policy_compliance = _clamp(compliant_sensitive / max(1, len(sensitive_tickets)))
+        if not sensitive_tickets:
+            policy_compliance = 1.0
+        else:
+            compliant_sensitive = 0
+            for ticket in sensitive_tickets:
+                action = action_by_ticket.get(ticket.ticket_id, {})
+                if action.get("approval_state") in {"APPROVAL_REQUIRED", "ESCALATED"}:
+                    compliant_sensitive += 1
+            policy_compliance = _clamp(compliant_sensitive / len(sensitive_tickets))
 
         expected_escalations = [
             ticket
