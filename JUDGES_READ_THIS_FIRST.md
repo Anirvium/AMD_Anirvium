@@ -122,8 +122,11 @@ Real AMD/vLLM benchmark completed on the observed 48GB AMD Developer Cloud runti
 
 Evidence paths:
 
+- `amd/benchmark_results_real.md`
 - `amd/logs/benchmark_llm_20260709210044.json`
 - `amd/logs/benchmark_llm_20260709212533.json`
 - API proof: `/runs/latest/trajectory/graph-discovery`
 
 See [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md).
+
+Note: generated JSON logs may be present only in the AMD notebook workspace because `amd/logs/*.json` is ignored to avoid committing generated output churn. The verified metrics are summarized in [amd/benchmark_results_real.md](amd/benchmark_results_real.md).

@@ -8,7 +8,7 @@
 - [ ] Demo video is recorded.
 - [ ] Slide deck PDF is exported.
 - [ ] AMD usage is visible in README and `amd/README_AMD_USAGE.md`.
-- [ ] AMD vLLM/ROCm benchmark log is generated and committed or linked.
+- [ ] AMD vLLM/ROCm benchmark log is generated and committed, linked, or summarized in `amd/benchmark_results_real.md`.
 - [ ] `python amd/smoke_vllm_openai.py --model anirvium-text` passes in the AMD notebook.
 - [ ] `MODE=llm DATASET=customer_support TICKETS=6 REPEATS=3 bash amd/run_agent_benchmark.sh` completes.
 - [ ] `/demo/customer-support-run` returns curated `POL-CS-*`, `PROC-CS-*`, and `TMPL-CS-*` evidence IDs.
