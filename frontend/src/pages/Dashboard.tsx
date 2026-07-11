@@ -65,6 +65,7 @@ export default function Dashboard() {
   const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([]);
   const [run, setRun] = useState<RunResult | null>(null);
   const [prompt, setPrompt] = useState(prompts[0]);
+  const [quickReply, setQuickReply] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(true);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +88,7 @@ export default function Dashboard() {
     if (ticketResult.status === "fulfilled") setTickets(ticketResult.value);
     if (demoResult.status === "fulfilled") {
       setRun(demoResult.value.run);
-      setSelectedTicketIds(demoResult.value.run.selected_ticket_ids);
+      setSelectedTicketIds(demoResult.value.run.selected_ticket_ids.slice(0, 1));
       setPrompt(demoResult.value.selected_tickets[0]?.message ?? prompts[0]);
     } else {
       setError(demoResult.reason instanceof Error ? demoResult.reason.message : "Unable to load the agent runtime.");
@@ -122,6 +123,12 @@ export default function Dashboard() {
   async function execute() {
     const ids = selectedTicketIds.length ? selectedTicketIds : tickets.slice(0, 1).map((ticket) => ticket.ticket_id);
     if (!ids.length || !prompt.trim()) return;
+    if (/^(hi|hello|hey|good morning|good afternoon|good evening)[!.\s]*$/i.test(prompt.trim())) {
+      setQuickReply("Hi — I’m ready to investigate a customer-support case. Describe the payment, verification, account-access, or policy issue and I’ll trace the evidence, tools, approvals, and resolution path.");
+      setError(null);
+      return;
+    }
+    setQuickReply(null);
     setIsRunning(true);
     setElapsed(0);
     setError(null);
@@ -198,6 +205,7 @@ export default function Dashboard() {
             setPrompt={setPrompt}
             run={run}
             primaryAction={primaryAction}
+            quickReply={quickReply}
             selectedTickets={selectedTickets}
             isRunning={isRunning}
             elapsed={elapsed}
@@ -218,13 +226,14 @@ interface AgentWorkspaceProps {
   setPrompt: (value: string) => void;
   run: RunResult | null;
   primaryAction: RunResult["final_actions"][number] | null;
+  quickReply: string | null;
   selectedTickets: SupportTicket[];
   isRunning: boolean;
   elapsed: number;
   onExecute: () => void;
 }
 
-function AgentWorkspace({ prompt, setPrompt, run, primaryAction, selectedTickets, isRunning, elapsed, onExecute }: AgentWorkspaceProps) {
+function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, selectedTickets, isRunning, elapsed, onExecute }: AgentWorkspaceProps) {
   return (
     <div className="agent-workspace">
       <section className="conversation-stream">
@@ -233,23 +242,25 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, selectedTickets
           <span>{selectedTickets.length ? `${selectedTickets.length} selected support case${selectedTickets.length > 1 ? "s" : ""}` : "Select a case from the queue"}</span>
         </div>
 
-        {primaryAction ? (
+        {primaryAction || quickReply ? (
           <article className="answer-card">
             <div className="answer-meta">
               <div className="agent-avatar"><Sparkles size={17} /></div>
               <div><strong>Anirvium Support Agent</strong><span>Evidence-grounded resolution</span></div>
-              <span className={`approval-state ${primaryAction.approval_state === "APPROVAL_REQUIRED" ? "review" : "safe"}`}>
-                {primaryAction.approval_state === "APPROVAL_REQUIRED" ? <UserRoundCheck size={13} /> : <ShieldCheck size={13} />}
-                {formatLabel(primaryAction.approval_state)}
+              <span className={`approval-state ${primaryAction?.approval_state === "APPROVAL_REQUIRED" ? "review" : "safe"}`}>
+                {primaryAction?.approval_state === "APPROVAL_REQUIRED" ? <UserRoundCheck size={13} /> : <ShieldCheck size={13} />}
+                {quickReply ? "Ready" : formatLabel(primaryAction?.approval_state ?? "ready")}
               </span>
             </div>
-            <p className="answer-copy">{primaryAction.draft_response}</p>
-            <div className="answer-details">
-              <span><Gauge size={14} />{Math.round((primaryAction.confidence_score ?? 0) * 100)}% confidence</span>
-              <span><BookOpen size={14} />{primaryAction.evidence_ids.length} sources</span>
-              <span><UserRoundCheck size={14} />{primaryAction.owner}</span>
-            </div>
-            <div className="source-row">{primaryAction.evidence_ids.map((id) => <span key={id}>{id}</span>)}</div>
+            <p className="answer-copy">{quickReply ?? primaryAction?.draft_response}</p>
+            {primaryAction && !quickReply && <>
+              <div className="answer-details">
+                <span><Gauge size={14} />{Math.round((primaryAction.confidence_score ?? 0) * 100)}% confidence</span>
+                <span><BookOpen size={14} />{primaryAction.evidence_ids.length} sources</span>
+                <span><UserRoundCheck size={14} />{primaryAction.owner}</span>
+              </div>
+              <div className="source-row">{primaryAction.evidence_ids.map((id) => <span key={id}>{id}</span>)}</div>
+            </>}
           </article>
         ) : (
           <div className="empty-answer"><BrainCircuit size={32} /><strong>Ready to investigate</strong><span>Select a case and describe the customer problem.</span></div>

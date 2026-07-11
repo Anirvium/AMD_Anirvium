@@ -14,7 +14,7 @@ class TriageAgent:
 
         for ticket in context["tickets"]:
             ticket_flags: List[str] = []
-            message = ticket.message.lower()
+            message = str(context.get("customer_query") or ticket.message).lower()
             sla_risk = "low"
             if ticket.priority == "critical":
                 sla_risk = "critical"
@@ -53,4 +53,3 @@ class TriageAgent:
             "approval_state": ApprovalState.DRAFT_RECOMMENDATION.value,
             "confidence": 0.9,
         }
-

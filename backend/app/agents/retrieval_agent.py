@@ -37,7 +37,8 @@ class KnowledgeRetrievalAgent:
                     }
                 )
                 evidence_ids.append(visual_card["evidence_id"])
-            curated_matches = match_records_for_ticket(ticket, limit=5)
+            query_ticket = ticket.model_copy(update={"message": context.get("customer_query") or ticket.message})
+            curated_matches = match_records_for_ticket(query_ticket, limit=5)
             for card in records_as_evidence(curated_matches):
                 if card["id"] in evidence_ids:
                     continue

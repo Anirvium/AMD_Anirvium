@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 import re
+import time
 from typing import Dict, List, Protocol
 
 import httpx
 
 from app.config import Settings, get_settings
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 @dataclass
@@ -68,22 +73,43 @@ class OpenAICompatibleLLMClient:
             "messages": messages,
             "temperature": temperature,
         }
-        with httpx.Client(timeout=self.settings.llm_timeout_seconds) as client:
-            response = client.post(
-                f"{self.settings.llm_base_url.rstrip('/')}/chat/completions",
-                headers=headers,
-                json=payload,
+        started_at = time.perf_counter()
+        logger.info("llm_call_started model=%s messages=%s", self.settings.llm_model, len(messages))
+        try:
+            with httpx.Client(timeout=self.settings.llm_timeout_seconds) as client:
+                response = client.post(
+                    f"{self.settings.llm_base_url.rstrip('/')}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                )
+                response.raise_for_status()
+                data = response.json()
+        except Exception:
+            logger.exception(
+                "llm_call_failed model=%s duration_ms=%s",
+                self.settings.llm_model,
+                int((time.perf_counter() - started_at) * 1000),
             )
-            response.raise_for_status()
-            data = response.json()
+            raise
         content = data["choices"][0]["message"]["content"]
         cleaned_content = strip_private_reasoning(content)
         usage = data.get("usage", {})
+        elapsed_ms = int((time.perf_counter() - started_at) * 1000)
+        logger.info(
+            "llm_call_completed model=%s duration_ms=%s prompt_tokens=%s completion_tokens=%s raw_chars=%s public_chars=%s",
+            self.settings.llm_model,
+            elapsed_ms,
+            usage.get("prompt_tokens", estimate_tokens(messages)),
+            usage.get("completion_tokens", estimate_tokens(content)),
+            len(content),
+            len(cleaned_content),
+        )
         return LLMResponse(
             text=cleaned_content,
             model_name=self.settings.llm_model,
             tokens_in=usage.get("prompt_tokens", estimate_tokens(messages)),
             tokens_out=usage.get("completion_tokens", estimate_tokens(content)),
+            latency_ms=elapsed_ms,
         )
 
 

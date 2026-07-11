@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List
 
 from app.schemas.run import FinalAction
 from app.schemas.trajectory import ApprovalState
 from app.services.model_router import ModelRole
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 class ResponseDraftingAgent:
@@ -34,6 +38,7 @@ class ResponseDraftingAgent:
                 ticket=ticket,
                 escalation=escalation,
                 policy=policy,
+                customer_query=context.get("customer_query"),
                 fallback=draft,
             )
             if llm_draft != draft:
@@ -175,6 +180,7 @@ class ResponseDraftingAgent:
         escalation: Dict[str, Any],
         policy: Dict[str, Any],
         fallback: str,
+        customer_query: str | None = None,
     ) -> str:
         if llm_client is None or getattr(llm_client, "model_name", "mock-trajectory-model") == "mock-trajectory-model":
             return fallback
@@ -182,7 +188,8 @@ class ResponseDraftingAgent:
             "Draft one concise customer-safe support response. "
             "Never promise refunds, account unblocking, withdrawal completion, security actions, compensation, or policy exceptions. "
             "Respect the approval state and constraints. Do not expose internal-only reasoning. "
-            f"Ticket: {ticket.message}\n"
+            f"Customer request: {customer_query or ticket.message}\n"
+            f"Matched support case: {getattr(ticket, 'issue_type', 'customer_support')}\n"
             f"Customer: {ticket.customer_name}\n"
             f"Escalation: {escalation}\n"
             f"Policy: {policy}\n"
@@ -197,8 +204,13 @@ class ResponseDraftingAgent:
                 temperature=0.1,
             )
         except Exception:
+            logger.exception("response_drafting_llm_fallback ticket_id=%s reason=call_failed", getattr(ticket, "ticket_id", "unknown"))
             return fallback
         text = response.text.strip()
-        if not text or any(term in text.lower() for term in ("guaranteed", "will refund", "will unblock", "skip verification")):
+        if not text:
+            logger.warning("response_drafting_llm_fallback ticket_id=%s reason=empty_public_output", getattr(ticket, "ticket_id", "unknown"))
+            return fallback
+        if any(term in text.lower() for term in ("guaranteed", "will refund", "will unblock", "skip verification")):
+            logger.warning("response_drafting_llm_fallback ticket_id=%s reason=unsafe_output", getattr(ticket, "ticket_id", "unknown"))
             return fallback
         return text

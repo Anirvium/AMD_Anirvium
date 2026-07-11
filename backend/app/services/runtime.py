@@ -1,11 +1,15 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from functools import lru_cache
+import logging
 from threading import Lock
 from uuid import uuid4
 
 from app.schemas.run import RunJobResponse, RunRequest
 from app.services.agent_runner import AgentRunner
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 @lru_cache
@@ -29,6 +33,7 @@ class RunJobManager:
         )
         with self.lock:
             self.jobs[job_id] = job
+        logger.info("run_job_queued job_id=%s tickets=%s", job_id, request.selected_ticket_ids or request.selection_mode)
         self.executor.submit(self._execute, job_id, request)
         return job.model_copy(deep=True)
 
@@ -41,6 +46,7 @@ class RunJobManager:
         with self.lock:
             self.jobs[job_id].status = "running"
             self.jobs[job_id].started_at = datetime.now(timezone.utc).isoformat()
+        logger.info("run_job_started job_id=%s", job_id)
         try:
             result = self.runner.run(request)
         except Exception as exc:
@@ -48,11 +54,13 @@ class RunJobManager:
                 self.jobs[job_id].status = "failed"
                 self.jobs[job_id].error = f"{type(exc).__name__}: {exc}"
                 self.jobs[job_id].completed_at = datetime.now(timezone.utc).isoformat()
+            logger.exception("run_job_failed job_id=%s", job_id)
             return
         with self.lock:
             self.jobs[job_id].status = "completed"
             self.jobs[job_id].result = result
             self.jobs[job_id].completed_at = datetime.now(timezone.utc).isoformat()
+        logger.info("run_job_completed job_id=%s run_id=%s score=%s", job_id, result.run_id, result.evaluation.metrics.overall_score)
 
 
 @lru_cache
