@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 
-from app.schemas.run import RunRequest, RunResult
+from app.schemas.run import RunJobResponse, RunRequest, RunResult
 from app.schemas.trajectory import TrajectoryResponse
 from app.services.graph_discovery import build_trajectory_property_graph
-from app.services.runtime import get_agent_runner
+from app.services.runtime import get_agent_runner, get_run_job_manager
 
 
 router = APIRouter(tags=["runs"])
@@ -14,6 +14,19 @@ def create_run(request: RunRequest) -> RunResult:
     runner = get_agent_runner()
     result = runner.run(request)
     return result
+
+
+@router.post("/runs/async", response_model=RunJobResponse, status_code=202)
+def create_async_run(request: RunRequest) -> RunJobResponse:
+    return get_run_job_manager().submit(request)
+
+
+@router.get("/runs/jobs/{job_id}", response_model=RunJobResponse)
+def get_run_job(job_id: str) -> RunJobResponse:
+    job = get_run_job_manager().get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Run job not found")
+    return job
 
 
 @router.get("/runs/latest", response_model=RunResult)

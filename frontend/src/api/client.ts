@@ -70,10 +70,18 @@ export async function runSupportAgent(selectedTicketIds?: string[], customerQuer
     ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery }
     : { selection_mode: "all_high_priority", dataset: "customer_support" };
 
-  return request<RunResult>("/runs", {
+  const job = await request<{ job_id: string; status: string }>("/runs/async", {
     method: "POST",
     body: JSON.stringify(body)
   });
+
+  for (let attempt = 0; attempt < 180; attempt += 1) {
+    await new Promise((resolve) => window.setTimeout(resolve, 2_000));
+    const current = await request<{ status: string; result: RunResult | null; error: string | null }>(`/runs/jobs/${job.job_id}`);
+    if (current.status === "completed" && current.result) return current.result;
+    if (current.status === "failed") throw new Error(current.error ?? "The AMD agent run failed.");
+  }
+  throw new Error("The AMD run did not finish within six minutes. Inspect backend and vLLM logs.");
 }
 
 export async function fetchWinningDemo(): Promise<WinningDemoResponse> {

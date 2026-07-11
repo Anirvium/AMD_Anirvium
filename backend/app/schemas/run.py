@@ -47,3 +47,13 @@ class RunResult(BaseModel):
     graph: TrajectoryGraph
     evaluation: EvaluationReport
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RunJobResponse(BaseModel):
+    job_id: str
+    status: Literal["queued", "running", "completed", "failed"]
+    submitted_at: str
+    started_at: Optional[str] = None
+    completed_at: Optional[str] = None
+    result: Optional[RunResult] = None
+    error: Optional[str] = None
