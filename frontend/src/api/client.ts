@@ -9,16 +9,25 @@ import type {
   WinningDemoResponse
 } from "./types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+// Keep browser traffic on the frontend origin by default. Vite proxies `/api`
+// during local development and Nginx proxies it in the Docker image. This
+// avoids hard-coding localhost in the browser, which breaks remote and hosted
+// demos because localhost always means the judge's own machine.
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/$/, "");
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options?.headers ?? {})
-    },
-    ...options
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers ?? {})
+      },
+      ...options
+    });
+  } catch {
+    throw new Error("Backend unavailable. Start the API on port 8000, then reload the demo.");
+  }
 
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);
