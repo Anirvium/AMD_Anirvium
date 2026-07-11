@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict, List
 from uuid import uuid4
 
@@ -41,6 +42,8 @@ class AgentRunner:
         self.runs: Dict[str, RunResult] = {}
         self.latest_run_id: str | None = None
         self.winning_demo_run_id: str | None = None
+        self.customer_support_demo_run_id: str | None = None
+        self._customer_support_demo_lock = Lock()
 
     def run(self, request: RunRequest) -> RunResult:
         run_id = f"run_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
@@ -380,7 +383,12 @@ class AgentRunner:
         }
 
     def get_or_create_customer_support_demo(self) -> Dict[str, Any]:
-        result = self.run(RunRequest(selection_mode="all_high_priority", dataset="customer_support"))
+        with self._customer_support_demo_lock:
+            result = self._get_cached_customer_support_demo_run()
+            if result is None:
+                result = self.run(RunRequest(selection_mode="all_high_priority", dataset="customer_support"))
+                self.customer_support_demo_run_id = result.run_id
+
         tickets_by_id = {ticket.ticket_id: ticket for ticket in load_tickets("customer_support")}
         selected_tickets = [tickets_by_id[ticket_id] for ticket_id in result.selected_ticket_ids if ticket_id in tickets_by_id]
         return {
@@ -402,3 +410,35 @@ class AgentRunner:
             "selected_tickets": [ticket.model_dump() for ticket in selected_tickets],
             "run": result.model_dump(mode="json"),
         }
+
+    def _get_cached_customer_support_demo_run(self) -> RunResult | None:
+        if self.customer_support_demo_run_id:
+            existing = self.get_run(self.customer_support_demo_run_id)
+            if existing:
+                return existing
+
+        candidates = sorted(
+            self.logger.store_dir.glob("run_*.json"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )
+        for path in candidates:
+            payload = self.logger.load_run(path.stem)
+            if not payload:
+                continue
+            metadata = payload.get("metadata", {})
+            if metadata.get("dataset") != "customer_support":
+                continue
+            if metadata.get("llm_provider") != self.settings.llm_provider:
+                continue
+            try:
+                result = RunResult(**payload)
+            except (TypeError, ValueError):
+                continue
+            if result.status != "completed" or len(result.trajectory) != 13:
+                continue
+            self.runs[result.run_id] = result
+            self.latest_run_id = result.run_id
+            self.customer_support_demo_run_id = result.run_id
+            return result
+        return None
