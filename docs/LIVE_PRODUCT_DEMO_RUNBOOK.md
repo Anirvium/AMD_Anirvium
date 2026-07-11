@@ -74,6 +74,59 @@ Use two proof paths:
 
 If a secure tunnel or public deployment is available, the backend can use the AMD endpoint. Otherwise, do not risk the main product demo on notebook networking. Clearly disclose that the UI demo is deterministic and the separate benchmark proves the AMD inference path.
 
+## Run The Complete Product On The AMD VM
+
+Keep vLLM on port `8001` and FastAPI on port `8000`. Run the production frontend gateway in a separate terminal:
+
+```bash
+cd /workspace/AMD_Anirvium/frontend
+npm ci
+npm run serve:amd
+```
+
+Use `serve:amd` for the judged AMD runtime. It creates a production Vite build, serves relative static assets safely through notebook proxies, and forwards same-origin `/api` requests to `http://127.0.0.1:8000`. Do not use the Vite development server for the final notebook demo; its module and HMR paths can fail behind Jupyter proxies even when the HTML opens.
+
+Verify inside the VM:
+
+```bash
+curl http://localhost:5173/api/health
+curl -I http://localhost:5173
+```
+
+The health payload must report `"mode":"openai_compatible"` for the real AMD path.
+
+## Collect Correlated Logs On AMD
+
+FastAPI terminal:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --access-log --log-level info 2>&1 | tee /workspace/anirvium_backend.log
+```
+
+Frontend terminal:
+
+```bash
+cd /workspace/AMD_Anirvium/frontend
+npm run serve:amd 2>&1 | tee /workspace/anirvium_frontend.log
+```
+
+The gateway logs every browser and API request. FastAPI adds `X-Request-ID` and `X-Response-Time-MS` headers and logs the same request lifecycle. The vLLM terminal shows each `/v1/chat/completions` call.
+
+Browser diagnostics:
+
+1. Open Developer Tools, then **Console**. Filter for `Anirvium API`.
+2. Open **Network**, enable **Preserve log**, and reload.
+3. Export a HAR file or capture failed `/api/*` rows, status codes, response bodies, and request IDs.
+
+Collect files for debugging:
+
+```bash
+tail -n 200 /workspace/anirvium_frontend.log
+tail -n 200 /workspace/anirvium_backend.log
+```
+
+The current `/runs` API is synchronous. A real AMD run may take roughly two minutes, and completed trajectory spans arrive together. The UI displays elapsed execution time honestly; true span-by-span streaming is a post-submission backend enhancement.
+
 ## Judge Demo Sequence
 
 1. Open the dashboard and show that a live run is loaded.

@@ -13,25 +13,44 @@ import type {
 // during local development and Nginx proxies it in the Docker image. This
 // avoids hard-coding localhost in the browser, which breaks remote and hosted
 // demos because localhost always means the judge's own machine.
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "api").replace(/\/$/, "");
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const method = options?.method ?? "GET";
+  const startedAt = performance.now();
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 300_000);
+  console.info(`[Anirvium API] ${method} ${path} started`);
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
       headers: {
         "Content-Type": "application/json",
         ...(options?.headers ?? {})
       },
-      ...options
+      signal: options?.signal ?? controller.signal
     });
-  } catch {
-    throw new Error("Backend unavailable. Start the API on port 8000, then reload the demo.");
+  } catch (error) {
+    const elapsedMs = Math.round(performance.now() - startedAt);
+    console.error(`[Anirvium API] ${method} ${path} failed after ${elapsedMs}ms`, error);
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("The AMD run exceeded five minutes. Inspect FastAPI and vLLM logs before retrying.");
+    }
+    throw new Error("Backend unavailable. Verify the frontend /api proxy and FastAPI health endpoint.");
+  } finally {
+    window.clearTimeout(timeout);
   }
 
   if (!response.ok) {
+    console.error(`[Anirvium API] ${method} ${path} returned ${response.status}`);
     throw new Error(`${response.status} ${response.statusText}`);
   }
+
+  console.info(
+    `[Anirvium API] ${method} ${path} completed in ${Math.round(performance.now() - startedAt)}ms`,
+    { requestId: response.headers.get("x-request-id") }
+  );
 
   return response.json() as Promise<T>;
 }
