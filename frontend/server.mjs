@@ -7,6 +7,8 @@ const host = process.env.FRONTEND_HOST ?? "0.0.0.0";
 const port = Number(process.env.FRONTEND_PORT ?? 5173);
 const backend = new URL(process.env.BACKEND_BASE_URL ?? "http://127.0.0.1:8000");
 const root = join(fileURLToPath(new URL(".", import.meta.url)), "dist");
+const configuredBasePath = process.env.FRONTEND_BASE_PATH ?? process.env.STREAMLIT_SERVER_BASE_URL_PATH ?? "";
+const basePath = configuredBasePath === "/" ? "" : configuredBasePath.replace(/\/$/, "");
 
 const contentTypes = {
   ".css": "text/css; charset=utf-8",
@@ -19,8 +21,15 @@ const contentTypes = {
   ".webp": "image/webp"
 };
 
-function proxyApi(req, res) {
-  const upstreamPath = req.url.replace(/^\/api/, "") || "/";
+function routedUrl(rawUrl = "/") {
+  if (!basePath) return rawUrl;
+  if (rawUrl === basePath) return "/";
+  if (rawUrl.startsWith(`${basePath}/`)) return rawUrl.slice(basePath.length) || "/";
+  return rawUrl;
+}
+
+function proxyApi(req, res, route) {
+  const upstreamPath = route.replace(/^\/api/, "") || "/";
   const upstream = proxyRequest({
     hostname: backend.hostname,
     port: backend.port || 80,
@@ -40,8 +49,8 @@ function proxyApi(req, res) {
   req.pipe(upstream);
 }
 
-function serveFile(req, res) {
-  const rawPath = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+function serveFile(route, res) {
+  const rawPath = decodeURIComponent(new URL(route, "http://localhost").pathname);
   const safePath = normalize(rawPath).replace(/^(\.\.(\/|\\|$))+/, "");
   let filePath = join(root, safePath === "/" ? "index.html" : safePath);
   if (!filePath.startsWith(root) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
@@ -57,9 +66,11 @@ function serveFile(req, res) {
 createServer((req, res) => {
   const started = Date.now();
   res.on("finish", () => console.info(`[frontend-gateway] ${req.method} ${req.url} ${res.statusCode} ${Date.now() - started}ms`));
-  if (req.url === "/api" || req.url?.startsWith("/api/")) proxyApi(req, res);
-  else serveFile(req, res);
+  const route = routedUrl(req.url);
+  if (route === "/api" || route.startsWith("/api/")) proxyApi(req, res, route);
+  else serveFile(route, res);
 }).listen(port, host, () => {
   console.info(`[frontend-gateway] UI ready on http://${host}:${port}`);
   console.info(`[frontend-gateway] Proxying /api to ${backend.origin}`);
+  console.info(`[frontend-gateway] External base path ${basePath || "/"}`);
 });
