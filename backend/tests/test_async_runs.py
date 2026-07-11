@@ -26,6 +26,9 @@ def test_async_run_returns_before_result_and_can_be_polled() -> None:
         if payload["status"] == "completed":
             assert payload["result"]["status"] == "completed"
             assert len(payload["result"]["trajectory"]) == 13
+            assert payload["current_step"] == 13
+            assert payload["progress_percent"] == 100
+            assert payload["progress_message"] == "Trajectory captured and evaluated"
             return
         assert payload["status"] in {"queued", "running"}
         time.sleep(0.01)

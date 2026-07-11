@@ -25,6 +25,15 @@ DOMAIN_TERMS = {
     "withdrawals": {"withdrawal", "withdraw", "bank", "utr", "imps", "processed", "limit", "funds"},
 }
 
+ISSUE_DOMAIN = {
+    "deposit_missing": "deposits",
+    "withdrawal_processed_missing": "withdrawals",
+    "verification_restriction": "verification",
+    "bonus_dispute": "bonuses",
+    "cross_account_access": "account_access",
+    "priority_policy_exception": "priority_support",
+}
+
 
 def _read_layer(filename: str) -> List[Dict[str, Any]]:
     with (LAYER_DIR / filename).open("r", encoding="utf-8") as file:
@@ -136,7 +145,16 @@ def match_records_for_ticket(ticket: Any, *, limit: int = 6) -> List[Dict[str, A
     try:
         from app.services.vector_store import hybrid_kb_search
 
-        return hybrid_kb_search(query, lexical_records, limit=limit)
+        matches = hybrid_kb_search(
+            query,
+            lexical_records,
+            limit=limit,
+            allowed_layers=("policies", "procedures", "templates"),
+        )
+        domain = ISSUE_DOMAIN.get(ticket.issue_type)
+        if domain:
+            matches = [record for record in matches if record.get("domain") == domain]
+        return matches[:limit]
     except Exception:
         return lexical_records
 

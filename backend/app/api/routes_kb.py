@@ -31,7 +31,7 @@ def search_kb(
     hybrid: bool = True,
 ) -> dict:
     lexical_records = search_kb_records(q, limit=limit, generation_only=generation_only)
-    records = hybrid_kb_search(q, lexical_records, limit=limit) if hybrid else lexical_records
+    records = hybrid_kb_search(q, lexical_records, limit=limit, generation_only=generation_only) if hybrid else lexical_records
     return {"query": q, "count": len(records), "hybrid": hybrid, "records": records}
 
 

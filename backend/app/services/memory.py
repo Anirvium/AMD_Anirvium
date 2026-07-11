@@ -123,6 +123,8 @@ def index_trajectory_memory(run_payload: Dict[str, Any]) -> Dict[str, Any]:
             "final_actions": final_actions,
             "evaluation_summary": evaluation.get("summary"),
             "metrics": evaluation.get("metrics"),
+            "diagnosis": evaluation.get("diagnosis", []),
+            "recommendations": evaluation.get("recommendations", []),
         },
         sort_keys=True,
     )

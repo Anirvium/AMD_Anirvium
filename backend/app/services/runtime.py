@@ -30,6 +30,8 @@ class RunJobManager:
             job_id=job_id,
             status="queued",
             submitted_at=datetime.now(timezone.utc).isoformat(),
+            current_agent="Planner Agent",
+            progress_message="Waiting for the AMD agent runtime",
         )
         with self.lock:
             self.jobs[job_id] = job
@@ -46,21 +48,51 @@ class RunJobManager:
         with self.lock:
             self.jobs[job_id].status = "running"
             self.jobs[job_id].started_at = datetime.now(timezone.utc).isoformat()
+            self.jobs[job_id].progress_message = "Agent workflow started"
         logger.info("run_job_started job_id=%s", job_id)
         try:
-            result = self.runner.run(request)
+            result = self.runner.run(
+                request,
+                progress_callback=lambda step, total, agent, phase: self._update_progress(
+                    job_id, step, total, agent, phase
+                ),
+            )
         except Exception as exc:
             with self.lock:
                 self.jobs[job_id].status = "failed"
                 self.jobs[job_id].error = f"{type(exc).__name__}: {exc}"
                 self.jobs[job_id].completed_at = datetime.now(timezone.utc).isoformat()
+                self.jobs[job_id].progress_message = "Agent workflow failed"
             logger.exception("run_job_failed job_id=%s", job_id)
             return
         with self.lock:
             self.jobs[job_id].status = "completed"
             self.jobs[job_id].result = result
             self.jobs[job_id].completed_at = datetime.now(timezone.utc).isoformat()
+            self.jobs[job_id].current_step = self.jobs[job_id].total_steps
+            self.jobs[job_id].progress_percent = 100
+            self.jobs[job_id].progress_message = "Trajectory captured and evaluated"
         logger.info("run_job_completed job_id=%s run_id=%s score=%s", job_id, result.run_id, result.evaluation.metrics.overall_score)
+
+    def _update_progress(self, job_id: str, step: int, total: int, agent: str, phase: str) -> None:
+        with self.lock:
+            job = self.jobs.get(job_id)
+            if job is None:
+                return
+            job.current_step = step
+            job.total_steps = total
+            job.current_agent = agent
+            completed_steps = step if phase == "completed" else max(0, step - 1)
+            job.progress_percent = min(99, int((completed_steps / total) * 100))
+            job.progress_message = f"{agent} {phase}"
+        logger.info(
+            "run_job_progress job_id=%s step=%s/%s agent=%s phase=%s",
+            job_id,
+            step,
+            total,
+            agent,
+            phase,
+        )
 
 
 @lru_cache

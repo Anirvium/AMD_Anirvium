@@ -60,16 +60,41 @@ function serveFile(route, res) {
     "content-type": contentTypes[extname(filePath)] ?? "application/octet-stream",
     "cache-control": filePath.endsWith("index.html") ? "no-cache" : "public, max-age=31536000, immutable"
   });
-  createReadStream(filePath).pipe(res);
+  const stream = createReadStream(filePath);
+  stream.on("error", (error) => {
+    console.error(`[frontend-gateway] static file failed: ${error.message}`);
+    if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
+    res.end(JSON.stringify({ detail: "Frontend asset unavailable" }));
+  });
+  stream.pipe(res);
 }
 
-createServer((req, res) => {
+const server = createServer((req, res) => {
   const started = Date.now();
   res.on("finish", () => console.info(`[frontend-gateway] ${req.method} ${req.url} ${res.statusCode} ${Date.now() - started}ms`));
-  const route = routedUrl(req.url);
-  if (route === "/api" || route.startsWith("/api/")) proxyApi(req, res, route);
-  else serveFile(route, res);
-}).listen(port, host, () => {
+  try {
+    const incoming = new URL(req.url ?? "/", "http://localhost");
+    if (basePath && incoming.pathname === basePath) {
+      res.writeHead(308, { location: `${basePath}/${incoming.search}` });
+      res.end();
+      return;
+    }
+    const route = routedUrl(req.url);
+    if (route === "/api" || route.startsWith("/api/")) proxyApi(req, res, route);
+    else serveFile(route, res);
+  } catch (error) {
+    console.error(`[frontend-gateway] ${req.method} ${req.url} request failed`, error);
+    if (!res.headersSent) res.writeHead(400, { "content-type": "application/json" });
+    res.end(JSON.stringify({ detail: "Invalid frontend request" }));
+  }
+});
+
+server.on("clientError", (error, socket) => {
+  console.error(`[frontend-gateway] client connection failed: ${error.message}`);
+  if (socket.writable) socket.end("HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n");
+});
+
+server.listen(port, host, () => {
   console.info(`[frontend-gateway] UI ready on http://${host}:${port}`);
   console.info(`[frontend-gateway] Proxying /api to ${backend.origin}`);
   console.info(`[frontend-gateway] External base path ${basePath || "/"}`);

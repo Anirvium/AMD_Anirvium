@@ -23,14 +23,16 @@ import {
   Wrench
 } from "lucide-react";
 import {
-  fetchCustomerSupportDemo,
   fetchCustomerSupportTickets,
   fetchKbLayers,
   fetchMemoryStatus,
+  fetchRuntimeReadiness,
   fetchVectorStatus,
-  runSupportAgent
+  resumeActiveSupportRun,
+  runSupportAgentWithProgress
 } from "../api/client";
-import type { KbLayerSummary, MemoryStatus, RunResult, SupportTicket, TrajectorySpan, VectorStatus } from "../api/types";
+import type { RunJobState } from "../api/client";
+import type { KbLayerSummary, MemoryStatus, RunResult, RuntimeReadiness, SupportTicket, TrajectorySpan, VectorStatus } from "../api/types";
 
 type View = "agent" | "intelligence";
 
@@ -64,43 +66,60 @@ export default function Dashboard() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([]);
   const [run, setRun] = useState<RunResult | null>(null);
-  const [prompt, setPrompt] = useState(prompts[0]);
+  const [prompt, setPrompt] = useState("");
+  const [submittedPrompt, setSubmittedPrompt] = useState<string | null>(null);
   const [quickReply, setQuickReply] = useState<string | null>(null);
-  const [isRunning, setIsRunning] = useState(true);
+  const [isBooting, setIsBooting] = useState(true);
+  const [isRunning, setIsRunning] = useState(false);
+  const [jobState, setJobState] = useState<RunJobState | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [vectorStatus, setVectorStatus] = useState<VectorStatus | null>(null);
   const [memoryStatus, setMemoryStatus] = useState<MemoryStatus | null>(null);
   const [kbStatus, setKbStatus] = useState<KbLayerSummary | null>(null);
+  const [runtimeStatus, setRuntimeStatus] = useState<RuntimeReadiness | null>(null);
 
-  async function loadDemo() {
-    setIsRunning(true);
-    setElapsed(0);
+  async function loadRuntime() {
+    setIsBooting(true);
     setError(null);
-    const [ticketResult, demoResult, vectorResult, memoryResult, kbResult] = await Promise.allSettled([
+    const [ticketResult, vectorResult, memoryResult, kbResult, runtimeResult] = await Promise.allSettled([
       fetchCustomerSupportTickets(),
-      fetchCustomerSupportDemo(),
       fetchVectorStatus(),
       fetchMemoryStatus(),
-      fetchKbLayers()
+      fetchKbLayers(),
+      fetchRuntimeReadiness()
     ]);
 
-    if (ticketResult.status === "fulfilled") setTickets(ticketResult.value);
-    if (demoResult.status === "fulfilled") {
-      setRun(demoResult.value.run);
-      setSelectedTicketIds(demoResult.value.run.selected_ticket_ids.slice(0, 1));
-      setPrompt(demoResult.value.selected_tickets[0]?.message ?? prompts[0]);
+    if (ticketResult.status === "fulfilled") {
+      setTickets(ticketResult.value);
+      setSelectedTicketIds((current) => current.length ? current : ticketResult.value.slice(0, 1).map((ticket) => ticket.ticket_id));
     } else {
-      setError(demoResult.reason instanceof Error ? demoResult.reason.message : "Unable to load the agent runtime.");
+      setError(ticketResult.reason instanceof Error ? ticketResult.reason.message : "Unable to load the support queue.");
     }
     if (vectorResult.status === "fulfilled") setVectorStatus(vectorResult.value);
     if (memoryResult.status === "fulfilled") setMemoryStatus(memoryResult.value);
     if (kbResult.status === "fulfilled") setKbStatus(kbResult.value);
-    setIsRunning(false);
+    if (runtimeResult.status === "fulfilled") setRuntimeStatus(runtimeResult.value);
+    try {
+      const resumed = await resumeActiveSupportRun((job) => {
+        setJobState(job);
+        setIsRunning(job.status === "queued" || job.status === "running");
+      });
+      if (resumed) {
+        setRun(resumed);
+        setSelectedTicketIds(resumed.selected_ticket_ids);
+        setSubmittedPrompt(String(resumed.metadata.customer_query ?? "Resumed customer request"));
+      }
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to resume the active agent run.");
+    } finally {
+      setIsRunning(false);
+      setIsBooting(false);
+    }
   }
 
   useEffect(() => {
-    void loadDemo();
+    void loadRuntime();
   }, []);
 
   useEffect(() => {
@@ -114,8 +133,8 @@ export default function Dashboard() {
     [tickets, selectedTicketIds]
   );
   const primaryAction = run?.final_actions[0] ?? null;
-  const modelName = String(run?.metadata.model_name ?? "runtime pending");
-  const provider = String(run?.metadata.llm_provider ?? "connecting");
+  const modelName = String(run?.metadata.model_name ?? runtimeStatus?.model_id ?? "runtime pending");
+  const provider = String(run?.metadata.llm_provider ?? runtimeStatus?.provider ?? "connecting");
   const evidenceCount = new Set(run?.trajectory.flatMap((span) => span.evidence_ids) ?? []).size;
   const toolCount = run?.trajectory.reduce((total, span) => total + span.tools_used.length, 0) ?? 0;
   const riskCount = new Set(run?.trajectory.flatMap((span) => span.risk_flags) ?? []).size;
@@ -124,16 +143,25 @@ export default function Dashboard() {
     const ids = selectedTicketIds.length ? selectedTicketIds : tickets.slice(0, 1).map((ticket) => ticket.ticket_id);
     if (!ids.length || !prompt.trim()) return;
     if (/^(hi|hello|hey|good morning|good afternoon|good evening)[!.\s]*$/i.test(prompt.trim())) {
+      setSubmittedPrompt(prompt.trim());
       setQuickReply("Hi — I’m ready to investigate a customer-support case. Describe the payment, verification, account-access, or policy issue and I’ll trace the evidence, tools, approvals, and resolution path.");
+      setRun(null);
+      setJobState(null);
+      setPrompt("");
       setError(null);
       return;
     }
+    const customerPrompt = prompt.trim();
+    setSubmittedPrompt(customerPrompt);
     setQuickReply(null);
+    setRun(null);
+    setJobState(null);
     setIsRunning(true);
     setElapsed(0);
     setError(null);
+    setPrompt("");
     try {
-      const result = await runSupportAgent(ids, prompt.trim());
+      const result = await runSupportAgentWithProgress(ids, customerPrompt, setJobState);
       setRun(result);
       setSelectedTicketIds(result.selected_ticket_ids);
     } catch (caught) {
@@ -144,7 +172,13 @@ export default function Dashboard() {
   }
 
   function toggleTicket(id: string) {
-    setSelectedTicketIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+    setSelectedTicketIds([id]);
+  }
+
+  function choosePrompt(item: string, index: number) {
+    const matchingTicketIds = ["CS-002", "CS-003", "CS-001"];
+    setPrompt(item);
+    setSelectedTicketIds([matchingTicketIds[index]]);
   }
 
   return (
@@ -174,7 +208,7 @@ export default function Dashboard() {
         </div>
 
         <div className="runtime-card">
-          <div><span className={`status-light ${error ? "error" : "online"}`} /><strong>{error ? "Runtime issue" : "Systems online"}</strong></div>
+          <div><span className={`status-light ${error || runtimeStatus?.model_ready === false ? "error" : "online"}`} /><strong>{isBooting ? "Checking runtime" : error ? "Runtime issue" : runtimeStatus?.model_ready ? "AMD model ready" : "Model degraded"}</strong></div>
           <dl>
             <div><dt>Provider</dt><dd>{provider}</dd></div>
             <div><dt>Model</dt><dd title={modelName}>{modelName}</dd></div>
@@ -191,12 +225,12 @@ export default function Dashboard() {
           </div>
           <div className="header-actions">
             <span className="run-identity"><Activity size={14} />{run?.run_id?.slice(-12) ?? "No active run"}</span>
-            <button className="icon-button" onClick={() => void loadDemo()} disabled={isRunning} title="Reload demonstration"><RefreshCw size={16} /></button>
+            <button className="icon-button" onClick={() => void loadRuntime()} disabled={isRunning || isBooting} title="Refresh runtime status"><RefreshCw size={16} /></button>
           </div>
         </header>
 
         {error && (
-          <div className="system-error"><CircleAlert size={17} /><span>{error}</span><button onClick={() => void loadDemo()}>Retry</button></div>
+          <div className="system-error"><CircleAlert size={17} /><span>{error}</span><button onClick={() => void loadRuntime()}>Reconnect</button></div>
         )}
 
         {view === "agent" ? (
@@ -206,9 +240,13 @@ export default function Dashboard() {
             run={run}
             primaryAction={primaryAction}
             quickReply={quickReply}
+            submittedPrompt={submittedPrompt}
             selectedTickets={selectedTickets}
             isRunning={isRunning}
+            isBooting={isBooting}
+            jobState={jobState}
             elapsed={elapsed}
+            onChoosePrompt={choosePrompt}
             onExecute={() => void execute()}
           />
         ) : (
@@ -216,7 +254,7 @@ export default function Dashboard() {
         )}
       </section>
 
-      <ExecutionRail run={run} isRunning={isRunning} elapsed={elapsed} evidenceCount={evidenceCount} toolCount={toolCount} riskCount={riskCount} />
+      <ExecutionRail run={run} isRunning={isRunning} jobState={jobState} elapsed={elapsed} evidenceCount={evidenceCount} toolCount={toolCount} riskCount={riskCount} />
     </main>
   );
 }
@@ -227,13 +265,17 @@ interface AgentWorkspaceProps {
   run: RunResult | null;
   primaryAction: RunResult["final_actions"][number] | null;
   quickReply: string | null;
+  submittedPrompt: string | null;
   selectedTickets: SupportTicket[];
   isRunning: boolean;
+  isBooting: boolean;
+  jobState: RunJobState | null;
   elapsed: number;
+  onChoosePrompt: (item: string, index: number) => void;
   onExecute: () => void;
 }
 
-function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, selectedTickets, isRunning, elapsed, onExecute }: AgentWorkspaceProps) {
+function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, submittedPrompt, selectedTickets, isRunning, isBooting, jobState, elapsed, onChoosePrompt, onExecute }: AgentWorkspaceProps) {
   return (
     <div className="agent-workspace">
       <section className="conversation-stream">
@@ -242,7 +284,19 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sel
           <span>{selectedTickets.length ? `${selectedTickets.length} selected support case${selectedTickets.length > 1 ? "s" : ""}` : "Select a case from the queue"}</span>
         </div>
 
-        {primaryAction || quickReply ? (
+        {submittedPrompt && <div className="user-turn"><span>{submittedPrompt}</span></div>}
+
+        {isRunning ? (
+          <article className="answer-card pending-answer">
+            <div className="answer-meta">
+              <div className="agent-avatar"><LoaderCircle className="spin" size={17} /></div>
+              <div><strong>{jobState?.current_agent ?? "Anirvium Support Agent"}</strong><span>{jobState?.progress_message ?? "Connecting to the AMD agent runtime"}</span></div>
+              <span className="approval-state safe">{jobState?.progress_percent ?? 0}%</span>
+            </div>
+            <div className="progress-track"><i style={{ width: `${jobState?.progress_percent ?? 2}%` }} /></div>
+            <p className="answer-copy pending-copy">Investigating the request, retrieving governed evidence, and checking policy constraints. The job remains recoverable if the public AMD proxy briefly reconnects.</p>
+          </article>
+        ) : primaryAction || quickReply ? (
           <article className="answer-card">
             <div className="answer-meta">
               <div className="agent-avatar"><Sparkles size={17} /></div>
@@ -258,6 +312,7 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sel
                 <span><Gauge size={14} />{Math.round((primaryAction.confidence_score ?? 0) * 100)}% confidence</span>
                 <span><BookOpen size={14} />{primaryAction.evidence_ids.length} sources</span>
                 <span><UserRoundCheck size={14} />{primaryAction.owner}</span>
+                <span><Sparkles size={14} />{primaryAction.generation_source === "amd_vllm" ? primaryAction.generation_model ?? "AMD vLLM" : "Verified safe fallback"}</span>
               </div>
               <div className="source-row">{primaryAction.evidence_ids.map((id) => <span key={id}>{id}</span>)}</div>
             </>}
@@ -266,7 +321,7 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sel
           <div className="empty-answer"><BrainCircuit size={32} /><strong>Ready to investigate</strong><span>Select a case and describe the customer problem.</span></div>
         )}
 
-        {run && (
+        {run && !isRunning && (
           <div className="resolution-summary">
             <span><ShieldCheck size={15} />Policy checked</span>
             <span><Search size={15} />Evidence grounded</span>
@@ -277,17 +332,17 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sel
 
       <section className="composer-zone">
         {isRunning && (
-          <div className="execution-notice"><LoaderCircle className="spin" size={16} /><span>AMD agent runtime is executing</span><strong>{elapsed}s</strong><small>Live spans appear when the synchronous run completes.</small></div>
+          <div className="execution-notice"><LoaderCircle className="spin" size={16} /><span>{jobState?.current_agent ?? "AMD agent runtime is starting"}</span><strong>{elapsed}s</strong><small>Step {jobState?.current_step ?? 0} of {jobState?.total_steps ?? 13}</small></div>
         )}
         <div className="suggestion-row">
-          {prompts.map((item, index) => <button key={item} onClick={() => setPrompt(item)}>{index === 0 ? "Withdrawal delay" : index === 1 ? "KYC restriction" : "Missing deposit"}</button>)}
+          {prompts.map((item, index) => <button key={item} onClick={() => onChoosePrompt(item, index)}>{index === 0 ? "Withdrawal delay" : index === 1 ? "KYC restriction" : "Missing deposit"}</button>)}
         </div>
         <div className={`prompt-composer ${isRunning ? "processing" : ""}`}>
           <textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Describe the customer issue…" rows={3} />
           <div className="composer-footer">
             <div><span><Database size={14} />Knowledge base</span><span><ShieldCheck size={14} />Policy guardrails</span></div>
-            <button onClick={onExecute} disabled={isRunning || !prompt.trim()} aria-label="Run support agent">
-              {isRunning ? <LoaderCircle className="spin" size={18} /> : <ArrowUp size={18} />}
+            <button onClick={onExecute} disabled={isRunning || isBooting || !prompt.trim()} aria-label="Run support agent">
+              {isRunning || isBooting ? <LoaderCircle className="spin" size={18} /> : <ArrowUp size={18} />}
             </button>
           </div>
         </div>
@@ -297,7 +352,7 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sel
   );
 }
 
-function ExecutionRail({ run, isRunning, elapsed, evidenceCount, toolCount, riskCount }: { run: RunResult | null; isRunning: boolean; elapsed: number; evidenceCount: number; toolCount: number; riskCount: number }) {
+function ExecutionRail({ run, isRunning, jobState, elapsed, evidenceCount, toolCount, riskCount }: { run: RunResult | null; isRunning: boolean; jobState: RunJobState | null; elapsed: number; evidenceCount: number; toolCount: number; riskCount: number }) {
   const spans = run?.trajectory ?? [];
   return (
     <aside className="execution-rail">
@@ -312,13 +367,18 @@ function ExecutionRail({ run, isRunning, elapsed, evidenceCount, toolCount, risk
         <div><strong>{riskCount}</strong><span>risks</span></div>
       </div>
       <div className="trajectory-list">
-        {isRunning ? executionPlan.map((name, index) => (
-          <div className="trajectory-step pending" key={name}>
-            <span className="step-node">{index + 1}</span>
-            <div><strong>{name}</strong><small>Queued in server-side workflow</small></div>
-            {index === 0 && <LoaderCircle className="spin" size={14} />}
-          </div>
-        )) : spans.map((span, index) => <TrajectoryStep span={span} index={index} key={span.step_id} />)}
+        {isRunning ? executionPlan.map((name, index) => {
+          const step = index + 1;
+          const currentStep = jobState?.current_step ?? 0;
+          const state = step < currentStep ? "completed" : step === currentStep ? "active" : "pending";
+          return (
+            <div className={`trajectory-step pending ${state}`} key={name}>
+              <span className={`step-node ${state === "completed" ? "good" : ""}`}>{state === "completed" ? <Check size={12} /> : step}</span>
+              <div><strong>{name}</strong><small>{state === "completed" ? "Completed" : state === "active" ? "Executing on AMD runtime" : "Waiting for structured context"}</small></div>
+              {state === "active" && <LoaderCircle className="spin" size={14} />}
+            </div>
+          );
+        }) : spans.map((span, index) => <TrajectoryStep span={span} index={index} key={span.step_id} />)}
       </div>
       {!isRunning && spans.length > 0 && <div className="rail-complete"><Check size={15} /><span>Trajectory captured and evaluated</span></div>}
     </aside>

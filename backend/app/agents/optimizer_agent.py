@@ -15,7 +15,7 @@ class OptimizerAgent:
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
         recommendations = self.engine.recommend(context["diagnosis"], context["metrics"])
         context["recommendations"] = recommendations
-        llm_optimizer_note = self._llm_optimizer_note(context)
+        llm_optimizer_note = self._llm_optimizer_note(context) if context.get("enable_auxiliary_llm_reviews", False) else None
         tools_used = ["optimization_rules", "workflow_change_mapper"]
         if llm_optimizer_note:
             tools_used.append("llm_optimizer_review")
@@ -27,6 +27,7 @@ class OptimizerAgent:
             "evidence_ids": [],
             "risk_flags": [],
             "approval_state": ApprovalState.DRAFT_RECOMMENDATION.value,
+            "model_name": "deterministic-workflow-optimizer-v1" if not llm_optimizer_note else getattr(context.get("llm_client"), "model_name", "unknown"),
             "confidence": 0.84,
         }
 

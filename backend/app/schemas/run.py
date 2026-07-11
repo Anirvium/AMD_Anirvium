@@ -35,6 +35,9 @@ class FinalAction(BaseModel):
     handoff_team: Optional[str] = None
     handoff_reason: Optional[str] = None
     handoff_summary: Optional[str] = None
+    generation_source: str = "deterministic_safe_fallback"
+    generation_model: Optional[str] = None
+    fallback_reason: Optional[str] = None
 
 
 class RunResult(BaseModel):
@@ -57,3 +60,8 @@ class RunJobResponse(BaseModel):
     completed_at: Optional[str] = None
     result: Optional[RunResult] = None
     error: Optional[str] = None
+    current_step: int = Field(default=0, ge=0)
+    total_steps: int = Field(default=13, ge=1)
+    current_agent: Optional[str] = None
+    progress_percent: int = Field(default=0, ge=0, le=100)
+    progress_message: Optional[str] = None

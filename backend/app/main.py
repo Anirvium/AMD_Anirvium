@@ -2,6 +2,7 @@ import logging
 import time
 from uuid import uuid4
 
+import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.requests import Request
@@ -71,6 +72,36 @@ def health() -> dict:
         "service": "anirvium-ai",
         "mode": settings.llm_provider,
         "synthetic_data_only": True,
+    }
+
+
+@app.get("/health/ready")
+def readiness() -> dict:
+    if settings.llm_provider.lower() not in {"openai", "openai_compatible", "llm"}:
+        return {
+            "status": "ready",
+            "backend_ready": True,
+            "model_ready": True,
+            "provider": settings.llm_provider,
+            "model_id": settings.llm_model,
+            "runtime": "deterministic_local",
+        }
+    try:
+        response = httpx.get(f"{settings.llm_base_url.rstrip('/')}/models", timeout=3)
+        response.raise_for_status()
+        model_ids = [item.get("id") for item in response.json().get("data", [])]
+        model_ready = settings.llm_model in model_ids
+    except (httpx.HTTPError, ValueError, KeyError):
+        model_ids = []
+        model_ready = False
+    return {
+        "status": "ready" if model_ready else "degraded",
+        "backend_ready": True,
+        "model_ready": model_ready,
+        "provider": settings.llm_provider,
+        "model_id": settings.llm_model,
+        "available_models": model_ids,
+        "runtime": settings.amd_backend_name,
     }
 
 

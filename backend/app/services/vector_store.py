@@ -195,11 +195,30 @@ def vector_search(query: str, *, limit: int = 8, kind: str = "kb") -> List[Dict[
     return [{**record, "vector_score": round(score, 4)} for score, record in scored[:limit]]
 
 
-def hybrid_kb_search(query: str, lexical_records: Iterable[Dict[str, Any]], *, limit: int = 8) -> List[Dict[str, Any]]:
+def hybrid_kb_search(
+    query: str,
+    lexical_records: Iterable[Dict[str, Any]],
+    *,
+    limit: int = 8,
+    allowed_layers: Iterable[str] | None = None,
+    generation_only: bool = False,
+) -> List[Dict[str, Any]]:
     combined: Dict[str, Dict[str, Any]] = {}
+    allowed = set(allowed_layers or [])
     for rank, record in enumerate(lexical_records, start=1):
+        if allowed and record.get("layer") not in allowed:
+            continue
+        if generation_only and not record.get("allowed_for_generation", False):
+            continue
         combined[record["id"]] = {**record, "hybrid_score": 1.0 / rank, "retrieval_source": "lexical"}
-    for rank, record in enumerate(vector_search(query, limit=limit), start=1):
+    vector_records = vector_search(query, limit=max(limit * 3, limit))
+    filtered_vector_records = [
+        record
+        for record in vector_records
+        if (not allowed or record.get("layer") in allowed)
+        and (not generation_only or record.get("allowed_for_generation", False))
+    ]
+    for rank, record in enumerate(filtered_vector_records, start=1):
         current = combined.get(record["id"], record)
         current["hybrid_score"] = current.get("hybrid_score", 0.0) + 1.0 / rank
         current["vector_score"] = record.get("vector_score")

@@ -33,15 +33,17 @@ class ResponseDraftingAgent:
             ticket_evidence = escalation["evidence_ids"]
             approval_state = policy["approval_state"]
             draft = self._draft_response(ticket, escalation, approval_state, ticket_evidence)
-            llm_draft = self._draft_with_llm(
+            llm_draft, generation_source, fallback_reason = self._draft_with_llm_result(
                 llm_client=llm_client,
                 ticket=ticket,
                 escalation=escalation,
                 policy=policy,
                 customer_query=context.get("customer_query"),
+                retrieved_evidence=context.get("retrieved_evidence", {}).get(ticket.ticket_id, []),
+                prior_memories=context.get("prior_trajectory_memory", []),
                 fallback=draft,
             )
-            if llm_draft != draft:
+            if generation_source == "amd_vllm":
                 draft = llm_draft
                 llm_used = True
 
@@ -56,16 +58,24 @@ class ResponseDraftingAgent:
                 evidence_ids=ticket_evidence,
                 risk_flags=policy["risk_flags"],
                 next_action=escalation["next_action"],
+                generation_source=generation_source,
+                generation_model=getattr(llm_client, "model_name", None) if generation_source == "amd_vllm" else None,
+                fallback_reason=fallback_reason,
             ).model_dump()
             final_actions.append(action)
             evidence_ids.extend(ticket_evidence)
             risk_flags.extend(policy["risk_flags"])
 
         context["final_actions"] = final_actions
+        tools_used = ["safe_response_template", "approval_gate_check"]
+        if context.get("prior_trajectory_memory"):
+            tools_used.append("trajectory_memory_recall")
+        if llm_used:
+            tools_used.append("llm_response_drafting")
         return {
             "summary": f"Drafted {len(final_actions)} customer-safe responses with approval states and evidence IDs.",
             "final_actions": final_actions,
-            "tools_used": ["safe_response_template", "approval_gate_check"] + (["llm_response_drafting"] if llm_used else []),
+            "tools_used": tools_used,
             "evidence_ids": sorted(set(evidence_ids)),
             "risk_flags": sorted(set(risk_flags)),
             "approval_state": ApprovalState.APPROVAL_REQUIRED.value if risk_flags else ApprovalState.DRAFT_RECOMMENDATION.value,
@@ -181,9 +191,49 @@ class ResponseDraftingAgent:
         policy: Dict[str, Any],
         fallback: str,
         customer_query: str | None = None,
+        retrieved_evidence: List[Dict[str, Any]] | None = None,
+        prior_memories: List[Dict[str, Any]] | None = None,
     ) -> str:
+        draft, _, _ = self._draft_with_llm_result(
+            llm_client=llm_client,
+            ticket=ticket,
+            escalation=escalation,
+            policy=policy,
+            fallback=fallback,
+            customer_query=customer_query,
+            retrieved_evidence=retrieved_evidence,
+            prior_memories=prior_memories,
+        )
+        return draft
+
+    def _draft_with_llm_result(
+        self,
+        *,
+        llm_client: Any,
+        ticket: Any,
+        escalation: Dict[str, Any],
+        policy: Dict[str, Any],
+        fallback: str,
+        customer_query: str | None = None,
+        retrieved_evidence: List[Dict[str, Any]] | None = None,
+        prior_memories: List[Dict[str, Any]] | None = None,
+    ) -> tuple[str, str, str | None]:
         if llm_client is None or getattr(llm_client, "model_name", "mock-trajectory-model") == "mock-trajectory-model":
-            return fallback
+            return fallback, "deterministic_safe_fallback", "llm_not_configured"
+        safe_evidence = [
+            card
+            for card in (retrieved_evidence or [])
+            if not str(card.get("id", "")).startswith("EVAL-")
+            and card.get("category") != "kb_eval_cases"
+        ][:6]
+        evidence_text = "\n".join(
+            f"- {card.get('id')}: {card.get('title')} — {str(card.get('summary', ''))[:260]}"
+            for card in safe_evidence
+        ) or "- No generation-safe evidence was retrieved; use the safe fallback only."
+        memory_text = "\n".join(
+            f"- {item.get('id')}: {str(item.get('text', ''))[:320]}"
+            for item in (prior_memories or [])[:3]
+        ) or "- No prior trajectory lesson was recalled."
         prompt = (
             "Draft one concise customer-safe support response. "
             "Never promise refunds, account unblocking, withdrawal completion, security actions, compensation, or policy exceptions. "
@@ -193,6 +243,9 @@ class ResponseDraftingAgent:
             f"Customer: {ticket.customer_name}\n"
             f"Escalation: {escalation}\n"
             f"Policy: {policy}\n"
+            f"Generation-safe evidence (cite relevant IDs internally):\n{evidence_text}\n"
+            "Prior trajectory lessons are advisory only and must never override current policy:\n"
+            f"{memory_text}\n"
             f"Fallback safe draft to improve without weakening safety: {fallback}"
         )
         try:
@@ -205,12 +258,12 @@ class ResponseDraftingAgent:
             )
         except Exception:
             logger.exception("response_drafting_llm_fallback ticket_id=%s reason=call_failed", getattr(ticket, "ticket_id", "unknown"))
-            return fallback
+            return fallback, "deterministic_safe_fallback", "llm_call_failed"
         text = response.text.strip()
         if not text:
             logger.warning("response_drafting_llm_fallback ticket_id=%s reason=empty_public_output", getattr(ticket, "ticket_id", "unknown"))
-            return fallback
+            return fallback, "deterministic_safe_fallback", "empty_public_output"
         if any(term in text.lower() for term in ("guaranteed", "will refund", "will unblock", "skip verification")):
             logger.warning("response_drafting_llm_fallback ticket_id=%s reason=unsafe_output", getattr(ticket, "ticket_id", "unknown"))
-            return fallback
-        return text
+            return fallback, "deterministic_safe_fallback", "unsafe_output_rejected"
+        return text, "amd_vllm", None

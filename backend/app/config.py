@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     llm_embedding_model: str = "Qwen/Qwen3-Embedding-4B"
     llm_reranker_model: str = "Qwen/Qwen3-Reranker-4B"
     llm_timeout_seconds: int = 60
+    llm_max_tokens: int = 384
+    llm_disable_thinking: bool = True
+    # The critic and optimizer retain deterministic implementations. Their
+    # optional LLM commentary stays off the latency-critical customer path.
+    llm_auxiliary_reviews: bool = False
 
     vector_backend: str = "local"
     vector_base_url: str = "http://localhost:6333"

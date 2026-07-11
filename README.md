@@ -2,31 +2,31 @@
 
 Trajectory Intelligence for Enterprise Support Agents.
 
-Anirvium AI is not a customer support chatbot. It is an observability, evaluation, diagnosis, and optimization layer for multimodal AI support-agent workflows. It shows why an agent made a decision, which text or visual evidence it used, where policy risk appears, whether escalation is needed, and how the workflow should improve.
+Anirvium AI combines a customer-support agent with a trajectory-intelligence layer. The support agent resolves customer requests with governed evidence and policy gates. The intelligence layer observes every step, evaluates failures, extracts lessons, stores trajectories, and recalls relevant prior lessons for future drafting.
 
 The demo uses synthetic enterprise support data only.
 
 ## 60-Second Judge Summary
 
-Anirvium AI is a trajectory intelligence platform for enterprise support agents. It captures each agent step, links decisions to evidence and policy, scores trajectory quality, diagnoses failures, and recommends concrete workflow improvements. The demo uses synthetic enterprise SaaS support tickets covering SLA risk, refunds, security/data deletion, customer churn risk, and escalation decisions.
+Anirvium AI is a governed agentic support platform. It routes a free-form customer message to the correct support domain, retrieves policy/procedure/template evidence, drafts a safe response on AMD vLLM, and captures a 13-step trajectory. It then scores, diagnoses, recommends, stores, and recalls trajectory lessons. The live demo uses synthetic payment, verification, account-access, bonus, and priority-support cases.
 
 What to inspect first:
 
 1. [JUDGES_READ_THIS_FIRST.md](JUDGES_READ_THIS_FIRST.md)
-2. `GET /demo/winning-run`
-3. The dashboard button: `Load Winning Demo`
+2. The live chat workspace and its **Trajectory intelligence** tab
+3. `POST /runs/async` followed by `GET /runs/jobs/{job_id}`
 4. [architecture_diagram.md](architecture_diagram.md)
 5. [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md)
 
-Winning demo path:
+Fast API proof path:
 
 ```bash
 cd backend
 uv run uvicorn app.main:app --port 8000
-curl http://localhost:8000/demo/winning-run
+curl http://localhost:8000/health/ready
 ```
 
-Then start the frontend and click `Load Winning Demo`.
+Then start the frontend, select a prompt chip, and submit one customer request.
 
 Current AMD status: real AMD GPU execution has been validated on AMD Developer Cloud through vLLM/ROCm with the 48GB Qwen3-8B profile. The benchmark logs in `amd/logs/benchmark_llm_*.json` capture the verified run metrics; older `benchmark_mock_*` files remain deterministic local samples.
 
@@ -99,6 +99,10 @@ flowchart LR
 - Compliance agent for legal, regulatory, company policy, privacy, and evidence-grounding checks.
 - Human escalation agent that routes low-confidence, approval-required, or compliance-review cases with handoff summaries.
 - Learning extraction agent that turns human handoffs, transcripts, satisfaction signals, and resolution logs into reusable improvement artifacts.
+- Recoverable asynchronous jobs with actual agent-step progress and browser refresh resumption.
+- Free-form query routing to the correct customer-support case before planning.
+- Generation-safe hybrid retrieval that keeps evaluation-only records out of answer evidence.
+- Advisory recall of similar prior trajectories without automatic policy mutation.
 - Reflection agent that reviews completed responses and repeated mistake patterns before optimization.
 - Deterministic evaluation metrics for grounding, policy, hallucination risk, escalation, actionability, tone, tokens, and latency.
 - Failure diagnosis for missing evidence, weak responses, missed escalation, unsafe actions, low confidence, and excessive token usage.
@@ -168,19 +172,22 @@ The API runs fully in mock mode without secrets.
 
 ```bash
 curl http://localhost:8000/health
+curl http://localhost:8000/health/ready
 curl http://localhost:8000/tickets
-curl http://localhost:8000/demo/winning-run
-curl -X POST http://localhost:8000/runs \
+curl -X POST http://localhost:8000/runs/async \
   -H "Content-Type: application/json" \
-  -d '{"selection_mode":"all_high_priority"}'
+  -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My UPI deposit is missing."}'
 ```
 
 Key endpoints:
 
 - `GET /health`
+- `GET /health/ready`
 - `GET /tickets`
 - `GET /demo/winning-run`
 - `POST /runs`
+- `POST /runs/async`
+- `GET /runs/jobs/{job_id}`
 - `GET /runs/latest`
 - `GET /runs/latest/trajectory`
 - `GET /runs/latest/evaluation`
@@ -225,12 +232,12 @@ REPEATS=3 \
 bash amd/run_agent_benchmark.sh
 ```
 
-Runtime profiles:
+Runtime profiles (only one served model is active in the current 48GB live path):
 
 - `text_48gb`: `Qwen/Qwen3-8B` reliable 48GB profile
 - `text_48gb_14b`: `Qwen/Qwen3-14B` target 48GB profile
 - `text`: `Qwen/Qwen3-30B-A3B-Instruct-2507` full 192GB profile
-- `critic`: `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` full 192GB critic profile
+- `critic`: optional future `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` 192GB profile; it is not active in the current Qwen3-8B demo
 
 Image/video model loading is deferred until the text trajectory benchmark is verified.
 

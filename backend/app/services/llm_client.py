@@ -72,7 +72,10 @@ class OpenAICompatibleLLMClient:
             "model": self.settings.llm_model,
             "messages": messages,
             "temperature": temperature,
+            "max_tokens": self.settings.llm_max_tokens,
         }
+        if self.settings.llm_disable_thinking:
+            payload["chat_template_kwargs"] = {"enable_thinking": False}
         started_at = time.perf_counter()
         logger.info("llm_call_started model=%s messages=%s", self.settings.llm_model, len(messages))
         try:
@@ -82,6 +85,20 @@ class OpenAICompatibleLLMClient:
                     headers=headers,
                     json=payload,
                 )
+                # Older OpenAI-compatible servers may not implement vLLM's
+                # Qwen chat-template switch. Retry once without that extension
+                # while retaining the output-token bound.
+                if response.status_code == 400 and "chat_template_kwargs" in payload:
+                    logger.warning(
+                        "llm_thinking_control_unsupported model=%s retrying_without_extension=true",
+                        self.settings.llm_model,
+                    )
+                    payload.pop("chat_template_kwargs", None)
+                    response = client.post(
+                        f"{self.settings.llm_base_url.rstrip('/')}/chat/completions",
+                        headers=headers,
+                        json=payload,
+                    )
                 response.raise_for_status()
                 data = response.json()
         except Exception:

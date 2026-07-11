@@ -35,7 +35,7 @@ Open:
 http://127.0.0.1:5173
 ```
 
-Do not open the backend as the product UI. The frontend automatically loads the curated support demo and proxies API requests through `/api`.
+Do not open the backend as the product UI. The frontend starts as a clean support conversation and proxies API requests through `/api`.
 
 ## Health Checks
 
@@ -43,8 +43,8 @@ Run these before opening the demo:
 
 ```bash
 curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8000/health/ready
 curl http://127.0.0.1:5173/api/health
-curl http://127.0.0.1:5173/api/demo/customer-support-run
 ```
 
 All three must succeed. If port 8000 is already in use, check it with the first health command before starting a second backend. If it returns the Anirvium health payload, reuse it.
@@ -76,10 +76,14 @@ If a secure tunnel or public deployment is available, the backend can use the AM
 
 ## Run The Complete Product On The AMD VM
 
-Keep vLLM on port `8001` and FastAPI on port `8000`. Run the production frontend gateway in a separate terminal:
+Keep vLLM on port `8001` and FastAPI on port `8000`. Run the production frontend gateway on port `8501` in a separate terminal:
 
 ```bash
 cd /workspace/AMD_Anirvium/frontend
+export FRONTEND_PORT=8501
+export FRONTEND_HOST=0.0.0.0
+export BACKEND_BASE_URL=http://127.0.0.1:8000
+export FRONTEND_BASE_PATH=/spaces/hf-415-81f7a8dd/8501
 npm ci
 npm run serve:amd
 ```
@@ -89,8 +93,9 @@ Use `serve:amd` for the judged AMD runtime. It creates a production Vite build, 
 Verify inside the VM:
 
 ```bash
-curl http://localhost:5173/api/health
-curl -I http://localhost:5173
+curl http://localhost:8501/api/health
+curl http://localhost:8501/api/health/ready
+curl -I http://localhost:8501
 ```
 
 The health payload must report `"mode":"openai_compatible"` for the real AMD path.
@@ -125,13 +130,13 @@ tail -n 200 /workspace/anirvium_frontend.log
 tail -n 200 /workspace/anirvium_backend.log
 ```
 
-The current `/runs` API is synchronous. A real AMD run may take roughly two minutes, and completed trajectory spans arrive together. The UI displays elapsed execution time honestly; true span-by-span streaming is a post-submission backend enhancement.
+The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job exposes the actual current agent, current step, total steps, and progress percentage. The browser persists the active job ID and resumes it after refresh. Transient `429`, `502`, `503`, and `504` polling responses are retried while the server-side job continues. Completed spans and their full outputs arrive with the final result.
 
 ## Judge Demo Sequence
 
-1. Open the dashboard and show that a live run is loaded.
-2. Select the high-risk payment/security cases.
-3. Click **Run selected cases**.
+1. Open the dashboard and verify the sidebar says **AMD model ready**.
+2. Select one high-risk payment/security case or click a prompt chip.
+3. Submit the customer request.
 4. Show the trajectory steps and tool/evidence trace.
 5. Show the policy gate and human handoff.
 6. Show the safe, cited final response.
@@ -153,6 +158,8 @@ Before submission, test the public URL in an incognito browser and on a phone us
 - Blank page: inspect the frontend terminal and run `npm run build`.
 - “Backend unavailable”: verify `curl http://127.0.0.1:8000/health`.
 - Frontend loads but no data: verify `curl http://127.0.0.1:5173/api/health`.
+- AMD model degraded: verify `curl http://localhost:8001/v1/models` and `curl http://localhost:8501/api/health/ready`.
+- A browser shows a transient 502 during a run: leave the backend running and reload once; the persisted job ID resumes automatically.
 - Port 8000 already used: reuse a healthy Anirvium backend or stop the unrelated process.
 - Port 5173 already used: use the URL Vite prints, or stop the old Vite process.
 - Remote notebook works only inside notebook: use an approved tunnel/public proxy or keep AMD as separate evidence.

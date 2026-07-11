@@ -71,7 +71,13 @@ button:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2
 .context-line { display: flex; align-items: center; gap: 10px; color: #777c8d; font-size: 11px; margin-bottom: 25px; }
 .context-avatars { display: flex; }
 .context-avatars span { width: 24px; height: 24px; border-radius: 50%; background: #202431; display: grid; place-items: center; border: 2px solid var(--bg); margin-right: -6px; color: #b5b9c6; font-size: 9px; }
+.user-turn { display: flex; justify-content: flex-end; margin: 0 0 28px; }
+.user-turn span { max-width: min(78%, 650px); border: 1px solid rgba(255,255,255,.08); border-radius: 16px 16px 4px 16px; background: rgba(255,255,255,.055); color: #e3e5ec; padding: 11px 14px; font-size: 13px; line-height: 1.55; }
 .answer-card { max-width: 780px; }
+.pending-answer { opacity: .96; }
+.pending-copy { color: #9095a5; }
+.progress-track { height: 2px; margin: 18px 0 0 44px; background: #242733; overflow: hidden; border-radius: 999px; }
+.progress-track i { display: block; height: 100%; min-width: 2%; background: linear-gradient(90deg,var(--violet),var(--cyan)); transition: width .35s ease; }
 .answer-meta { display: flex; align-items: center; gap: 10px; }
 .agent-avatar { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: var(--violet-2); background: linear-gradient(145deg, rgba(139,124,255,.2), rgba(114,230,209,.08)); border: 1px solid rgba(139,124,255,.18); }
 .answer-meta > div:nth-child(2) { display: grid; }
@@ -135,6 +141,8 @@ button:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2
 .step-node.warn { border-color: rgba(244,199,107,.25); color: var(--amber); }
 .step-node.risk { border-color: rgba(255,124,135,.25); color: var(--red); }
 .trajectory-step.pending { color: #686d7c; }
+.trajectory-step.pending.active { color: #c2bdf7; background: rgba(139,124,255,.035); border-radius: 8px; }
+.trajectory-step.pending.completed { color: #858a9b; }
 .step-detail { margin: 0 0 8px 36px; border-left: 1px solid rgba(139,124,255,.2); padding: 7px 9px; }
 .step-detail p { margin: 0 0 7px; color: #8a8f9f; font-size: 9px; line-height: 1.5; }
 .step-detail div { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }

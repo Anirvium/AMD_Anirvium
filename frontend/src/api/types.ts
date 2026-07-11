@@ -33,6 +33,9 @@ export interface FinalAction {
   handoff_team?: string | null;
   handoff_reason?: string | null;
   handoff_summary?: string | null;
+  generation_source?: string;
+  generation_model?: string | null;
+  fallback_reason?: string | null;
 }
 
 export interface VisualEvidenceCard {
@@ -244,6 +247,16 @@ export interface MemoryStatus {
   mid_term_sessions: number;
   short_term_ttl_seconds: number;
   mid_term_limit: number;
+}
+
+export interface RuntimeReadiness {
+  status: "ready" | "degraded";
+  backend_ready: boolean;
+  model_ready: boolean;
+  provider: string;
+  model_id: string;
+  available_models?: string[];
+  runtime: string;
 }
 
 export interface KbSearchRecord {

@@ -1,5 +1,31 @@
 # Principal AI Engineering and Hackathon Readiness Review
 
+## Submission-Hardening Addendum — 11 July 2026
+
+The live product path was materially hardened after the original review at commit `7160e6c`. The following items are now implemented and verified in the working submission branch:
+
+- Asynchronous AMD jobs with recoverable job IDs, transient proxy-error retry, refresh resumption, and real per-agent progress.
+- Query-to-domain routing before planning. A KYC query submitted against the default deposit case now resolves to `CS-003` and the Verification team.
+- Generation-safe hybrid retrieval. `EVAL-*` records cannot leak into customer-answer evidence, and support-domain retrieval is constrained to the matching domain.
+- Qwen receives compact policy/procedure/template evidence, has a 384-token output bound, and uses the Qwen no-thinking template switch when supported.
+- LLM critic/optimizer commentary is removed from the latency-critical path; deterministic evaluation, diagnosis, reflection, learning extraction, and optimization remain active.
+- Every final action discloses whether it came from AMD vLLM or the deterministic safe fallback, including a fallback reason.
+- The frontend no longer presents a cached demo answer as the current conversation. It renders the submitted user turn, current agent, real progress, final provenance, evidence, and trajectory.
+- Similar prior trajectories are recalled into the next Qwen drafting context as advisory lessons. Policy mutation remains disabled and explicitly disclosed.
+- AMD-style `/spaces/.../8501` routing was verified end to end, including canonical trailing-slash redirect and same-origin API proxying.
+
+Verification after this hardening pass:
+
+| Check | Result |
+| --- | --- |
+| Backend tests | `39 passed` |
+| Frontend production build | Passed (`tsc` + Vite) |
+| AMD-style base-path gateway | `308` canonical redirect, then `200` UI |
+| Async same-origin API | `202` submit, progress fields, `200` completed result |
+| Mismatched KYC-query regression | Resolved to `CS-003`, Verification team, three relevant evidence IDs, zero `EVAL-*` IDs |
+
+This increases live-demo engineering readiness substantially, but does not remove the original submission-artifact and production-security gaps. The product should still be positioned as a hackathon prototype. The trajectory layer now performs a bounded **retrieve → execute → evaluate → diagnose → recommend → store → recall** loop; it does not autonomously rewrite policy or deploy code.
+
 **Review date:** 11 July 2026  
 **Scope:** Entire repository at commit `7160e6c` (`main`)  
 **Review posture:** Product, AI engineering, research validity, architecture, security, operations, documentation, demo, and submission evidence

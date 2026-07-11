@@ -2,22 +2,22 @@
 
 ## What Anirvium AI Is
 
-Anirvium AI is a trajectory intelligence platform for enterprise support agents. It is not a chatbot. It observes, evaluates, diagnoses, and improves AI support-agent workflows by turning each decision into a trace of evidence, policy, risk, approval state, and optimization.
+Anirvium AI has two connected products: a governed customer-support agent and a trajectory-intelligence layer. The first resolves free-form support requests. The second observes, evaluates, diagnoses, stores, and recalls the resulting execution trajectories.
 
 ## Why It Matters
 
 Enterprise AI agents can fail silently. A support agent may miss an SLA escalation, cite weak evidence, promise a refund without approval, mishandle a security request, or produce a vague customer response. Anirvium AI gives support leaders a structured way to inspect and improve those decisions.
 
-## Demo Scenario
+## Live Demo Scenario
 
-The winning demo analyzes a synthetic high-risk SaaS support queue. The primary case is `T-001`: ACME Corp, an enterprise customer, has a production outage with an SLA deadline under 60 minutes, angry sentiment, and churn risk.
+Submit a synthetic payment or verification request. The query is resolved to the correct domain before planning; the support agent retrieves governed evidence, applies policy gates, drafts a response, and exposes the actual 13-step server-side execution progress.
 
 The workflow shows:
 
 - SLA risk detected.
 - KB and policy evidence retrieved.
 - Policy gates applied.
-- Engineering and customer-success escalation recommended.
+- Correct financial, verification, security, bonus, or priority-support owner selected.
 - Safe customer response drafted.
 - Approval state used for sensitive cases.
 - Trajectory evaluated.
@@ -51,6 +51,7 @@ Health check:
 
 ```bash
 curl http://localhost:8000/health
+curl http://localhost:8000/health/ready
 ```
 
 ## Run Frontend
@@ -67,17 +68,15 @@ Open:
 http://localhost:5173
 ```
 
-## Trigger The Winning Demo
-
-Backend:
+## Trigger A Recoverable Agent Run
 
 ```bash
-curl http://localhost:8000/demo/winning-run
+curl -X POST http://localhost:8000/runs/async \
+  -H 'Content-Type: application/json' \
+  -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My account is restricted for KYC. Unblock it immediately."}'
 ```
 
-Frontend:
-
-Click `Load Winning Demo`.
+Poll the returned job ID at `GET /runs/jobs/{job_id}`. The resolved case must be `CS-003`, the owner must be the Verification review queue, and answer evidence must not contain `EVAL-*` records.
 
 ## Inspect Trajectory JSON
 

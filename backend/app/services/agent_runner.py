@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 from uuid import uuid4
 
 from app.agents.compliance_agent import ComplianceAgent
@@ -27,7 +27,8 @@ from app.schemas.trajectory import TrajectoryResponse, TrajectorySpan
 from app.schemas.ticket import SupportTicket
 from app.services.data_loader import customers_by_id, evidence_catalog, load_tickets
 from app.services.llm_client import build_llm_client
-from app.services.memory import add_mid_term_summary, add_short_term_memory, index_trajectory_memory
+from app.services.intent_router import resolve_customer_support_intent
+from app.services.memory import add_mid_term_summary, add_short_term_memory, index_trajectory_memory, search_long_term_memory
 from app.services.model_router import build_model_router
 from app.services.trajectory_logger import TrajectoryLogger
 
@@ -44,10 +45,18 @@ class AgentRunner:
         self.winning_demo_run_id: str | None = None
         self.customer_support_demo_run_id: str | None = None
         self._customer_support_demo_lock = Lock()
+        self._hydrate_recent_trajectory_memory()
 
-    def run(self, request: RunRequest) -> RunResult:
+    def run(
+        self,
+        request: RunRequest,
+        progress_callback: Callable[[int, int, str, str], None] | None = None,
+    ) -> RunResult:
         run_id = f"run_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         selected_tickets = self._select_tickets(request)
+        intent = resolve_customer_support_intent(request.customer_query) if request.dataset == "customer_support" else None
+        memory_query = request.customer_query or " ".join(ticket.message for ticket in selected_tickets)
+        prior_memories = search_long_term_memory(memory_query, limit=3) if memory_query else []
         context: Dict[str, Any] = {
             "run_id": run_id,
             "tickets": selected_tickets,
@@ -57,6 +66,9 @@ class AgentRunner:
             "customers_by_id": customers_by_id(),
             "llm_client": self.llm_client,
             "model_router": self.model_router,
+            "enable_auxiliary_llm_reviews": self.settings.llm_auxiliary_reviews,
+            "resolved_intent": intent.issue_type if intent else None,
+            "prior_trajectory_memory": self._compact_prior_memories(prior_memories),
         }
         spans: List[TrajectorySpan] = []
 
@@ -81,6 +93,7 @@ class AgentRunner:
                 agent_name=agent.name,
                 input_summary=self._input_summary(agent.name, selected_tickets, context),
                 execute=lambda current_agent=agent: current_agent.run(context),
+                progress_callback=progress_callback,
             )
             spans.append(span)
             parent_step_id = span.step_id
@@ -93,6 +106,7 @@ class AgentRunner:
             agent_name=critic.name,
             input_summary="Evaluate the full support-agent trajectory, final actions, evidence coverage, policy compliance, and operational risk.",
             execute=lambda: critic.run(context, spans),
+            progress_callback=progress_callback,
         )
         spans.append(critic_span)
         parent_step_id = critic_span.step_id
@@ -105,6 +119,7 @@ class AgentRunner:
             agent_name=reflection.name,
             input_summary="Review completed support responses, diagnose repeated mistakes, and propose durable behavior improvements.",
             execute=lambda: reflection.run(context),
+            progress_callback=progress_callback,
         )
         spans.append(reflection_span)
         parent_step_id = reflection_span.step_id
@@ -117,6 +132,7 @@ class AgentRunner:
             agent_name=learning.name,
             input_summary="Extract reusable learning artifacts from human handoffs, trajectory logs, transcripts, and satisfaction signals.",
             execute=lambda: learning.run(context),
+            progress_callback=progress_callback,
         )
         spans.append(learning_span)
         parent_step_id = learning_span.step_id
@@ -129,6 +145,7 @@ class AgentRunner:
             agent_name=optimizer.name,
             input_summary="Recommend workflow changes from critic findings, deterministic scores, and final support actions.",
             execute=lambda: optimizer.run(context),
+            progress_callback=progress_callback,
         )
         spans.append(optimizer_span)
 
@@ -166,6 +183,13 @@ class AgentRunner:
                 "runtime_profile": self.settings.amd_runtime_profile,
                 "dataset": request.dataset,
                 "customer_query": request.customer_query,
+                "query_resolution": {
+                    "requested_ticket_ids": request.selected_ticket_ids or [],
+                    "resolved_ticket_ids": [ticket.ticket_id for ticket in selected_tickets],
+                    "resolved_issue_type": intent.issue_type if intent else None,
+                    "confidence": intent.confidence if intent else None,
+                    "query_routed": bool(intent and (request.selected_ticket_ids or []) != [ticket.ticket_id for ticket in selected_tickets]),
+                },
                 "model_routes": {
                     "text_agent": self.settings.llm_text_model,
                     "critic_agent": self.settings.llm_critic_model,
@@ -200,6 +224,19 @@ class AgentRunner:
                     "production_export_path": "otel_otlp_optional_after_gpu_validation",
                 },
                 "synthetic_data_only": True,
+                "learning_loop": {
+                    "mode": "retrieve_evaluate_recommend_reuse",
+                    "prior_memories_recalled": len(context.get("prior_trajectory_memory", [])),
+                    "recalled_memory_ids": [item["id"] for item in context.get("prior_trajectory_memory", [])],
+                    "applied_learning_ids": [
+                        item["id"]
+                        for item in context.get("prior_trajectory_memory", [])
+                        if any(action.get("generation_source") == "amd_vllm" for action in context.get("final_actions", []))
+                    ],
+                    "reuse_stage": "response_drafting_advisory_context",
+                    "writes_trajectory_memory": True,
+                    "automatic_policy_mutation": False,
+                },
             },
         )
         add_short_term_memory(
@@ -264,11 +301,15 @@ class AgentRunner:
         agent_name: str,
         input_summary: str,
         execute: Any,
+        progress_callback: Callable[[int, int, str, str], None] | None = None,
     ) -> TrajectorySpan:
+        total_steps = 13
+        if progress_callback:
+            progress_callback(step_index, total_steps, agent_name, "running")
         start = time.perf_counter()
         output = execute()
         latency_ms = int((time.perf_counter() - start) * 1000)
-        return self.logger.create_span(
+        span = self.logger.create_span(
             run_id=run_id,
             step_index=step_index,
             parent_step_id=parent_step_id,
@@ -277,6 +318,9 @@ class AgentRunner:
             full_output=output,
             latency_ms=latency_ms,
         )
+        if progress_callback:
+            progress_callback(step_index, total_steps, agent_name, "completed")
+        return span
 
     def _select_tickets(self, request: RunRequest) -> List[SupportTicket]:
         tickets = load_tickets(request.dataset)
@@ -284,8 +328,57 @@ class AgentRunner:
             return tickets
         if request.selection_mode == "selected":
             selected_ids = set(request.selected_ticket_ids or [])
-            return [ticket for ticket in tickets if ticket.ticket_id in selected_ids]
+            selected = [ticket for ticket in tickets if ticket.ticket_id in selected_ids]
+            if request.dataset == "customer_support" and request.customer_query:
+                intent = resolve_customer_support_intent(request.customer_query)
+                if intent:
+                    matching_selected = [ticket for ticket in selected if ticket.issue_type == intent.issue_type]
+                    if matching_selected:
+                        return matching_selected[:1]
+                    canonical = next((ticket for ticket in tickets if ticket.issue_type == intent.issue_type), None)
+                    if canonical:
+                        return [canonical]
+            return selected
         return [ticket for ticket in tickets if ticket.priority in {"high", "critical"}]
+
+    def _compact_prior_memories(self, records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        compact: List[Dict[str, Any]] = []
+        for record in records:
+            compact.append(
+                {
+                    "id": record.get("id"),
+                    "run_id": record.get("metadata", {}).get("run_id") or record.get("run_id"),
+                    "text": str(record.get("text", ""))[:1800],
+                    "relevance": record.get("vector_score"),
+                }
+            )
+        return compact
+
+    def _hydrate_recent_trajectory_memory(self) -> None:
+        if self.settings.llm_provider == "mock":
+            return
+        candidates = sorted(
+            self.logger.store_dir.glob("run_*.json"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )
+        hydrated = 0
+        for path in candidates:
+            payload = self.logger.load_run(path.stem)
+            if not payload:
+                continue
+            metadata = payload.get("metadata", {})
+            if metadata.get("dataset") != "customer_support":
+                continue
+            if metadata.get("llm_provider") != self.settings.llm_provider:
+                continue
+            try:
+                index_trajectory_memory(payload)
+            except Exception:
+                continue
+            hydrated += 1
+            if hydrated >= 12:
+                break
 
     def _input_summary(self, agent_name: str, tickets: List[SupportTicket], context: Dict[str, Any]) -> str:
         ids = ", ".join(ticket.ticket_id for ticket in tickets)
@@ -387,6 +480,8 @@ class AgentRunner:
             result = self._get_cached_customer_support_demo_run()
             if result is None:
                 result = self.run(RunRequest(selection_mode="all_high_priority", dataset="customer_support"))
+                result.metadata["demo_kind"] = "customer_support_curated"
+                self.logger.save_run(result.run_id, result.model_dump(mode="json"))
                 self.customer_support_demo_run_id = result.run_id
 
         tickets_by_id = {ticket.ticket_id: ticket for ticket in load_tickets("customer_support")}
@@ -417,6 +512,11 @@ class AgentRunner:
             if existing:
                 return existing
 
+        expected_ticket_ids = {
+            ticket.ticket_id
+            for ticket in load_tickets("customer_support")
+            if ticket.priority in {"high", "critical"}
+        }
         candidates = sorted(
             self.logger.store_dir.glob("run_*.json"),
             key=lambda path: path.stat().st_mtime,
@@ -431,11 +531,15 @@ class AgentRunner:
                 continue
             if metadata.get("llm_provider") != self.settings.llm_provider:
                 continue
+            if metadata.get("customer_query") is not None:
+                continue
             try:
                 result = RunResult(**payload)
             except (TypeError, ValueError):
                 continue
             if result.status != "completed" or len(result.trajectory) != 13:
+                continue
+            if set(result.selected_ticket_ids) != expected_ticket_ids:
                 continue
             self.runs[result.run_id] = result
             self.latest_run_id = result.run_id

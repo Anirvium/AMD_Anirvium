@@ -54,6 +54,8 @@ def test_ticket_matching_returns_curated_evidence() -> None:
 
     assert "POL-CS-PAY-002" in ids
     assert "PROC-CS-WDR-001" in ids
+    assert all(not record["id"].startswith("EVAL-") for record in matches)
+    assert all(record.get("layer") in {"policies", "procedures", "templates"} for record in matches)
 
 
 def test_retrieval_agent_adds_curated_kb_cards() -> None:

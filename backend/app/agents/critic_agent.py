@@ -27,7 +27,7 @@ class CriticEvaluatorAgent:
             if model_router
             else "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
         )
-        llm_review = self._llm_review(context)
+        llm_review = self._llm_review(context) if context.get("enable_auxiliary_llm_reviews", False) else None
         tools_used = ["deterministic_eval_rules", "failure_diagnosis_engine"]
         if llm_review:
             tools_used.append("llm_critic_review")
@@ -40,7 +40,7 @@ class CriticEvaluatorAgent:
             "evidence_ids": sorted({evidence_id for action in context.get("final_actions", []) for evidence_id in action.get("evidence_ids", [])}),
             "risk_flags": [item.category.upper() for item in diagnosis if item.severity in {"HIGH", "CRITICAL"}],
             "approval_state": ApprovalState.DRAFT_RECOMMENDATION.value,
-            "model_name": model_name,
+            "model_name": model_name if llm_review else "deterministic-trajectory-evaluator-v1",
             "confidence": 0.87,
         }
 
