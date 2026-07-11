@@ -98,6 +98,100 @@ def build_trajectory_property_graph(run: RunResult) -> Dict[str, Any]:
         )
         edges.append({"source": run_node_id, "target": action_node_id, "type": "PRODUCES_ACTION", "properties": {}})
 
+    if run.sarvagun:
+        sarvagun = run.sarvagun
+        conversation_node_id = f"conversation:{sarvagun.conversation.conversation_id}"
+        customer_node_id = f"customer:{sarvagun.customer_context.customer_id}"
+        transcript_node_id = f"transcript:{sarvagun.transcript.transcript_id}"
+        escalation_node_id = f"escalation:{sarvagun.escalation.escalation_id}"
+        nodes.extend(
+            [
+                {
+                    "id": conversation_node_id,
+                    "labels": ["Conversation", "SarvagunExecution"],
+                    "properties": {
+                        "conversation_id": sarvagun.conversation.conversation_id,
+                        "message_type": sarvagun.conversation.message_type,
+                        "execution_mode": sarvagun.execution_strategy.execution_mode,
+                        "resolution_stage": sarvagun.resolution_stage,
+                    },
+                },
+                {
+                    "id": customer_node_id,
+                    "labels": ["Customer"],
+                    "properties": {
+                        "customer_id": sarvagun.customer_context.customer_id,
+                        "plan": sarvagun.customer_context.plan,
+                        "region": sarvagun.customer_context.region,
+                    },
+                },
+                {
+                    "id": transcript_node_id,
+                    "labels": ["Transcript"],
+                    "properties": {
+                        "transcript_id": sarvagun.transcript.transcript_id,
+                        "resolution_status": sarvagun.transcript.resolution_status,
+                        "redaction_status": sarvagun.transcript.redaction_status,
+                    },
+                },
+                {
+                    "id": escalation_node_id,
+                    "labels": ["Escalation"],
+                    "properties": sarvagun.escalation.model_dump(),
+                },
+            ]
+        )
+        edges.extend(
+            [
+                {"source": run_node_id, "target": conversation_node_id, "type": "EXECUTES_CONVERSATION", "properties": {"system": "Sarvagun"}},
+                {"source": customer_node_id, "target": conversation_node_id, "type": "PARTICIPATES_IN", "properties": {}},
+                {"source": conversation_node_id, "target": transcript_node_id, "type": "GENERATES_TRANSCRIPT", "properties": {}},
+                {"source": conversation_node_id, "target": escalation_node_id, "type": "CREATES_ESCALATION", "properties": {}},
+            ]
+        )
+        for tool in sarvagun.tool_executions:
+            tool_run_node_id = f"tool_execution:{tool.tool_execution_id}"
+            nodes.append(
+                {
+                    "id": tool_run_node_id,
+                    "labels": ["ToolExecution"],
+                    "properties": {
+                        "tool_execution_id": tool.tool_execution_id,
+                        "tool_name": tool.tool_name,
+                        "operation": tool.operation,
+                        "status": tool.status,
+                        "simulated": tool.simulated,
+                        "audit_id": tool.audit_id,
+                    },
+                }
+            )
+            edges.append({"source": conversation_node_id, "target": tool_run_node_id, "type": "EXECUTES_TOOL", "properties": {}})
+        if sarvagun.incident.detected and sarvagun.incident.incident_id:
+            incident_node_id = f"incident:{sarvagun.incident.incident_id}"
+            nodes.append({"id": incident_node_id, "labels": ["IncidentCluster"], "properties": sarvagun.incident.model_dump()})
+            edges.append({"source": conversation_node_id, "target": incident_node_id, "type": "LINKED_TO_INCIDENT", "properties": {}})
+
+    if run.superturiya:
+        superturiya_node_id = f"superturiya:{run.run_id}"
+        nodes.append(
+            {
+                "id": superturiya_node_id,
+                "labels": ["SuperTuriya", "TrajectoryIntelligence"],
+                "properties": {
+                    "observed_system": run.superturiya.observed_system,
+                    "feedback_loop_status": run.superturiya.feedback_loop_status,
+                    "trace_count": run.superturiya.trace_count,
+                    "event_count": run.superturiya.event_count,
+                    "automatic_policy_mutation": run.superturiya.automatic_policy_mutation,
+                },
+            }
+        )
+        edges.append({"source": superturiya_node_id, "target": run_node_id, "type": "OBSERVES_AND_EVALUATES", "properties": {}})
+        for memory_id in run.superturiya.created_memory_ids:
+            memory_node_id = f"memory:{memory_id}"
+            nodes.append({"id": memory_node_id, "labels": ["IntelligenceMemory"], "properties": {"memory_id": memory_id}})
+            edges.append({"source": superturiya_node_id, "target": memory_node_id, "type": "CREATES_MEMORY", "properties": {}})
+
     return {
         "run_id": run.run_id,
         "graph_store": "local_property_graph",

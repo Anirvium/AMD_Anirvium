@@ -1,5 +1,7 @@
 import type {
   CustomerSupportDemoResponse,
+  ConversationTurnResponse,
+  ExecutionMode,
   KbLayerSummary,
   KbSearchResponse,
   MemoryStatus,
@@ -99,8 +101,8 @@ export async function fetchCustomerSupportTickets(): Promise<SupportTicket[]> {
 
 export async function runSupportAgent(selectedTicketIds?: string[], customerQuery?: string): Promise<RunResult> {
   const body = selectedTicketIds?.length
-    ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery }
-    : { selection_mode: "all_high_priority", dataset: "customer_support" };
+    ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery, execution_mode: "hybrid" }
+    : { selection_mode: "all_high_priority", dataset: "customer_support", execution_mode: "hybrid" };
 
   const job = await request<RunJobState>("/runs/async", {
     method: "POST",
@@ -114,11 +116,14 @@ export async function runSupportAgent(selectedTicketIds?: string[], customerQuer
 export async function runSupportAgentWithProgress(
   selectedTicketIds: string[] | undefined,
   customerQuery: string | undefined,
-  onProgress: (job: RunJobState) => void
+  onProgress: (job: RunJobState) => void,
+  executionMode: ExecutionMode = "hybrid",
+  conversationId?: string,
+  customerId?: string
 ): Promise<RunResult> {
   const body = selectedTicketIds?.length
-    ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery }
-    : { selection_mode: "all_high_priority", dataset: "customer_support", customer_query: customerQuery };
+    ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery, execution_mode: executionMode, conversation_id: conversationId, customer_id: customerId }
+    : { selection_mode: "all_high_priority", dataset: "customer_support", customer_query: customerQuery, execution_mode: executionMode, conversation_id: conversationId, customer_id: customerId };
 
   const job = await request<RunJobState>("/runs/async", {
     method: "POST",
@@ -128,6 +133,28 @@ export async function runSupportAgentWithProgress(
   persistActiveJob(job.job_id);
   onProgress(job);
   return pollRunJob(job.job_id, onProgress);
+}
+
+export async function processConversationTurn(
+  message: string,
+  conversationId?: string,
+  customerId?: string
+): Promise<ConversationTurnResponse> {
+  return request<ConversationTurnResponse>("/conversations/turn", {
+    method: "POST",
+    body: JSON.stringify({ message, conversation_id: conversationId, customer_id: customerId })
+  });
+}
+
+export async function submitSatisfactionFeedback(
+  runId: string,
+  explicitCsat: number,
+  explicitResolution: "yes" | "partially" | "no"
+): Promise<Record<string, unknown>> {
+  return request<Record<string, unknown>>("/cx/feedback", {
+    method: "POST",
+    body: JSON.stringify({ run_id: runId, explicit_csat: explicitCsat, explicit_resolution: explicitResolution })
+  });
 }
 
 export async function resumeActiveSupportRun(

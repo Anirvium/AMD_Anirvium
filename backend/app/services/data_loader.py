@@ -28,7 +28,13 @@ def load_customer_support_tickets() -> List[SupportTicket]:
 
 @lru_cache
 def load_customers() -> List[Dict[str, Any]]:
-    return _read_json("synthetic_customers.json")
+    enterprise_customers = _read_json("synthetic_customers.json")
+    return enterprise_customers + load_cx_context().get("customers", [])
+
+
+@lru_cache
+def load_cx_context() -> Dict[str, Any]:
+    return _read_json("synthetic_cx_context.json")
 
 
 @lru_cache

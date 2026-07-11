@@ -4,7 +4,7 @@ For the final detailed internal and pitch deck, see [FINAL_TEAM_PITCH_DECK.md](F
 
 ## 1. Title
 
-Anirvium AI: Trajectory Intelligence for Enterprise Support Agents.
+Anirvium AI: Sarvagun Customer Support × SuperTuriya Trajectory Intelligence.
 
 ## 2. Problem
 
@@ -12,7 +12,7 @@ AI support agents are entering high-stakes workflows, but teams lack observabili
 
 ## 3. Solution
 
-Anirvium AI records, evaluates, diagnoses, and optimizes every support-agent trajectory.
+Sarvagun executes the support task; SuperTuriya records, evaluates, diagnoses, remembers, and improves its trajectory.
 
 ## 4. Why Now
 
@@ -20,7 +20,7 @@ Enterprises are scaling AI agents faster than governance and QA systems. Agent f
 
 ## 5. Product Demo
 
-Show the support queue, run console, final actions, safe drafts, approval states, and evidence IDs.
+Show Sarvagun’s conversation and CX signals, audited tools, safe response gate, then SuperTuriya’s complete path and memory loop.
 
 ## 6. Technical Architecture
 

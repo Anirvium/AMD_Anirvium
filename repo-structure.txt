@@ -4,7 +4,7 @@ Anirvium AI Repository Structure
 Purpose
 -------
 This repository contains the complete hackathon prototype for Anirvium AI:
-a trajectory intelligence platform for enterprise support agents.
+Anirvium AI: Sarvagun customer-support execution with SuperTuriya trajectory intelligence.
 
 Top-Level Layout
 ----------------

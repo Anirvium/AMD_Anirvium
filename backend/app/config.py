@@ -30,9 +30,9 @@ class Settings(BaseSettings):
 
     vector_backend: str = "local"
     vector_base_url: str = "http://localhost:6333"
-    vector_kb_collection: str = "anirvium_kb"
-    vector_memory_collection: str = "anirvium_memory"
-    vector_trajectory_collection: str = "anirvium_trajectories"
+    vector_kb_collection: str = "anirvium_sarvagun_kb"
+    vector_memory_collection: str = "anirvium_superturiya_memory"
+    vector_trajectory_collection: str = "anirvium_superturiya_trajectories"
     vector_dimension: int = 64
 
     memory_backend: str = "local"

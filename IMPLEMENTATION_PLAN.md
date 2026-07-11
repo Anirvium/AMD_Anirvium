@@ -2,11 +2,11 @@
 
 ## Objective
 
-Build a hackathon-ready product prototype for AMD Developer Hackathon ACT II, Track 3: a trajectory intelligence platform for enterprise support agents that runs locally in mock mode and can be benchmarked against AMD Developer Cloud GPU-backed vLLM/ROCm inference.
+Build a hackathon-ready Anirvium AI prototype: Sarvagun governed customer-support execution aligned with SuperTuriya trajectory intelligence, runnable with synthetic connectors and benchmarked against AMD Developer Cloud GPU-backed vLLM/ROCm inference.
 
 ## Product Story
 
-Anirvium AI helps enterprise teams inspect, evaluate, diagnose, and improve AI support-agent decisions. The demo shows a high-priority support queue, a multi-agent workflow, full trace visibility, evidence grounding, policy checks, safe response drafts, approval states, failure diagnosis, optimization recommendations, and AMD benchmark instrumentation.
+Sarvagun handles conversations, CX context, evidence, policy, tools, escalation, and safe responses. SuperTuriya observes the stable 13-agent path, evaluates outcomes, diagnoses failures, stores trusted trajectory intelligence, and applies it before future governed plans.
 
 ## Phases
 
@@ -59,4 +59,3 @@ Anirvium AI helps enterprise teams inspect, evaluate, diagnose, and improve AI s
 - AMD folder includes reproducible commands and benchmark scripts.
 - Docs explain the product clearly enough for automated pre-screening.
 - Tests pass locally.
-

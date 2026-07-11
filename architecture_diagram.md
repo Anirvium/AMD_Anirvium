@@ -1,5 +1,9 @@
 # Anirvium AI Architecture Diagram
 
+Anirvium AI is the platform. **Sarvagun** is the complete customer-support execution system, and **SuperTuriya** is the core trajectory-intelligence and memory system that observes and improves it. The existing 13 agent names below remain unchanged.
+
+For the current CX lifecycle, hybrid execution modes, tool boundary, memory trust model, and honest demo limits, see [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md).
+
 ## System Architecture
 
 ```mermaid
@@ -27,7 +31,7 @@ flowchart LR
     Benchmarks["GET /benchmarks/amd"]
   end
 
-  subgraph Runner["Trajectory Intelligence Runtime"]
+  subgraph Runner["Anirvium Runtime"]
     AgentRunner["Agent Runner"]
     Logger["Trajectory Logger"]
     GraphDiscovery["Property Graph Discovery"]
@@ -38,7 +42,7 @@ flowchart LR
     ModelRouter["Model Router"]
   end
 
-  subgraph Agents["Multi-Agent Workflow"]
+  subgraph Agents["Sarvagun Execution + SuperTuriya Intelligence"]
     Planner["1. Planner Agent"]
     Visual["2. Attachment Evidence Agent"]
     Triage["3. Intake / Triage Agent"]

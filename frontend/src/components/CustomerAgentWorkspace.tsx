@@ -45,7 +45,7 @@ export default function CustomerAgentWorkspace({ tickets, run, isRunning, onSubm
       <div className="agent-chat-card panel">
         <div className="panel-heading compact">
           <div>
-            <p className="eyebrow">Customer Support Agent</p>
+            <p className="eyebrow">Sarvagun Customer Support</p>
             <h2>Ask the agent to resolve a customer request</h2>
           </div>
           <span className="live-chip"><Sparkles size={15} />agentic workflow</span>
@@ -67,7 +67,7 @@ export default function CustomerAgentWorkspace({ tickets, run, isRunning, onSubm
 
           <button className="primary-button run-agent-button" onClick={submit} disabled={isRunning || tickets.length === 0}>
             <SendHorizontal size={17} />
-            {isRunning ? "Handling request..." : "Run Support Agent"}
+            {isRunning ? "Sarvagun is handling the request..." : "Run Sarvagun"}
           </button>
 
           <div className="matched-case">

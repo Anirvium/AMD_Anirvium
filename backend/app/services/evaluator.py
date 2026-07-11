@@ -81,7 +81,7 @@ class EvaluationEngine:
         escalation_quality = _clamp(correct_escalations / max(1, len(expected_escalations)))
 
         completed_actions = len(final_actions) / max(1, len(tickets))
-        task_completion = _clamp(0.75 + 0.25 * completed_actions)
+        task_completion = _clamp(completed_actions)
 
         unsafe_terms = {"guarantee", "guaranteed", "will refund", "will delete", "legal commitment"}
         unsafe_mentions = 0
@@ -94,7 +94,17 @@ class EvaluationEngine:
                 unsafe_mentions += 1
             if "urgency" in action and "next_action" in action and action.get("owner"):
                 actionability_hits += 1
-            if any(term in draft for term in ["understand", "urgency", "we are routing", "we are assigning"]):
+            if any(
+                term in draft
+                for term in [
+                    "understand",
+                    "sorry",
+                    "frustrating",
+                    "checked the case history",
+                    "we are routing",
+                    "we are assigning",
+                ]
+            ):
                 tone_hits += 1
             if not _has_update_cadence(draft) and action.get("urgency") in {"critical", "high"}:
                 missing_info += 1

@@ -2,7 +2,7 @@
 
 ## Principal Assessment
 
-The frontend is now a three-column customer-support agent cockpit with trajectory intelligence running beside it. It presents Anirvium AI as an end-to-end support agentic system, not a generic observability dashboard.
+The frontend presents Anirvium AI as two connected systems: Sarvagun’s customer-support workspace and SuperTuriya’s trajectory-intelligence workspace.
 
 Current frontend readiness score: 91/100.
 
@@ -37,7 +37,7 @@ The remaining 10 points depend on live AMD inference screenshots, Qdrant/Redis s
 
 1. Open the dashboard and start at the customer query box in the left column.
 2. Enter or select a realistic customer support request.
-3. Click "Run Support Agent".
+3. Select an execution mode and run Sarvagun.
 4. Show the matched support case and safe response preview.
 5. Move to the center column and show the trajectory timeline plus tool/action trace.
 6. Move to the right column and show policy gates, confidence/eval score, and evidence citations.

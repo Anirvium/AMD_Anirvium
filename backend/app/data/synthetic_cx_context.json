@@ -1,0 +1,170 @@
+{
+  "customers": [
+    {
+      "customer_id": "CS-C001",
+      "customer_name": "Aisha Mehta",
+      "plan": "business",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "verified",
+      "crm_account_id": "CRM-CS-001"
+    },
+    {
+      "customer_id": "CS-C002",
+      "customer_name": "Priya Shah",
+      "plan": "pro",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "verified",
+      "crm_account_id": "CRM-CS-002"
+    },
+    {
+      "customer_id": "CS-C003",
+      "customer_name": "Rohan Iyer",
+      "plan": "business",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "review_pending",
+      "crm_account_id": "CRM-CS-003"
+    },
+    {
+      "customer_id": "CS-C004",
+      "customer_name": "Kavya Rao",
+      "plan": "pro",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "verified",
+      "crm_account_id": "CRM-CS-004"
+    },
+    {
+      "customer_id": "CS-C005",
+      "customer_name": "Arjun Sen",
+      "plan": "business",
+      "region": "IN",
+      "preferred_channel": "email",
+      "identity_status": "channel_unverified",
+      "crm_account_id": "CRM-CS-005"
+    },
+    {
+      "customer_id": "CS-C006",
+      "customer_name": "Meera Kapoor",
+      "plan": "enterprise",
+      "region": "IN",
+      "preferred_channel": "priority_chat",
+      "identity_status": "review_pending",
+      "crm_account_id": "CRM-CS-006"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-DEP-701",
+      "customer_id": "CS-C001",
+      "issue_type": "deposit_missing",
+      "status": "IN_PROGRESS",
+      "contacted_at": "2026-07-10T08:00:00Z",
+      "commitment_deadline": null,
+      "commitment_met": null
+    },
+    {
+      "case_id": "CASE-WDR-881",
+      "customer_id": "CS-C002",
+      "issue_type": "withdrawal_processed_missing",
+      "status": "ESCALATED",
+      "contacted_at": "2026-07-05T11:00:00Z",
+      "commitment_deadline": "2026-07-06T11:00:00Z",
+      "commitment_met": false,
+      "transaction_id": "WDR-2291"
+    },
+    {
+      "case_id": "CASE-WDR-912",
+      "customer_id": "CS-C002",
+      "issue_type": "withdrawal_processed_missing",
+      "status": "IN_PROGRESS",
+      "contacted_at": "2026-07-09T15:00:00Z",
+      "commitment_deadline": "2026-07-10T15:00:00Z",
+      "commitment_met": false,
+      "transaction_id": "WDR-2291"
+    },
+    {
+      "case_id": "CASE-KYC-441",
+      "customer_id": "CS-C003",
+      "issue_type": "verification_restriction",
+      "status": "WAITING_FOR_CUSTOMER",
+      "contacted_at": "2026-07-10T09:15:00Z",
+      "commitment_deadline": null,
+      "commitment_met": null
+    },
+    {
+      "case_id": "CASE-BONUS-118",
+      "customer_id": "CS-C004",
+      "issue_type": "bonus_dispute",
+      "status": "OPEN",
+      "contacted_at": "2026-07-08T12:00:00Z",
+      "commitment_deadline": null,
+      "commitment_met": null
+    },
+    {
+      "case_id": "CASE-ACCESS-332",
+      "customer_id": "CS-C005",
+      "issue_type": "cross_account_access",
+      "status": "OPEN",
+      "contacted_at": "2026-07-10T10:30:00Z",
+      "commitment_deadline": null,
+      "commitment_met": null
+    },
+    {
+      "case_id": "CASE-PRIORITY-901",
+      "customer_id": "CS-C006",
+      "issue_type": "priority_policy_exception",
+      "status": "OPEN",
+      "contacted_at": "2026-07-11T07:30:00Z",
+      "commitment_deadline": null,
+      "commitment_met": null
+    }
+  ],
+  "tool_results": {
+    "deposit_missing": {
+      "status": "payment_evidence_received",
+      "outcome_confirmed": false,
+      "reference": "DEP-7781",
+      "next_system_action": "financial_review"
+    },
+    "withdrawal_processed_missing": {
+      "status": "bank_trace_under_review",
+      "outcome_confirmed": false,
+      "reference": "WDR-2291",
+      "next_system_action": "senior_financial_review"
+    },
+    "verification_restriction": {
+      "status": "documents_pending_review",
+      "outcome_confirmed": false,
+      "reference": "KYC-441",
+      "next_system_action": "verification_review"
+    },
+    "bonus_dispute": {
+      "status": "eligibility_review_required",
+      "outcome_confirmed": false,
+      "reference": "BONUS-118",
+      "next_system_action": "bonus_policy_review"
+    },
+    "cross_account_access": {
+      "status": "registered_channel_required",
+      "outcome_confirmed": false,
+      "reference": "ACCESS-332",
+      "next_system_action": "identity_verification"
+    },
+    "priority_policy_exception": {
+      "status": "policy_exception_rejected_pending_review",
+      "outcome_confirmed": false,
+      "reference": "PRIORITY-901",
+      "next_system_action": "authorized_approver_review"
+    }
+  },
+  "incident_seed": [
+    {"customer_id": "INC-C101", "case_id": "INC-CASE-101", "issue_type": "withdrawal_processed_missing", "minutes_ago": 51},
+    {"customer_id": "INC-C102", "case_id": "INC-CASE-102", "issue_type": "withdrawal_processed_missing", "minutes_ago": 43},
+    {"customer_id": "INC-C103", "case_id": "INC-CASE-103", "issue_type": "withdrawal_processed_missing", "minutes_ago": 31},
+    {"customer_id": "INC-C104", "case_id": "INC-CASE-104", "issue_type": "withdrawal_processed_missing", "minutes_ago": 19},
+    {"customer_id": "INC-C105", "case_id": "INC-CASE-105", "issue_type": "withdrawal_processed_missing", "minutes_ago": 8}
+  ]
+}

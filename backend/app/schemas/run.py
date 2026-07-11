@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.cx import ExecutionMode, SarvagunExecution, SuperTuriyaIntelligence
 from app.schemas.evaluation import EvaluationReport
 from app.schemas.trajectory import TrajectoryGraph, TrajectorySpan
 from app.schemas.visual_evidence import VisualEvidenceCard
@@ -16,6 +17,11 @@ class RunRequest(BaseModel):
     selected_ticket_ids: Optional[List[str]] = None
     dataset: RunDataset = "enterprise_saas"
     customer_query: Optional[str] = None
+    execution_mode: ExecutionMode = "hybrid"
+    conversation_id: Optional[str] = None
+    customer_id: Optional[str] = None
+    explicit_csat: Optional[int] = Field(default=None, ge=1, le=5)
+    explicit_resolution: Optional[Literal["yes", "partially", "no"]] = None
 
 
 class FinalAction(BaseModel):
@@ -49,6 +55,8 @@ class RunResult(BaseModel):
     trajectory: List[TrajectorySpan]
     graph: TrajectoryGraph
     evaluation: EvaluationReport
+    sarvagun: Optional[SarvagunExecution] = None
+    superturiya: Optional[SuperTuriyaIntelligence] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 

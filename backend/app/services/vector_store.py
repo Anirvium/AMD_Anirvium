@@ -84,26 +84,31 @@ def upsert_vector_records(records: List[Dict[str, Any]], *, kind: str = "kb") ->
         for record in records
     ]
 
+    index = _LOCAL_INDEXES.setdefault(collection, [])
+    index[:] = [item for item in index if item["record"]["id"] not in {record["id"] for record in records}]
+    index.extend(points)
+
+    active_backend = settings.vector_backend
+    qdrant_error = None
     if settings.vector_backend == "qdrant":
-        _ensure_qdrant_collection(collection)
-        with httpx.Client(timeout=20) as client:
-            client.put(
-                f"{settings.vector_base_url.rstrip('/')}/collections/{collection}/points",
-                params={"wait": "true"},
-                json={"points": [{"id": p["id"], "vector": p["vector"], "payload": p["payload"]} for p in points]},
-            ).raise_for_status()
-    else:
-        index = _LOCAL_INDEXES.setdefault(collection, [])
-        existing_ids = {item["record"]["id"] for item in index}
-        index[:] = [item for item in index if item["record"]["id"] not in {record["id"] for record in records}]
-        index.extend(points)
-        existing_ids.update(record["id"] for record in records)
+        try:
+            _ensure_qdrant_collection(collection)
+            with httpx.Client(timeout=20) as client:
+                client.put(
+                    f"{settings.vector_base_url.rstrip('/')}/collections/{collection}/points",
+                    params={"wait": "true"},
+                    json={"points": [{"id": p["id"], "vector": p["vector"], "payload": p["payload"]} for p in points]},
+                ).raise_for_status()
+        except httpx.HTTPError as exc:
+            active_backend = "local_fallback"
+            qdrant_error = type(exc).__name__
 
     return {
-        "backend": settings.vector_backend,
+        "backend": active_backend,
         "collection": collection,
         "dimension": settings.vector_dimension,
         "indexed_records": len(points),
+        "qdrant_error": qdrant_error,
     }
 
 
@@ -182,7 +187,7 @@ def vector_search(query: str, *, limit: int = 8, kind: str = "kb") -> List[Dict[
                     records.append({**point["payload"], "vector_score": point.get("score", 0.0)})
             return records
         except httpx.HTTPError:
-            return []
+            pass
 
     if kind == "kb" and not _LOCAL_INDEXES.get(collection):
         reindex_kb_vectors()

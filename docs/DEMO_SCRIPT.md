@@ -4,32 +4,31 @@
 
 Enterprise AI support agents fail silently. They can miss SLA risk, cite weak evidence, mishandle refunds or security requests, and produce customer responses that are hard to audit.
 
-## 0:20-0:50 Demo Input
+## 0:20-0:50 Sarvagun Conversation
 
-Open Anirvium AI and load the high-risk SaaS support queue. Focus on `T-001`: ACME Corp, an enterprise customer, has a production outage, an SLA deadline under 60 minutes, angry sentiment, and churn risk.
+Open Anirvium AI. In Sarvagun, type `Hi` to show the backend conversation fast path. Then select `CS-002` and submit:
 
-Click `Load Winning Demo`.
+> This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.
 
 ## 0:50-1:30 Agent Workflow
 
-Walk through the multi-agent path:
+Walk through the Sarvagun path:
 
 Attachment evidence -> triage -> retrieval -> policy -> escalation -> response -> critic -> optimizer.
 
 Explain:
 
-- Attachment evidence extracts metadata-driven findings and `VIS-*` evidence IDs without loading an image/video model in the text-first path.
-- Triage detects SLA and sentiment risk.
+- Conversation context identifies Priya Shah and two prior unresolved cases.
+- Emotion analysis detects frustration and requires acknowledgement/apology.
+- Recontact detection finds a missed commitment and a third contact.
 - Retrieval attaches KB and policy evidence IDs.
-- Policy checker gates sensitive actions.
-- Escalation assigns route, owner, urgency, and next action.
-- Response drafter creates safe customer responses.
-- Critic scores the trajectory.
-- Optimizer recommends concrete workflow changes.
+- The audited mock status tool returns `bank_trace_under_review`.
+- The sixth unique matching customer triggers one incident cluster.
+- Policy, compliance, and SuperTuriya’s response gate keep the financial outcome approval-controlled.
 
-## 1:30-2:10 Trajectory Intelligence
+## 1:30-2:10 SuperTuriya Trajectory Intelligence
 
-Show the trajectory graph and trace viewer.
+Open SuperTuriya and show the trajectory rail, intelligence loop, and graph endpoint.
 
 Highlight:
 
@@ -41,6 +40,9 @@ Highlight:
 - risk flags
 - approval states
 - trajectory health score
+- recalled, applied, and created memory IDs
+- AI-predicted satisfaction clearly separated from explicit CSAT
+- transcript and audited mock connector writes
 
 ## 2:10-2:40 Failure And Optimization
 
@@ -57,10 +59,8 @@ Then show the concrete fix:
 
 ## 2:40-3:00 AMD And Vision
 
-Show the AMD benchmark panel. Say clearly:
-
-Real AMD benchmark is pending. The vLLM/ROCm runbook and benchmark scripts are ready, and real logs/screenshots will be attached after AMD Developer Cloud GPU access is available.
+Show the runtime card and say clearly that Qwen3-8B is served through vLLM/ROCm on the AMD notebook, while connector data remains synthetic.
 
 Close:
 
-Anirvium AI makes enterprise AI agents measurable, debuggable, and self-improving by turning every decision into a trajectory of evidence, reasoning, risk, and optimization.
+Sarvagun executes the support task. SuperTuriya observes, evaluates, remembers, and improves the next execution—without bypassing current policy.

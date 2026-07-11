@@ -1,12 +1,12 @@
 # Architecture
 
-Anirvium AI is a mock-first, AMD-ready trajectory intelligence stack for enterprise support-agent operations.
+Anirvium AI is the platform for **Sarvagun** governed customer-support execution and **SuperTuriya** trajectory intelligence. The hackathon path is synthetic-data-first and AMD-vLLM-ready.
 
-For renderable Mermaid diagrams, see [architecture_diagram.md](../architecture_diagram.md).
+For the current implementation contract see [SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](SARVAGUN_SUPERTURIYA_ARCHITECTURE.md); for additional Mermaid diagrams see [architecture_diagram.md](../architecture_diagram.md).
 
 ## Backend
 
-The FastAPI backend exposes tickets, runs, trajectories, evaluations, and AMD benchmark metadata. `AgentRunner` coordinates the workflow and writes structured JSON runs under `backend/app/data/runs`.
+The FastAPI backend exposes conversations, CX operations, tickets, asynchronous runs, trajectories, evaluations, memory/vector status, and AMD readiness. `AgentRunner` preserves the stable agent chain while the Sarvagun lifecycle adds CX context and SuperTuriya closes evaluation and memory.
 
 Agent order:
 
@@ -43,7 +43,7 @@ No real customer data is required or included.
 
 The default evaluator is deterministic. It measures task completion, evidence grounding, policy compliance, hallucination risk, escalation quality, actionability, missing information, customer tone, token efficiency, latency efficiency, and overall score.
 
-The diagnosis engine maps metrics and trajectory outputs into failure categories. The reflection agent reviews repeated mistakes, the learning extraction agent converts human handoffs and transcript/satisfaction placeholders into improvement artifacts, and the optimizer converts those findings into workflow changes such as mandatory evidence checklists, approval gates, owner requirements, escalation thresholds, and token-reduction handoffs.
+The diagnosis engine maps metrics and trajectory outputs into failure categories. The reflection agent reviews repeated mistakes, the learning extraction agent converts handoffs and real synthetic transcript/satisfaction records into improvement artifacts, and the optimizer converts those findings into workflow changes such as mandatory evidence checklists, approval gates, owner requirements, escalation thresholds, and token-reduction handoffs.
 
 ## Graph Discovery
 
@@ -52,7 +52,7 @@ The run API exports a property graph view of every trajectory:
 - `GET /runs/latest/trajectory/graph-discovery`
 - `GET /runs/{run_id}/trajectory/graph-discovery`
 
-This local graph export models runs, spans, tools, evidence, risk flags, diagnosis items, and final actions. Neo4j is optional for advanced discovery; the demo does not require a live Neo4j service.
+This local graph export models runs, spans, customers, conversations, tool executions, transcripts, incidents, escalations, SuperTuriya memory, evidence, risk flags, diagnoses, and final actions. Neo4j remains optional for advanced persistence and queries.
 
 ## LLM Provider
 

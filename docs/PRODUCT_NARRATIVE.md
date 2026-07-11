@@ -1,6 +1,6 @@
 # Product Narrative
 
-Anirvium AI makes enterprise AI agents measurable, debuggable, and self-improving by turning every decision into a trajectory of evidence, reasoning, risk, and optimization.
+Anirvium AI combines **Sarvagun**, the governed customer-support execution system, with **SuperTuriya**, the trajectory intelligence that makes every decision measurable, debuggable, safely remembered, and improvable.
 
 ## Category
 
@@ -8,7 +8,7 @@ Trajectory intelligence for enterprise AI agents.
 
 ## Positioning
 
-Anirvium AI is not a chatbot. It is the observability, evaluation, diagnosis, and optimization layer for enterprise support-agent workflows.
+Anirvium AI is not a generic chatbot. Sarvagun resolves customer-support work; SuperTuriya proves why it acted, evaluates the result, and improves the next governed plan.
 
 ## Core Belief
 
@@ -16,9 +16,8 @@ The next enterprise AI control plane will not be another conversational wrapper.
 
 ## Winning Demo Story
 
-An enterprise support manager asks Anirvium AI to analyze a high-risk support queue. The system runs a multi-agent workflow, identifies SLA and policy risk, drafts safe responses, evaluates the full trajectory, diagnoses weaknesses, and recommends concrete workflow improvements.
+A frustrated customer returns for the third time about a missing withdrawal. Sarvagun retrieves the synthetic case history, detects recontact, checks evidence and operational status, and safely escalates the sixth matching incident. SuperTuriya observes the path, gates response quality, diagnoses the run, and stores trusted intelligence for the next similar case.
 
 ## Repeated Narrative
 
-Anirvium AI shows why AI agents act, whether they are safe, and how to make them better.
-
+Sarvagun executes. SuperTuriya observes, evaluates, remembers, and improves it.

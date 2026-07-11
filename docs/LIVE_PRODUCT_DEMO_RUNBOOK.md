@@ -65,14 +65,20 @@ The Nginx container sends `/api/*` to the backend container. Judges do not need 
 
 ## AMD Demonstration Strategy
 
-The private AMD notebook should not be the only frontend host. Notebook `localhost` is private to the notebook machine.
+The complete judged product can run on the AMD Jupyter VM. The browser must use the AMD platform’s port-proxy URL; a Mac browser cannot open the VM’s raw `localhost`.
 
-Use two proof paths:
+The required request path is:
 
-1. **Live product UX:** local or hosted frontend plus deterministic backend. This must be stable and fast.
-2. **AMD proof:** a short recorded/live segment showing the AMD device, vLLM/ROCm server, model endpoint, and benchmark output.
+```text
+Safari on Mac
+  → AMD port-proxy path /spaces/hf-415-81f7a8dd/8501/
+  → production frontend gateway on VM port 8501
+  → same-origin /api proxy
+  → FastAPI on VM port 8000
+  → vLLM/OpenAI-compatible Qwen on VM port 8001
+```
 
-If a secure tunnel or public deployment is available, the backend can use the AMD endpoint. Otherwise, do not risk the main product demo on notebook networking. Clearly disclose that the UI demo is deterministic and the separate benchmark proves the AMD inference path.
+The local Mac remains the editing, review, and Git push machine. GitHub is the synchronization boundary; the AMD VM pulls the tested commit and runs it.
 
 ## Run The Complete Product On The AMD VM
 
@@ -99,6 +105,70 @@ curl -I http://localhost:8501
 ```
 
 The health payload must report `"mode":"openai_compatible"` for the real AMD path.
+
+Open this browser route for the current AMD instance:
+
+```text
+https://radeon-global.anruicloud.com/instances/hf-415-81f7a8dd/spaces/hf-415-81f7a8dd/8501/
+```
+
+If the instance ID changes, replace both occurrences of `hf-415-81f7a8dd`. Do not open `http://localhost:8501` on the Mac.
+
+## Submission-Day AMD Restart
+
+After the final commit is pushed from the Mac, use three AMD terminals in addition to the already-running vLLM terminal.
+
+### AMD terminal 2 — synchronize and run FastAPI
+
+```bash
+cd /workspace/AMD_Anirvium
+git status --short
+git -c http.sslVerify=false fetch origin main
+git merge --ff-only FETCH_HEAD
+git log -1 --oneline
+
+cd /workspace/AMD_Anirvium/backend
+source .venv/bin/activate
+export LLM_BASE_URL=http://localhost:8001/v1
+export LLM_API_KEY=dummy
+export LLM_MODEL=anirvium-text
+export LLM_PROVIDER=openai_compatible
+export AMD_RUNTIME_PROFILE=text_48gb
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --access-log --log-level info 2>&1 | tee /workspace/anirvium_backend.log
+```
+
+Use `http.sslVerify=false` only on this one fetch because the observed AMD image lacks the proxy CA chain. Do not save it as a global Git setting.
+
+### AMD terminal 3 — build and run the production frontend
+
+```bash
+cd /workspace/AMD_Anirvium/frontend
+hash -r
+node --version
+npm --version
+export FRONTEND_PORT=8501
+export FRONTEND_HOST=0.0.0.0
+export BACKEND_BASE_URL=http://127.0.0.1:8000
+export FRONTEND_BASE_PATH=/spaces/hf-415-81f7a8dd/8501
+npm ci
+npm run serve:amd 2>&1 | tee /workspace/anirvium_frontend.log
+```
+
+Node must be 20 or newer. The observed AMD VM now has Node `v20.20.2`, which is sufficient.
+
+### AMD terminal 4 — verify the complete chain
+
+```bash
+curl -sS http://localhost:8001/v1/models
+curl -sS http://localhost:8000/health
+curl -sS http://localhost:8501/api/health
+curl -sS 'http://localhost:8501/api/tickets?dataset=customer_support'
+curl -sS -X POST http://localhost:8501/api/conversations/turn \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"Hi","customer_id":"CS-C002"}'
+```
+
+Only after all five checks succeed should the browser be opened. In Safari, use `Option + Command + R` to reload without the normal page cache after a new frontend build.
 
 ## Collect Correlated Logs On AMD
 
@@ -130,18 +200,20 @@ tail -n 200 /workspace/anirvium_frontend.log
 tail -n 200 /workspace/anirvium_backend.log
 ```
 
-The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job exposes the actual current agent, current step, total steps, and progress percentage. The browser persists the active job ID and resumes it after refresh. Transient `429`, `502`, `503`, and `504` polling responses are retried while the server-side job continues. Completed spans and their full outputs arrive with the final result.
+The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job exposes the actual current agent, current step, total steps, and progress percentage. The browser persists the active job ID and resumes it after refresh. Transient `429`, `502`, `503`, and `504` polling responses are retried while the server-side job continues. Completed Sarvagun execution, SuperTuriya intelligence, spans, CX signals, audited tools, and memory IDs arrive with the final result.
 
 ## Judge Demo Sequence
 
 1. Open the dashboard and verify the sidebar says **AMD model ready**.
-2. Select one high-risk payment/security case or click a prompt chip.
-3. Submit the customer request.
-4. Show the trajectory steps and tool/evidence trace.
-5. Show the policy gate and human handoff.
-6. Show the safe, cited final response.
-7. Show the scorecard, diagnosed failure, and optimizer recommendation.
-8. Switch to the AMD evidence slide/clip and show the real vLLM/ROCm run.
+2. Type `Hi` and show Sarvagun’s fast backend conversation response.
+3. Select `CS-002`, choose **Hybrid governed**, and submit the third-contact withdrawal prompt from the demo script.
+4. Show emotion, recontact, incident, escalation, and AI-predicted satisfaction.
+5. Expand provenance to show evidence, audited mock tool executions, assurance, and transcript.
+6. Show the safe response and its human-review state; do not describe an approval-required draft as sent.
+7. Follow the 13 real server-side steps: the first nine are Sarvagun, the final four are SuperTuriya.
+8. Open SuperTuriya and show events observed, memories recalled/applied/created, scorecard, diagnosis, and improvement recommendation.
+9. Submit explicit CSAT and point out that it remains separate from predicted satisfaction.
+10. Show the vLLM terminal’s real `/v1/chat/completions` activity and AMD model identity.
 
 Keep a prerecorded screen capture of the same sequence as the fallback.
 

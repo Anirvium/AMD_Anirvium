@@ -2,7 +2,7 @@
   {
     "ticket_id": "CS-001",
     "customer_id": "CS-C001",
-    "customer_name": "Customer A",
+    "customer_name": "Aisha Mehta",
     "plan": "business",
     "issue_type": "deposit_missing",
     "priority": "high",
@@ -17,7 +17,7 @@
   {
     "ticket_id": "CS-002",
     "customer_id": "CS-C002",
-    "customer_name": "Customer B",
+    "customer_name": "Priya Shah",
     "plan": "pro",
     "issue_type": "withdrawal_processed_missing",
     "priority": "high",
@@ -32,7 +32,7 @@
   {
     "ticket_id": "CS-003",
     "customer_id": "CS-C003",
-    "customer_name": "Customer C",
+    "customer_name": "Rohan Iyer",
     "plan": "business",
     "issue_type": "verification_restriction",
     "priority": "critical",
@@ -47,7 +47,7 @@
   {
     "ticket_id": "CS-004",
     "customer_id": "CS-C004",
-    "customer_name": "Customer D",
+    "customer_name": "Kavya Rao",
     "plan": "pro",
     "issue_type": "bonus_dispute",
     "priority": "medium",
@@ -62,7 +62,7 @@
   {
     "ticket_id": "CS-005",
     "customer_id": "CS-C005",
-    "customer_name": "Customer E",
+    "customer_name": "Arjun Sen",
     "plan": "business",
     "issue_type": "cross_account_access",
     "priority": "high",
@@ -77,7 +77,7 @@
   {
     "ticket_id": "CS-006",
     "customer_id": "CS-C006",
-    "customer_name": "Customer F",
+    "customer_name": "Meera Kapoor",
     "plan": "enterprise",
     "issue_type": "priority_policy_exception",
     "priority": "critical",

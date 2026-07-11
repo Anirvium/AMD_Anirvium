@@ -2,7 +2,9 @@
 
 ## Product Scope
 
-Anirvium AI is a customer-support agentic system plus a trajectory intelligence layer. The support agent handles customer requests end-to-end, while the trajectory layer observes every step, checks policy and compliance, diagnoses failures, extracts learning signals, and recommends improvements.
+Anirvium AI is the umbrella platform. **Sarvagun** handles customer-support execution end to end. **SuperTuriya** is its core trajectory-intelligence system: it observes every step, checks quality and policy outcomes, discovers the execution path, diagnoses failures, extracts trusted learning, and influences future Sarvagun plans.
+
+The current implementation contract is maintained in [SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](SARVAGUN_SUPERTURIYA_ARCHITECTURE.md).
 
 The product should not expose private model reasoning. It should expose auditable reasoning summaries:
 
@@ -19,7 +21,7 @@ The product should not expose private model reasoning. It should expose auditabl
 
 ## Hybrid Control Path
 
-Anirvium uses both plan-driven and AI-driven control.
+Sarvagun exposes policy-driven, plan-driven, bounded autonomous, and hybrid control. All modes retain deterministic policy, compliance, approval, tool-allowlist, and human-handoff gates.
 
 Plan-driven path:
 
@@ -123,4 +125,4 @@ RETURN s.step_id, s.agent_name, collect(e.evidence_id)
 9. Learning extraction creates new KB/eval/memory artifacts.
 10. Optimizer recommends changes to prompts, policy gates, retrieval, or handoff thresholds.
 
-This is the core Anirvium thesis: support agents improve because their trajectories are observable, queryable, scored, and fed back into the system.
+This is the core Anirvium thesis: Sarvagun improves because SuperTuriya makes its trajectories observable, queryable, scored, safely remembered, and available before the next plan.

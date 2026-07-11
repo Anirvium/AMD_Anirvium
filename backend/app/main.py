@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.requests import Request
 
 from app.api.routes_demo import router as demo_router
+from app.api.routes_cx import router as cx_router
 from app.api.routes_evaluations import router as evaluations_router
 from app.api.routes_kb import router as kb_router
 from app.api.routes_memory import router as memory_router
@@ -21,7 +22,7 @@ logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(
     title="Anirvium AI API",
-    description="Trajectory intelligence APIs for enterprise support-agent workflows.",
+    description="Anirvium AI APIs for Sarvagun customer-support execution and SuperTuriya trajectory intelligence.",
     version="0.1.0",
 )
 
@@ -72,6 +73,7 @@ def health() -> dict:
         "service": "anirvium-ai",
         "mode": settings.llm_provider,
         "synthetic_data_only": True,
+        "systems": {"execution": "Sarvagun", "intelligence": "SuperTuriya"},
     }
 
 
@@ -85,6 +87,7 @@ def readiness() -> dict:
             "provider": settings.llm_provider,
             "model_id": settings.llm_model,
             "runtime": "deterministic_local",
+            "systems": {"execution": "Sarvagun", "intelligence": "SuperTuriya"},
         }
     try:
         response = httpx.get(f"{settings.llm_base_url.rstrip('/')}/models", timeout=3)
@@ -102,6 +105,7 @@ def readiness() -> dict:
         "model_id": settings.llm_model,
         "available_models": model_ids,
         "runtime": settings.amd_backend_name,
+        "systems": {"execution": "Sarvagun", "intelligence": "SuperTuriya"},
     }
 
 
@@ -111,3 +115,4 @@ app.include_router(runs_router)
 app.include_router(evaluations_router)
 app.include_router(kb_router)
 app.include_router(memory_router)
+app.include_router(cx_router)

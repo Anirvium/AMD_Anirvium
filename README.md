@@ -1,22 +1,23 @@
 # Anirvium AI
 
-Trajectory Intelligence for Enterprise Support Agents.
+Sarvagun customer-support execution, continuously improved by SuperTuriya trajectory intelligence.
 
-Anirvium AI combines a customer-support agent with a trajectory-intelligence layer. The support agent resolves customer requests with governed evidence and policy gates. The intelligence layer observes every step, evaluates failures, extracts lessons, stores trajectories, and recalls relevant prior lessons for future drafting.
+Anirvium AI contains two connected systems. **Sarvagun** is the complete governed customer-support agentic system. **SuperTuriya** is its trajectory-intelligence heart: it observes every step, evaluates failures and successes, discovers execution paths, stores trusted intelligence, and influences future Sarvagun plans without mutating safety policy.
 
 The demo uses synthetic enterprise support data only.
 
 ## 60-Second Judge Summary
 
-Anirvium AI is a governed agentic support platform. It routes a free-form customer message to the correct support domain, retrieves policy/procedure/template evidence, drafts a safe response on AMD vLLM, and captures a 13-step trajectory. It then scores, diagnoses, recommends, stores, and recalls trajectory lessons. The live demo uses synthetic payment, verification, account-access, bonus, and priority-support cases.
+Sarvagun routes a free-form customer message, reads synthetic customer/case history, detects emotion and recontact, retrieves governed evidence, executes audited mock enterprise tools, applies deterministic policy/escalation rules, and drafts a safe response on AMD vLLM. SuperTuriya captures the 13-step trajectory, applies a post-compliance response gate, scores and diagnoses the run, stores trusted memory, and recalls it before future planning.
 
 What to inspect first:
 
 1. [JUDGES_READ_THIS_FIRST.md](JUDGES_READ_THIS_FIRST.md)
-2. The live chat workspace and its **Trajectory intelligence** tab
+2. The live **Sarvagun** workspace and **SuperTuriya** intelligence tab
 3. `POST /runs/async` followed by `GET /runs/jobs/{job_id}`
 4. [architecture_diagram.md](architecture_diagram.md)
 5. [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md)
+6. [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md)
 
 Fast API proof path:
 
@@ -57,7 +58,7 @@ Anirvium AI turns agent behavior into measurable infrastructure.
 
 ## Architecture
 
-See [repo-structure.txt](repo-structure.txt) for the repository map and [architecture_diagram.md](architecture_diagram.md) for renderable Mermaid diagrams.
+See [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md) for the current implementation contract, [repo-structure.txt](repo-structure.txt) for the repository map, and [architecture_diagram.md](architecture_diagram.md) for renderable diagrams.
 
 ```mermaid
 flowchart LR
@@ -89,6 +90,12 @@ flowchart LR
 
 ## Features
 
+- Sarvagun conversation manager for greetings, support queries, complaints, follow-ups, escalation requests, confirmations, and conversation endings.
+- Governed `policy_driven`, `plan_driven`, `autonomous`, and `hybrid` execution modes with a bounded two-iteration autonomous trace.
+- Emotion/frustration analysis, recontact detection, deterministic escalation state, and a sixth-unique-customer emerging-incident demo.
+- Audited mock enterprise connector calls with authorization, idempotency, timeout, status, before/after state, and simulation labels.
+- SuperTuriya post-compliance response quality gate, CX rubric, explicit-versus-predicted satisfaction separation, provenance, and transcript generation.
+- Redis operational memory and trusted vector trajectory memory with explicit local fallbacks and no automatic policy mutation.
 - Multi-agent support queue analysis.
 - Plan-driven Planner Agent with evidence contracts, stop conditions, and public reasoning summaries.
 - Attachment evidence extraction for images, screenshots, documents, logs, and metadata without loading an image/video model in the text-first GPU path.
@@ -183,6 +190,8 @@ Key endpoints:
 
 - `GET /health`
 - `GET /health/ready`
+- `POST /conversations/turn`
+- `GET /conversations/{conversation_id}`
 - `GET /tickets`
 - `GET /demo/winning-run`
 - `POST /runs`
@@ -200,6 +209,9 @@ Key endpoints:
 - `GET /kb/search?q=withdrawal%20processed`
 - `GET /kb/vector/status`
 - `POST /kb/vector/reindex`
+- `GET /cx/operations`
+- `GET /cx/transcripts/{run_id}`
+- `POST /cx/feedback`
 
 ## Mock Mode
 

@@ -41,6 +41,13 @@ def search_long_term(q: str = Query(..., min_length=2), limit: int = Query(8, ge
 def create_long_term_memory(payload: dict) -> dict:
     memory_id = str(payload.get("id") or payload.get("memory_id") or "LTM-manual")
     text = str(payload.get("text") or payload.get("content") or "")
-    metadata = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
+    supplied_metadata = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
+    # Public/manual memories must never be promoted into the trusted
+    # SuperTuriya recall path merely by supplying privileged metadata.
+    metadata = {
+        **supplied_metadata,
+        "memory_type": "manual_untrusted",
+        "trust_scope": "untrusted_external_memory",
+    }
     record = add_long_term_memory(memory_id, text, metadata=metadata)
     return {"record": record}

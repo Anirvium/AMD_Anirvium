@@ -2,11 +2,11 @@
 
 ## Current Product Thesis
 
-Anirvium AI is a trajectory intelligence layer for autonomous customer-support agent systems. It is not positioned as a generic chatbot. The product shows how a support agent receives a customer request, plans the work, retrieves evidence, applies policy, drafts a safe response, escalates when confidence or approval state requires it, and then feeds the completed trajectory into evaluation, diagnosis, reflection, learning extraction, and optimizer recommendations.
+Anirvium AI contains **Sarvagun**, the complete governed customer-support agentic system, and **SuperTuriya**, its core trajectory-intelligence and memory loop. Sarvagun executes; SuperTuriya observes, evaluates, discovers, remembers, and improves future governed plans.
 
 ## What Has Been Built
 
-### Customer Support Agent System
+### Sarvagun Customer-Support System
 
 - Synthetic customer-support datasets for general enterprise support and customer-support workflow cases.
 - Ticket selection by queue mode or selected ticket IDs.
@@ -31,7 +31,7 @@ The backend executes a 13-step support-agent workflow:
 12. Learning Extraction Agent
 13. Optimizer Agent
 
-### Trajectory Intelligence
+### SuperTuriya Trajectory Intelligence
 
 - Every step emits a structured trajectory span.
 - Spans include agent name, input/output summaries, evidence IDs, tool calls, latency, token estimates, confidence, risk flags, approval states, and public reasoning summaries.

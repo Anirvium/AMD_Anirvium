@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.schemas.run import RunJobResponse, RunRequest, RunResult
 from app.schemas.trajectory import TrajectoryResponse
+from app.services.agent_runner import InvalidRunSelectionError
 from app.services.graph_discovery import build_trajectory_property_graph
 from app.services.runtime import get_agent_runner, get_run_job_manager
 
@@ -12,7 +13,10 @@ router = APIRouter(tags=["runs"])
 @router.post("/runs", response_model=RunResult)
 def create_run(request: RunRequest) -> RunResult:
     runner = get_agent_runner()
-    result = runner.run(request)
+    try:
+        result = runner.run(request)
+    except InvalidRunSelectionError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     return result
 
 

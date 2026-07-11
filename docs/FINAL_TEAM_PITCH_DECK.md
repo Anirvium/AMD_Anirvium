@@ -5,7 +5,7 @@ Use this as the source deck for team alignment, demo narration, and conversion i
 ## Slide 1: Title
 
 **Anirvium AI**  
-Trajectory Intelligence for Enterprise Support Agents
+Sarvagun Customer Support × SuperTuriya Trajectory Intelligence
 
 **On-slide copy**
 
@@ -16,7 +16,7 @@ Trajectory Intelligence for Enterprise Support Agents
 
 **Speaker notes**
 
-Anirvium AI is not another support chatbot. It is the control layer that makes enterprise AI support agents measurable, debuggable, and self-improving.
+Anirvium AI is not another support chatbot. Sarvagun executes governed customer-support work; SuperTuriya makes its complete trajectory measurable, debuggable, safely remembered, and improvable.
 
 **Visual suggestion**
 
@@ -27,7 +27,7 @@ Dashboard screenshot with trajectory graph, health score, and `T-001` enterprise
 ## Slide 2: One-Sentence Mission
 
 **Mission**  
-Anirvium AI makes enterprise AI support agents observable, auditable, and continuously improvable by turning every agent decision into an evidence-backed trajectory.
+Sarvagun executes; SuperTuriya observes, evaluates, remembers, and improves the next governed execution.
 
 **Speaker notes**
 

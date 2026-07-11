@@ -2,7 +2,7 @@
 
 ## What Anirvium AI Is
 
-Anirvium AI has two connected products: a governed customer-support agent and a trajectory-intelligence layer. The first resolves free-form support requests. The second observes, evaluates, diagnoses, stores, and recalls the resulting execution trajectories.
+Anirvium AI has two connected systems. **Sarvagun** is the governed customer-support agentic system. **SuperTuriya** is its trajectory-intelligence heart: it observes, traces, evaluates, diagnoses, stores, recalls, and applies trusted execution intelligence to future Sarvagun plans.
 
 ## Why It Matters
 
@@ -10,7 +10,7 @@ Enterprise AI agents can fail silently. A support agent may miss an SLA escalati
 
 ## Live Demo Scenario
 
-Submit a synthetic payment or verification request. The query is resolved to the correct domain before planning; the support agent retrieves governed evidence, applies policy gates, drafts a response, and exposes the actual 13-step server-side execution progress.
+Start with “Hi,” then submit the synthetic `CS-002` withdrawal complaint. Sarvagun identifies Priya Shah, detects frustration and third-contact recontact, checks the mock case and payment status, retrieves governed evidence, and triggers the sixth-unique-customer incident rule. SuperTuriya observes the complete execution and closes the memory loop.
 
 The workflow shows:
 
@@ -21,6 +21,10 @@ The workflow shows:
 - Safe customer response drafted.
 - Approval state used for sensitive cases.
 - Trajectory evaluated.
+- Audited mock tool executions and response provenance shown.
+- Explicit CSAT kept separate from AI-predicted satisfaction.
+- Transcript generated and attached through the mock connector.
+- Trusted trajectory intelligence stored for the next similar plan.
 - Failure diagnosed.
 - Concrete workflow optimization recommended.
 
@@ -76,7 +80,9 @@ curl -X POST http://localhost:8000/runs/async \
   -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My account is restricted for KYC. Unblock it immediately."}'
 ```
 
-Poll the returned job ID at `GET /runs/jobs/{job_id}`. The resolved case must be `CS-003`, the owner must be the Verification review queue, and answer evidence must not contain `EVAL-*` records.
+Poll the returned job ID at `GET /runs/jobs/{job_id}`. The verification scenario resolves to `CS-003`, routes to the Verification review queue, and excludes `EVAL-*` records from answer evidence. For the full CX scenario use `CS-002` and `execution_mode=hybrid`.
+
+The full implementation and its honest demo boundaries are documented in [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md).
 
 ## Inspect Trajectory JSON
 

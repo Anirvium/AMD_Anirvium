@@ -158,7 +158,165 @@ export interface RunResult {
     edges: TrajectoryGraphEdge[];
   };
   evaluation: EvaluationReport;
+  sarvagun?: SarvagunExecution | null;
+  superturiya?: SuperTuriyaIntelligence | null;
   metadata: Record<string, unknown>;
+}
+
+export type ExecutionMode = "policy_driven" | "plan_driven" | "autonomous" | "hybrid";
+
+export interface ConversationTurn {
+  turn_id: string;
+  role: "customer" | "agent" | "system";
+  content: string;
+  created_at: string;
+  delivery_status: string;
+}
+
+export interface ConversationTurnResponse {
+  signal: {
+    conversation_id: string;
+    message_type: string;
+    requires_agent_run: boolean;
+    is_follow_up: boolean;
+    confidence: number;
+    response: string | null;
+  };
+  customer: Record<string, unknown> | null;
+  turns: ConversationTurn[];
+}
+
+export interface ToolExecutionRecord {
+  tool_execution_id: string;
+  tool_name: string;
+  operation: string;
+  access_type: "read" | "write";
+  status: string;
+  authorization: string;
+  audit_id: string;
+  latency_ms: number;
+  simulated: boolean;
+  result: Record<string, unknown>;
+}
+
+export interface SarvagunExecution {
+  system_name: "Sarvagun";
+  platform: "Anirvium AI";
+  conversation: ConversationTurnResponse["signal"];
+  execution_strategy: {
+    execution_mode: ExecutionMode;
+    decision_authority: string;
+    autonomous_scope: string[];
+    selected_tools: string[];
+    stop_conditions: string[];
+    recalled_intelligence_ids: string[];
+    memory_influenced_decisions: string[];
+    autonomous_decisions: Array<Record<string, unknown>>;
+    termination_reason: string;
+  };
+  customer_context: {
+    customer_id: string;
+    customer_name: string;
+    plan: string;
+    region: string;
+    open_case_ids: string[];
+    interaction_count: number;
+  };
+  emotion: {
+    primary_emotion: string;
+    intensity: number;
+    irritation_detected: boolean;
+    requires_acknowledgement: boolean;
+    escalation_risk: number;
+    signals: string[];
+  };
+  recontact: {
+    recontact_detected: boolean;
+    related_cases: string[];
+    contacts_last_7_days: number;
+    previous_commitment_missed: boolean;
+    recommended_action: string;
+  };
+  tool_executions: ToolExecutionRecord[];
+  assurances: Array<{
+    assurance_type: string;
+    assurance_text: string;
+    supported_by: string[];
+    commitment_owner: string | null;
+  }>;
+  escalation: {
+    reason: string;
+    severity: string;
+    destination: string;
+    sla_minutes: number;
+    status: string;
+  };
+  incident: {
+    incident_id: string | null;
+    unique_customers: number;
+    window_minutes: number;
+    detected: boolean;
+    severity: string;
+    status: string;
+    recommended_action: string;
+  };
+  satisfaction: {
+    predicted_satisfaction: number;
+    predicted_label: string;
+    explicit_csat: number | null;
+    explicit_resolution: string | null;
+    resolution_status: string;
+    customer_effort_score: number;
+    dissatisfaction_reasons: string[];
+    rubric: Record<string, number>;
+  };
+  response_quality_gate: {
+    decision: "approved" | "rewritten" | "human_review_required";
+    passed: boolean;
+    checks: Record<string, boolean>;
+    score: number;
+    original_length: number;
+    final_length: number;
+    rewrite_applied: boolean;
+    blocking_reasons: string[];
+  };
+  provenance: Array<{
+    response_id: string;
+    sources: Array<{ source_id: string; title: string; version: string; category: string }>;
+    tool_executions: ToolExecutionRecord[];
+    answer_confidence: number;
+    customer_view: string;
+    auditor_view: string;
+  }>;
+  transcript: {
+    transcript_id: string;
+    conversation_id: string;
+    turns: ConversationTurn[];
+    detected_issue: string;
+    resolution_status: string;
+    redaction_status: string;
+  };
+  resolution_stage: string;
+}
+
+export interface SuperTuriyaIntelligence {
+  system_name: "SuperTuriya";
+  observed_system: "Sarvagun";
+  role: string;
+  lifecycle: string[];
+  trace_count: number;
+  event_count: number;
+  events: Array<{ event_id: string; event_type: string; timestamp: string; actor: string }>;
+  discovered_path: string[];
+  successes: string[];
+  failures: string[];
+  intelligence: string[];
+  improvement_recommendation_ids: string[];
+  recalled_memory_ids: string[];
+  applied_memory_ids: string[];
+  created_memory_ids: string[];
+  feedback_loop_status: string;
+  automatic_policy_mutation: boolean;
 }
 
 export interface AmdBenchmark {

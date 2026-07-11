@@ -6,7 +6,7 @@ Anirvium AI
 
 ## One-Sentence Mission
 
-Anirvium AI makes enterprise AI support agents observable, auditable, and continuously improvable by turning every agent decision into an evidence-backed trajectory.
+Anirvium AI combines Sarvagun, a governed customer-support agentic system, with SuperTuriya, the trajectory intelligence that makes every execution observable, auditable, and continuously improvable.
 
 ## Problem
 
@@ -14,7 +14,7 @@ Enterprise AI support agents fail silently. Teams often cannot see why an agent 
 
 ## Solution
 
-Anirvium AI runs and evaluates multi-agent support workflows with structured trajectory logging, evidence grounding, policy checks, approval states, failure diagnosis, and optimization recommendations.
+Sarvagun runs governed support workflows with conversation context, evidence, policy, CX signals, and audited tools. SuperTuriya observes and evaluates those trajectories, diagnoses failures, stores trusted intelligence, and applies it before future plans.
 
 ## Why Now
 
@@ -22,13 +22,15 @@ Companies are deploying AI agents into SLA-sensitive, refund-sensitive, and secu
 
 ## Demo Scenario
 
-Analyze a synthetic high-risk SaaS support queue centered on `T-001`, an enterprise production outage with an SLA deadline under 60 minutes and angry customer sentiment.
+Run synthetic case `CS-002`: Priya Shah’s third unresolved withdrawal contact becomes the sixth matching unique customer, triggering deterministic recontact and incident escalation while SuperTuriya closes the trajectory-memory loop.
 
 ## Technical Architecture
 
 - FastAPI backend.
 - React/Vite dashboard.
-- Deterministic seven-agent workflow.
+- Stable 13-agent Sarvagun/SuperTuriya workflow.
+- Governed policy, plan, autonomous, and hybrid execution modes.
+- Redis operational memory and vector trajectory memory with trusted-recall controls.
 - Pydantic schemas.
 - Synthetic support data.
 - Structured trajectory logger.

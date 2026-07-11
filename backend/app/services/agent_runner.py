@@ -30,7 +30,12 @@ from app.services.llm_client import build_llm_client
 from app.services.intent_router import resolve_customer_support_intent
 from app.services.memory import add_mid_term_summary, add_short_term_memory, index_trajectory_memory, search_long_term_memory
 from app.services.model_router import build_model_router
+from app.services.sarvagun_lifecycle import sarvagun_lifecycle
 from app.services.trajectory_logger import TrajectoryLogger
+
+
+class InvalidRunSelectionError(ValueError):
+    """Raised when a request cannot resolve to any runnable support case."""
 
 
 class AgentRunner:
@@ -54,9 +59,16 @@ class AgentRunner:
     ) -> RunResult:
         run_id = f"run_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         selected_tickets = self._select_tickets(request)
+        if not selected_tickets:
+            raise InvalidRunSelectionError("No valid support tickets matched the requested selection")
+        if request.customer_id and any(ticket.customer_id != request.customer_id for ticket in selected_tickets):
+            raise InvalidRunSelectionError(
+                "The requested customer_id does not match the selected support case"
+            )
         intent = resolve_customer_support_intent(request.customer_query) if request.dataset == "customer_support" else None
         memory_query = request.customer_query or " ".join(ticket.message for ticket in selected_tickets)
-        prior_memories = search_long_term_memory(memory_query, limit=3) if memory_query else []
+        prior_memories = search_long_term_memory(memory_query, limit=3, trusted_only=True) if memory_query else []
+        compact_prior_memories = self._compact_prior_memories(prior_memories)
         context: Dict[str, Any] = {
             "run_id": run_id,
             "tickets": selected_tickets,
@@ -68,8 +80,17 @@ class AgentRunner:
             "model_router": self.model_router,
             "enable_auxiliary_llm_reviews": self.settings.llm_auxiliary_reviews,
             "resolved_intent": intent.issue_type if intent else None,
-            "prior_trajectory_memory": self._compact_prior_memories(prior_memories),
+            "prior_trajectory_memory": compact_prior_memories,
         }
+        if request.dataset == "customer_support":
+            context.update(
+                sarvagun_lifecycle.prepare(
+                    run_id=run_id,
+                    request=request,
+                    tickets=selected_tickets,
+                    prior_memories=compact_prior_memories,
+                )
+            )
         spans: List[TrajectorySpan] = []
 
         agents = [
@@ -92,7 +113,7 @@ class AgentRunner:
                 parent_step_id=parent_step_id,
                 agent_name=agent.name,
                 input_summary=self._input_summary(agent.name, selected_tickets, context),
-                execute=lambda current_agent=agent: current_agent.run(context),
+                execute=lambda current_agent=agent: self._execute_agent(current_agent, context),
                 progress_callback=progress_callback,
             )
             spans.append(span)
@@ -149,6 +170,11 @@ class AgentRunner:
         )
         spans.append(optimizer_span)
 
+        sarvagun = None
+        superturiya = None
+        if request.dataset == "customer_support":
+            sarvagun, superturiya = sarvagun_lifecycle.finalize(context=context, spans=spans, request=request)
+
         graph = self.logger.build_graph(spans)
         evaluation = EvaluationReport(
             run_id=run_id,
@@ -165,6 +191,9 @@ class AgentRunner:
                 "human_handoff_count": sum(1 for action in context.get("final_actions", []) if action.get("human_escalation_required")),
                 "learning_artifact_count": len(context.get("learning_artifacts", [])),
                 "reflection_count": len(context.get("reflections", [])),
+                "sarvagun_execution_mode": request.execution_mode,
+                "superturiya_event_count": superturiya.event_count if superturiya else 0,
+                "cx_quality_rubric": sarvagun.satisfaction.rubric if sarvagun else {},
             },
         )
         result = RunResult(
@@ -176,6 +205,8 @@ class AgentRunner:
             trajectory=spans,
             graph=graph,
             evaluation=evaluation,
+            sarvagun=sarvagun,
+            superturiya=superturiya,
             metadata={
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "llm_provider": self.settings.llm_provider,
@@ -183,6 +214,13 @@ class AgentRunner:
                 "runtime_profile": self.settings.amd_runtime_profile,
                 "dataset": request.dataset,
                 "customer_query": request.customer_query,
+                "system_identity": {
+                    "platform": "Anirvium AI",
+                    "execution_system": "Sarvagun",
+                    "intelligence_system": "SuperTuriya",
+                },
+                "execution_mode": request.execution_mode,
+                "conversation_id": sarvagun.conversation.conversation_id if sarvagun else request.conversation_id,
                 "query_resolution": {
                     "requested_ticket_ids": request.selected_ticket_ids or [],
                     "resolved_ticket_ids": [ticket.ticket_id for ticket in selected_tickets],
@@ -192,7 +230,7 @@ class AgentRunner:
                 },
                 "model_routes": {
                     "text_agent": self.settings.llm_text_model,
-                    "critic_agent": self.settings.llm_critic_model,
+                    "critic_agent": self.settings.llm_critic_model if self.settings.llm_auxiliary_reviews else "deterministic-trajectory-evaluator-v1",
                     "embedding": self.settings.llm_embedding_model,
                     "reranker": self.settings.llm_reranker_model,
                 },
@@ -220,6 +258,9 @@ class AgentRunner:
                         "learning_artifact",
                         "optimizer_recommendation",
                         "trajectory_property_graph",
+                        "sarvagun_conversation_event",
+                        "enterprise_tool_execution",
+                        "superturiya_intelligence_event",
                     ],
                     "production_export_path": "otel_otlp_optional_after_gpu_validation",
                 },
@@ -228,12 +269,8 @@ class AgentRunner:
                     "mode": "retrieve_evaluate_recommend_reuse",
                     "prior_memories_recalled": len(context.get("prior_trajectory_memory", [])),
                     "recalled_memory_ids": [item["id"] for item in context.get("prior_trajectory_memory", [])],
-                    "applied_learning_ids": [
-                        item["id"]
-                        for item in context.get("prior_trajectory_memory", [])
-                        if any(action.get("generation_source") == "amd_vllm" for action in context.get("final_actions", []))
-                    ],
-                    "reuse_stage": "response_drafting_advisory_context",
+                    "applied_learning_ids": superturiya.applied_memory_ids if superturiya else [],
+                    "reuse_stage": "pre_plan_strategy_and_response_drafting",
                     "writes_trajectory_memory": True,
                     "automatic_policy_mutation": False,
                 },
@@ -251,10 +288,18 @@ class AgentRunner:
             metadata={"dataset": request.dataset, "metric_score": evaluation.metrics.overall_score},
         )
         index_trajectory_memory(result.model_dump(mode="json"))
+        if sarvagun and superturiya:
+            sarvagun_lifecycle.persist(run_id=run_id, sarvagun=sarvagun, superturiya=superturiya)
         self.runs[run_id] = result
         self.latest_run_id = run_id
         self.logger.save_run(run_id, result.model_dump(mode="json"))
         return result
+
+    def _execute_agent(self, agent: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+        output = agent.run(context)
+        if context.get("dataset") == "customer_support":
+            return sarvagun_lifecycle.after_agent(agent.name, context, output)
+        return output
 
     def get_run(self, run_id: str) -> RunResult | None:
         if run_id in self.runs:
@@ -344,12 +389,18 @@ class AgentRunner:
     def _compact_prior_memories(self, records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         compact: List[Dict[str, Any]] = []
         for record in records:
+            memory_type = record.get("memory_type") or record.get("metadata", {}).get("memory_type")
+            trust_scope = record.get("trust_scope") or record.get("metadata", {}).get("trust_scope")
+            if memory_type not in {"trajectory_summary", "sarvagun_transcript"} or trust_scope != "superturiya_evaluated_memory":
+                continue
             compact.append(
                 {
                     "id": record.get("id"),
                     "run_id": record.get("metadata", {}).get("run_id") or record.get("run_id"),
                     "text": str(record.get("text", ""))[:1800],
                     "relevance": record.get("vector_score"),
+                    "memory_type": memory_type,
+                    "trust_scope": trust_scope,
                 }
             )
         return compact
