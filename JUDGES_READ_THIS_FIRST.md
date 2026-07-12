@@ -12,6 +12,12 @@ Enterprise AI agents can fail silently. A support agent may miss an SLA escalati
 
 Start with “Hi,” then submit the synthetic `CS-002` withdrawal complaint. Sarvagun identifies Priya Shah, detects frustration and third-contact recontact, checks the mock case and payment status, retrieves governed evidence, and triggers the sixth-unique-customer incident rule. SuperTuriya observes the complete execution and closes the memory loop.
 
+Before the long run, demonstrate the hybrid router with three fast prompts:
+
+- `List all customers` returns normalized SQLite customer rows.
+- `Show all payment-failure cases` returns the matching seeded support cases.
+- `What is a capital market?` uses the live AMD model without leaking customer records.
+
 The workflow shows:
 
 - SLA risk detected.
@@ -80,7 +86,7 @@ curl -X POST http://localhost:8000/runs/async \
   -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My account is restricted for KYC. Unblock it immediately."}'
 ```
 
-Poll the returned job ID at `GET /runs/jobs/{job_id}`. The verification scenario resolves to `CS-003`, routes to the Verification review queue, and excludes `EVAL-*` records from answer evidence. For the full CX scenario use `CS-002` and `execution_mode=hybrid`.
+Poll the returned job ID at `GET /runs/jobs/{job_id}`. The verification issue profile routes the selected `CS-001` customer to the Verification review queue while preserving `CS-C001` identity and excluding unrelated payment and `EVAL-*` evidence. For the full CX scenario use `CS-002` and `execution_mode=hybrid`.
 
 The full implementation and its honest demo boundaries are documented in [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md).
 
@@ -96,7 +102,11 @@ Or after a run:
 
 ```bash
 curl http://localhost:8000/runs/latest/trajectory
+curl http://localhost:8000/platform/status
 ```
+
+Compare any two persisted runs with `GET /runs/compare?baseline_run_id=...&candidate_run_id=...`.
+Inspect the complete normalized synthetic context for the withdrawal demo with `GET /data/cases/CS-002/context`.
 
 The persisted mock run JSON is written locally under:
 

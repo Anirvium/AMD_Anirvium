@@ -6,6 +6,7 @@ from threading import Lock
 from typing import Any, Dict, List
 from uuid import uuid4
 
+from app.schemas.capability import CapabilityRoute, DirectCapabilityResult
 from app.schemas.cx import ConversationSignal, ConversationTurn, ConversationTurnResponse, CustomerContext
 from app.services.data_loader import load_cx_context
 from app.services.intent_router import resolve_customer_support_intent
@@ -70,6 +71,9 @@ class ConversationManager:
         *,
         conversation_id: str | None = None,
         customer_id: str | None = None,
+        signal_override: ConversationSignal | None = None,
+        capability_route: CapabilityRoute | None = None,
+        direct_result: DirectCapabilityResult | None = None,
     ) -> ConversationTurnResponse:
         session_id = conversation_id or f"conv_{uuid4().hex[:12]}"
         with _SESSION_LOCK:
@@ -80,13 +84,14 @@ class ConversationManager:
                     "customer_id": customer_id,
                     "started_at": _now(),
                     "turns": [],
+                    "capability_routes": [],
                     "has_support_history": False,
                     "status": "open",
                 },
             )
             if customer_id:
                 session["customer_id"] = customer_id
-            signal = self.analyze(
+            signal = signal_override or self.analyze(
                 message,
                 conversation_id=session_id,
                 has_support_history=bool(session.get("has_support_history")),
@@ -111,12 +116,27 @@ class ConversationManager:
             if signal.message_type == "CONVERSATION_END":
                 session["status"] = "closed"
                 session["closed_at"] = _now()
+            if capability_route:
+                session.setdefault("capability_routes", []).append(
+                    {
+                        **capability_route.model_dump(mode="json"),
+                        "recorded_at": _now(),
+                        "result_status": direct_result.status if direct_result else "routed",
+                        "record_count": direct_result.record_count if direct_result else 0,
+                    }
+                )
+                session["capability_routes"] = session["capability_routes"][-50:]
 
         add_short_term_memory(
             session_id,
             message.strip(),
             role="customer",
-            metadata={"message_type": signal.message_type, "customer_id": customer_id},
+            metadata={
+                "message_type": signal.message_type,
+                "customer_id": customer_id,
+                "capability": capability_route.capability if capability_route else None,
+                "route_id": capability_route.route_id if capability_route else None,
+            },
         )
         if signal.response:
             add_short_term_memory(
@@ -129,6 +149,8 @@ class ConversationManager:
             signal=signal,
             customer=self._customer_context(customer_id),
             turns=[ConversationTurn(**turn) for turn in _SESSIONS[session_id]["turns"]],
+            capability_route=capability_route,
+            direct_result=direct_result,
         )
 
     def record_agent_turn(self, conversation_id: str, content: str) -> ConversationTurn:
@@ -146,6 +168,7 @@ class ConversationManager:
                     "customer_id": None,
                     "started_at": _now(),
                     "turns": [],
+                    "capability_routes": [],
                     "has_support_history": True,
                     "status": "open",
                 },

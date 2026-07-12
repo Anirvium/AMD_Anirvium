@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,12 +31,17 @@ from app.services.llm_client import build_llm_client
 from app.services.intent_router import resolve_customer_support_intent
 from app.services.memory import add_mid_term_summary, add_short_term_memory, index_trajectory_memory, search_long_term_memory
 from app.services.model_router import build_model_router
+from app.services.observability import bind_observability_context
+from app.services.relational_store import get_relational_repository
 from app.services.sarvagun_lifecycle import sarvagun_lifecycle
 from app.services.trajectory_logger import TrajectoryLogger
 
 
 class InvalidRunSelectionError(ValueError):
     """Raised when a request cannot resolve to any runnable support case."""
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 class AgentRunner:
@@ -58,6 +64,7 @@ class AgentRunner:
         progress_callback: Callable[[int, int, str, str], None] | None = None,
     ) -> RunResult:
         run_id = f"run_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
+        bind_observability_context(correlation_id=request.correlation_id, run_id=run_id)
         selected_tickets = self._select_tickets(request)
         if not selected_tickets:
             raise InvalidRunSelectionError("No valid support tickets matched the requested selection")
@@ -74,6 +81,7 @@ class AgentRunner:
             "tickets": selected_tickets,
             "dataset": request.dataset,
             "customer_query": request.customer_query,
+            "correlation_id": request.correlation_id,
             "evidence_catalog": evidence_catalog(),
             "customers_by_id": customers_by_id(),
             "llm_client": self.llm_client,
@@ -114,6 +122,7 @@ class AgentRunner:
                 agent_name=agent.name,
                 input_summary=self._input_summary(agent.name, selected_tickets, context),
                 execute=lambda current_agent=agent: self._execute_agent(current_agent, context),
+                correlation_id=request.correlation_id,
                 progress_callback=progress_callback,
             )
             spans.append(span)
@@ -127,6 +136,7 @@ class AgentRunner:
             agent_name=critic.name,
             input_summary="Evaluate the full support-agent trajectory, final actions, evidence coverage, policy compliance, and operational risk.",
             execute=lambda: critic.run(context, spans),
+            correlation_id=request.correlation_id,
             progress_callback=progress_callback,
         )
         spans.append(critic_span)
@@ -140,6 +150,7 @@ class AgentRunner:
             agent_name=reflection.name,
             input_summary="Review completed support responses, diagnose repeated mistakes, and propose durable behavior improvements.",
             execute=lambda: reflection.run(context),
+            correlation_id=request.correlation_id,
             progress_callback=progress_callback,
         )
         spans.append(reflection_span)
@@ -153,6 +164,7 @@ class AgentRunner:
             agent_name=learning.name,
             input_summary="Extract reusable learning artifacts from human handoffs, trajectory logs, transcripts, and satisfaction signals.",
             execute=lambda: learning.run(context),
+            correlation_id=request.correlation_id,
             progress_callback=progress_callback,
         )
         spans.append(learning_span)
@@ -166,6 +178,7 @@ class AgentRunner:
             agent_name=optimizer.name,
             input_summary="Recommend workflow changes from critic findings, deterministic scores, and final support actions.",
             execute=lambda: optimizer.run(context),
+            correlation_id=request.correlation_id,
             progress_callback=progress_callback,
         )
         spans.append(optimizer_span)
@@ -214,6 +227,7 @@ class AgentRunner:
                 "runtime_profile": self.settings.amd_runtime_profile,
                 "dataset": request.dataset,
                 "customer_query": request.customer_query,
+                "correlation_id": request.correlation_id,
                 "system_identity": {
                     "platform": "Anirvium AI",
                     "execution_system": "Sarvagun",
@@ -226,13 +240,39 @@ class AgentRunner:
                     "resolved_ticket_ids": [ticket.ticket_id for ticket in selected_tickets],
                     "resolved_issue_type": intent.issue_type if intent else None,
                     "confidence": intent.confidence if intent else None,
-                    "query_routed": bool(intent and (request.selected_ticket_ids or []) != [ticket.ticket_id for ticket in selected_tickets]),
+                    "query_routed": self._query_was_routed(request, intent),
+                    "customer_identity_preserved": self._customer_identity_preserved(request, selected_tickets),
+                    "routing_strategy": (
+                        "issue_profile_overlay_on_selected_customer_case"
+                        if self._query_was_routed(request, intent)
+                        else "selected_case_or_priority_selection"
+                    ),
                 },
                 "model_routes": {
-                    "text_agent": self.settings.llm_text_model,
-                    "critic_agent": self.settings.llm_critic_model if self.settings.llm_auxiliary_reviews else "deterministic-trajectory-evaluator-v1",
-                    "embedding": self.settings.llm_embedding_model,
-                    "reranker": self.settings.llm_reranker_model,
+                    "sarvagun_text": {
+                        "active_model": self.llm_client.model_name,
+                        "provider": self.settings.llm_provider,
+                        "active": self.settings.llm_provider.lower() in {"openai", "openai_compatible", "llm"},
+                    },
+                    "superturiya_critic": {
+                        "active_model": self.llm_client.model_name if self.settings.llm_auxiliary_reviews else "deterministic-trajectory-evaluator-v1",
+                        "configured_optional_model": self.settings.llm_critic_model,
+                        "llm_review_active": self.settings.llm_auxiliary_reviews,
+                    },
+                    "embedding": {
+                        "active_model": "deterministic-token-hash-64d",
+                        "configured_optional_model": self.settings.llm_embedding_model,
+                        "external_model_active": False,
+                    },
+                    "reranker": {
+                        "active_model": "deterministic-hybrid-rank-fusion",
+                        "configured_optional_model": self.settings.llm_reranker_model,
+                        "external_model_active": False,
+                    },
+                    "classification_and_guardrails": {
+                        "active_model": "deterministic-rules",
+                        "external_model_active": False,
+                    },
                 },
                 "image_video_model_status": "deferred_text_first",
                 "memory_backend": self.settings.memory_backend,
@@ -290,6 +330,17 @@ class AgentRunner:
         index_trajectory_memory(result.model_dump(mode="json"))
         if sarvagun and superturiya:
             sarvagun_lifecycle.persist(run_id=run_id, sarvagun=sarvagun, superturiya=superturiya)
+        try:
+            result.metadata["relational_persistence"] = get_relational_repository().persist_run_result(result)
+        except Exception as exc:
+            # The JSON trajectory remains the reliable demo fallback. Surface
+            # relational degradation explicitly instead of failing the run or
+            # claiming that the write succeeded.
+            result.metadata["relational_persistence"] = {
+                "backend": "sqlite",
+                "persisted": False,
+                "error": type(exc).__name__,
+            }
         self.runs[run_id] = result
         self.latest_run_id = run_id
         self.logger.save_run(run_id, result.model_dump(mode="json"))
@@ -346,13 +397,31 @@ class AgentRunner:
         agent_name: str,
         input_summary: str,
         execute: Any,
+        correlation_id: str | None = None,
         progress_callback: Callable[[int, int, str, str], None] | None = None,
     ) -> TrajectorySpan:
         total_steps = 13
         if progress_callback:
             progress_callback(step_index, total_steps, agent_name, "running")
+        logger.info(
+            "agent_step_started correlation_id=%s run_id=%s step=%s agent=%s",
+            correlation_id,
+            run_id,
+            step_index,
+            agent_name,
+        )
         start = time.perf_counter()
-        output = execute()
+        try:
+            output = execute()
+        except Exception:
+            logger.exception(
+                "agent_step_failed correlation_id=%s run_id=%s step=%s agent=%s",
+                correlation_id,
+                run_id,
+                step_index,
+                agent_name,
+            )
+            raise
         latency_ms = int((time.perf_counter() - start) * 1000)
         span = self.logger.create_span(
             run_id=run_id,
@@ -365,6 +434,17 @@ class AgentRunner:
         )
         if progress_callback:
             progress_callback(step_index, total_steps, agent_name, "completed")
+        logger.info(
+            "agent_step_completed correlation_id=%s run_id=%s step=%s agent=%s duration_ms=%s tokens_in=%s tokens_out=%s risks=%s",
+            correlation_id,
+            run_id,
+            step_index,
+            agent_name,
+            latency_ms,
+            span.tokens_in,
+            span.tokens_out,
+            len(span.risk_flags),
+        )
         return span
 
     def _select_tickets(self, request: RunRequest) -> List[SupportTicket]:
@@ -382,9 +462,47 @@ class AgentRunner:
                         return matching_selected[:1]
                     canonical = next((ticket for ticket in tickets if ticket.issue_type == intent.issue_type), None)
                     if canonical:
+                        if selected:
+                            selected_customer_case = selected[0]
+                            return [
+                                selected_customer_case.model_copy(
+                                    update={
+                                        "issue_type": canonical.issue_type,
+                                        "priority": canonical.priority,
+                                        "message": request.customer_query,
+                                        "previous_interactions": [],
+                                        "attachments": [],
+                                        "expected_evidence_ids": list(canonical.expected_evidence_ids),
+                                    }
+                                )
+                            ]
                         return [canonical]
             return selected
         return [ticket for ticket in tickets if ticket.priority in {"high", "critical"}]
+
+    def _query_was_routed(self, request: RunRequest, intent: Any) -> bool:
+        if intent is None or request.dataset != "customer_support":
+            return False
+        requested_ids = set(request.selected_ticket_ids or [])
+        requested_tickets = [
+            ticket for ticket in load_tickets(request.dataset) if ticket.ticket_id in requested_ids
+        ]
+        return bool(requested_tickets and all(ticket.issue_type != intent.issue_type for ticket in requested_tickets))
+
+    def _customer_identity_preserved(
+        self,
+        request: RunRequest,
+        selected_tickets: List[SupportTicket],
+    ) -> bool:
+        if not request.selected_ticket_ids:
+            return True
+        requested_ids = set(request.selected_ticket_ids)
+        requested_customer_ids = {
+            ticket.customer_id
+            for ticket in load_tickets(request.dataset)
+            if ticket.ticket_id in requested_ids
+        }
+        return {ticket.customer_id for ticket in selected_tickets}.issubset(requested_customer_ids)
 
     def _compact_prior_memories(self, records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         compact: List[Dict[str, Any]] = []

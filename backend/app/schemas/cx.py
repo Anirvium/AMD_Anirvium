@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.capability import CapabilityRoute, DirectCapabilityResult
+
 
 ExecutionMode = Literal["policy_driven", "plan_driven", "autonomous", "hybrid"]
 ConversationKind = Literal[
@@ -199,6 +201,7 @@ class TrajectoryEvent(BaseModel):
     timestamp: str
     conversation_id: str
     run_id: Optional[str] = None
+    correlation_id: Optional[str] = None
     actor: str
     payload: Dict[str, Any] = Field(default_factory=dict)
 
@@ -275,6 +278,8 @@ class ConversationTurnResponse(BaseModel):
     signal: ConversationSignal
     customer: Optional[CustomerContext] = None
     turns: List[ConversationTurn] = Field(default_factory=list)
+    capability_route: Optional[CapabilityRoute] = None
+    direct_result: Optional[DirectCapabilityResult] = None
 
 
 class SatisfactionFeedbackRequest(BaseModel):

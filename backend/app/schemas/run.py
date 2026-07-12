@@ -22,6 +22,7 @@ class RunRequest(BaseModel):
     customer_id: Optional[str] = None
     explicit_csat: Optional[int] = Field(default=None, ge=1, le=5)
     explicit_resolution: Optional[Literal["yes", "partially", "no"]] = None
+    correlation_id: Optional[str] = Field(default=None, min_length=6, max_length=128)
 
 
 class FinalAction(BaseModel):
@@ -73,3 +74,4 @@ class RunJobResponse(BaseModel):
     current_agent: Optional[str] = None
     progress_percent: int = Field(default=0, ge=0, le=100)
     progress_message: Optional[str] = None
+    correlation_id: Optional[str] = None

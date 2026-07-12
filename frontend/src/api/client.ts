@@ -1,5 +1,6 @@
 import type {
   CustomerSupportDemoResponse,
+  CaseContext,
   ConversationTurnResponse,
   ExecutionMode,
   KbLayerSummary,
@@ -83,7 +84,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   console.info(
     `[Anirvium API] ${method} ${path} completed in ${Math.round(performance.now() - startedAt)}ms`,
-    { requestId: response.headers.get("x-request-id") }
+    {
+      requestId: response.headers.get("x-request-id"),
+      correlationId: response.headers.get("x-correlation-id")
+    }
   );
 
   return response.json() as Promise<T>;
@@ -97,6 +101,10 @@ export async function fetchTickets(): Promise<SupportTicket[]> {
 export async function fetchCustomerSupportTickets(): Promise<SupportTicket[]> {
   const payload = await request<{ tickets: SupportTicket[] }>("/tickets?dataset=customer_support");
   return payload.tickets;
+}
+
+export async function fetchCaseContext(caseId: string): Promise<CaseContext> {
+  return request<CaseContext>(`/data/cases/${encodeURIComponent(caseId)}/context`);
 }
 
 export async function runSupportAgent(selectedTicketIds?: string[], customerQuery?: string): Promise<RunResult> {
@@ -119,7 +127,8 @@ export async function runSupportAgentWithProgress(
   onProgress: (job: RunJobState) => void,
   executionMode: ExecutionMode = "hybrid",
   conversationId?: string,
-  customerId?: string
+  customerId?: string,
+  correlationId?: string
 ): Promise<RunResult> {
   const body = selectedTicketIds?.length
     ? { selection_mode: "selected", selected_ticket_ids: selectedTicketIds, dataset: "customer_support", customer_query: customerQuery, execution_mode: executionMode, conversation_id: conversationId, customer_id: customerId }
@@ -127,6 +136,7 @@ export async function runSupportAgentWithProgress(
 
   const job = await request<RunJobState>("/runs/async", {
     method: "POST",
+    headers: correlationId ? { "X-Correlation-ID": correlationId } : undefined,
     body: JSON.stringify(body)
   });
 
@@ -138,10 +148,12 @@ export async function runSupportAgentWithProgress(
 export async function processConversationTurn(
   message: string,
   conversationId?: string,
-  customerId?: string
+  customerId?: string,
+  correlationId?: string
 ): Promise<ConversationTurnResponse> {
   return request<ConversationTurnResponse>("/conversations/turn", {
     method: "POST",
+    headers: correlationId ? { "X-Correlation-ID": correlationId } : undefined,
     body: JSON.stringify({ message, conversation_id: conversationId, customer_id: customerId })
   });
 }

@@ -7,6 +7,9 @@ __pycache__/
 backend/.venv/
 .uv-cache/
 backend/app/data/runs/*.json
+backend/app/data/*.sqlite3
+backend/app/data/*.sqlite3-shm
+backend/app/data/*.sqlite3-wal
 
 # Node
 node_modules/

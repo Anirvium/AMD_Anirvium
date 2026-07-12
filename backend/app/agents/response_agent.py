@@ -20,7 +20,7 @@ class ResponseDraftingAgent:
         risk_flags: List[str] = []
         model_router = context.get("model_router")
         llm_client = context.get("llm_client")
-        model_name = (
+        routed_model_name = (
             model_router.route(ModelRole.TEXT_AGENT).model_name
             if model_router
             else "Qwen/Qwen3-14B"
@@ -79,7 +79,7 @@ class ResponseDraftingAgent:
             "evidence_ids": sorted(set(evidence_ids)),
             "risk_flags": sorted(set(risk_flags)),
             "approval_state": ApprovalState.APPROVAL_REQUIRED.value if risk_flags else ApprovalState.DRAFT_RECOMMENDATION.value,
-            "model_name": model_name,
+            "model_name": getattr(llm_client, "model_name", routed_model_name) if llm_used else "deterministic-safe-response-v2",
             "confidence": 0.86,
         }
 

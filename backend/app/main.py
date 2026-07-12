@@ -9,12 +9,15 @@ from fastapi.requests import Request
 
 from app.api.routes_demo import router as demo_router
 from app.api.routes_cx import router as cx_router
+from app.api.routes_data import router as data_router
 from app.api.routes_evaluations import router as evaluations_router
 from app.api.routes_kb import router as kb_router
 from app.api.routes_memory import router as memory_router
+from app.api.routes_platform import router as platform_router
 from app.api.routes_runs import router as runs_router
 from app.api.routes_tickets import router as tickets_router
 from app.config import get_settings
+from app.services.observability import bind_observability_context
 
 
 settings = get_settings()
@@ -38,15 +41,26 @@ app.add_middleware(
 @app.middleware("http")
 async def request_observability(request: Request, call_next):
     request_id = request.headers.get("x-request-id") or uuid4().hex[:12]
+    correlation_id = request.headers.get("x-correlation-id") or request_id
+    request.state.request_id = request_id
+    request.state.correlation_id = correlation_id
+    bind_observability_context(request_id=request_id, correlation_id=correlation_id)
     started_at = time.perf_counter()
-    logger.info("request_started id=%s method=%s path=%s", request_id, request.method, request.url.path)
+    logger.info(
+        "request_started id=%s correlation_id=%s method=%s path=%s",
+        request_id,
+        correlation_id,
+        request.method,
+        request.url.path,
+    )
     try:
         response = await call_next(request)
     except Exception:
         elapsed_ms = int((time.perf_counter() - started_at) * 1000)
         logger.exception(
-            "request_failed id=%s method=%s path=%s duration_ms=%s",
+            "request_failed id=%s correlation_id=%s method=%s path=%s duration_ms=%s",
             request_id,
+            correlation_id,
             request.method,
             request.url.path,
             elapsed_ms,
@@ -54,10 +68,12 @@ async def request_observability(request: Request, call_next):
         raise
     elapsed_ms = int((time.perf_counter() - started_at) * 1000)
     response.headers["X-Request-ID"] = request_id
+    response.headers["X-Correlation-ID"] = correlation_id
     response.headers["X-Response-Time-MS"] = str(elapsed_ms)
     logger.info(
-        "request_completed id=%s method=%s path=%s status=%s duration_ms=%s",
+        "request_completed id=%s correlation_id=%s method=%s path=%s status=%s duration_ms=%s",
         request_id,
+        correlation_id,
         request.method,
         request.url.path,
         response.status_code,
@@ -116,3 +132,5 @@ app.include_router(evaluations_router)
 app.include_router(kb_router)
 app.include_router(memory_router)
 app.include_router(cx_router)
+app.include_router(platform_router)
+app.include_router(data_router)

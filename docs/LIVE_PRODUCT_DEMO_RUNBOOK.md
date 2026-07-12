@@ -109,10 +109,10 @@ The health payload must report `"mode":"openai_compatible"` for the real AMD pat
 Open this browser route for the current AMD instance:
 
 ```text
-https://radeon-global.anruicloud.com/instances/hf-415-81f7a8dd/spaces/hf-415-81f7a8dd/8501/
+https://radeon-global.anruicloud.com/spaces/hf-415-81f7a8dd/8501/
 ```
 
-If the instance ID changes, replace both occurrences of `hf-415-81f7a8dd`. Do not open `http://localhost:8501` on the Mac.
+If the instance ID changes, replace `hf-415-81f7a8dd`. The `/instances/<id>/lab` URL is the Jupyter workspace, not the frontend. Do not open `http://localhost:8501` on the Mac.
 
 ## Submission-Day AMD Restart
 
@@ -141,6 +141,21 @@ Use `http.sslVerify=false` only on this one fetch because the observed AMD image
 
 ### AMD terminal 3 — build and run the production frontend
 
+If the restarted notebook image has no Node/npm, install Node 20 once in that session:
+
+```bash
+cd /tmp
+curl -fsSLO https://nodejs.org/dist/v20.20.2/node-v20.20.2-linux-x64.tar.xz
+tar -xJf node-v20.20.2-linux-x64.tar.xz
+cp -a node-v20.20.2-linux-x64/bin/. /usr/local/bin/
+cp -a node-v20.20.2-linux-x64/lib/. /usr/local/lib/
+hash -r
+node --version
+npm --version
+```
+
+Then start the frontend:
+
 ```bash
 cd /workspace/AMD_Anirvium/frontend
 hash -r
@@ -162,6 +177,8 @@ Node must be 20 or newer. The observed AMD VM now has Node `v20.20.2`, which is 
 curl -sS http://localhost:8001/v1/models
 curl -sS http://localhost:8000/health
 curl -sS http://localhost:8501/api/health
+curl -sS http://localhost:8501/api/platform/status
+curl -sS http://localhost:8501/api/data/cases/CS-002/context
 curl -sS 'http://localhost:8501/api/tickets?dataset=customer_support'
 curl -sS -X POST http://localhost:8501/api/conversations/turn \
   -H 'Content-Type: application/json' \
@@ -185,7 +202,7 @@ cd /workspace/AMD_Anirvium/frontend
 npm run serve:amd 2>&1 | tee /workspace/anirvium_frontend.log
 ```
 
-The gateway logs every browser and API request. FastAPI adds `X-Request-ID` and `X-Response-Time-MS` headers and logs the same request lifecycle. The vLLM terminal shows each `/v1/chat/completions` call.
+The gateway logs every browser and API request. FastAPI adds `X-Request-ID`, `X-Correlation-ID`, and `X-Response-Time-MS` headers and logs the same identifiers through queued jobs, agent steps, and model calls. The vLLM terminal shows each `/v1/chat/completions` call.
 
 Browser diagnostics:
 
@@ -212,8 +229,9 @@ The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job 
 6. Show the safe response and its human-review state; do not describe an approval-required draft as sent.
 7. Follow the 13 real server-side steps: the first nine are Sarvagun, the final four are SuperTuriya.
 8. Open SuperTuriya and show events observed, memories recalled/applied/created, scorecard, diagnosis, and improvement recommendation.
-9. Submit explicit CSAT and point out that it remains separate from predicted satisfaction.
-10. Show the vLLM terminal’s real `/v1/chat/completions` activity and AMD model identity.
+9. Compare two stored runs through `/runs/compare` and explain the safety-aware verdict.
+10. Submit explicit CSAT only for a released response and point out that it remains separate from predicted satisfaction.
+11. Show the vLLM terminal’s real `/v1/chat/completions` activity and AMD model identity.
 
 Keep a prerecorded screen capture of the same sequence as the fallback.
 

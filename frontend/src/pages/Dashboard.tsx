@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import {
   fetchCustomerSupportTickets,
+  fetchCaseContext,
   fetchKbLayers,
   fetchMemoryStatus,
   fetchRuntimeReadiness,
@@ -34,7 +35,8 @@ import {
   submitSatisfactionFeedback
 } from "../api/client";
 import type { RunJobState } from "../api/client";
-import type { ConversationTurn, ExecutionMode, KbLayerSummary, MemoryStatus, RunResult, RuntimeReadiness, SupportTicket, TrajectorySpan, VectorStatus } from "../api/types";
+import type { CapabilityRoute, CaseContext, ConversationTurn, DirectCapabilityResult, ExecutionMode, KbLayerSummary, MemoryStatus, RunResult, RuntimeReadiness, SupportTicket, TrajectorySpan, VectorStatus } from "../api/types";
+import SuperTuriyaTraceGraph from "../components/SuperTuriyaTraceGraph";
 
 type View = "agent" | "intelligence";
 
@@ -63,14 +65,27 @@ function confidenceTone(value: number) {
   return "risk";
 }
 
+function slaLabel(deadline: string) {
+  const deadlineMs = Date.parse(deadline);
+  if (!Number.isFinite(deadlineMs)) return { label: "SLA unknown", tone: "unknown" };
+  const remainingMinutes = Math.ceil((deadlineMs - Date.now()) / 60_000);
+  if (remainingMinutes <= 0) return { label: "SLA breached", tone: "breached" };
+  if (remainingMinutes < 60) return { label: `${remainingMinutes}m left`, tone: "risk" };
+  if (remainingMinutes < 1_440) return { label: `${Math.ceil(remainingMinutes / 60)}h left`, tone: "watch" };
+  return { label: `${Math.ceil(remainingMinutes / 1_440)}d left`, tone: "safe" };
+}
+
 export default function Dashboard() {
   const [view, setView] = useState<View>("agent");
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([]);
+  const [caseContext, setCaseContext] = useState<CaseContext | null>(null);
   const [run, setRun] = useState<RunResult | null>(null);
   const [prompt, setPrompt] = useState("");
   const [submittedPrompt, setSubmittedPrompt] = useState<string | null>(null);
   const [quickReply, setQuickReply] = useState<string | null>(null);
+  const [capabilityRoute, setCapabilityRoute] = useState<CapabilityRoute | null>(null);
+  const [directResult, setDirectResult] = useState<DirectCapabilityResult | null>(null);
   const [isBooting, setIsBooting] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
   const [jobState, setJobState] = useState<RunJobState | null>(null);
@@ -101,6 +116,14 @@ export default function Dashboard() {
     if (ticketResult.status === "fulfilled") {
       setTickets(ticketResult.value);
       setSelectedTicketIds((current) => current.length ? current : ticketResult.value.slice(0, 1).map((ticket) => ticket.ticket_id));
+      const initialCaseId = ticketResult.value[0]?.ticket_id;
+      if (initialCaseId) {
+        try {
+          setCaseContext(await fetchCaseContext(initialCaseId));
+        } catch {
+          setCaseContext(null);
+        }
+      }
     } else {
       setError(ticketResult.reason instanceof Error ? ticketResult.reason.message : "Unable to load the support queue.");
     }
@@ -156,6 +179,8 @@ export default function Dashboard() {
     const customerPrompt = prompt.trim();
     setSubmittedPrompt(customerPrompt);
     setQuickReply(null);
+    setCapabilityRoute(null);
+    setDirectResult(null);
     setRun(null);
     setJobState(null);
     setElapsed(0);
@@ -165,10 +190,13 @@ export default function Dashboard() {
     setFeedbackPending(false);
     setIsRunning(true);
     try {
-      const turn = await processConversationTurn(customerPrompt, conversationId, selectedTickets[0]?.customer_id);
+      const correlationId = `ui-${crypto.randomUUID()}`;
+      const turn = await processConversationTurn(customerPrompt, conversationId, selectedTickets[0]?.customer_id, correlationId);
       setConversationId(turn.signal.conversation_id);
       setConversationKind(turn.signal.message_type);
       setConversationTurns(turn.turns);
+      setCapabilityRoute(turn.capability_route ?? null);
+      setDirectResult(turn.direct_result ?? null);
       if (!turn.signal.requires_agent_run) {
         setQuickReply(turn.signal.response ?? "I’m ready to help with your support request.");
         return;
@@ -179,7 +207,8 @@ export default function Dashboard() {
         setJobState,
         executionMode,
         turn.signal.conversation_id,
-        selectedTickets[0]?.customer_id
+        selectedTickets[0]?.customer_id,
+        correlationId
       );
       setRun(result);
       setSelectedTicketIds(result.selected_ticket_ids);
@@ -204,14 +233,30 @@ export default function Dashboard() {
     }
   }
 
-  function toggleTicket(id: string) {
+  async function toggleTicket(id: string) {
     setSelectedTicketIds([id]);
+    setSubmittedPrompt(null);
+    setQuickReply(null);
+    setCapabilityRoute(null);
+    setDirectResult(null);
+    setRun(null);
+    setJobState(null);
+    setConversationId(undefined);
+    setConversationKind(null);
+    setConversationTurns([]);
+    setFeedbackSent(false);
+    setCaseContext(null);
+    try {
+      setCaseContext(await fetchCaseContext(id));
+    } catch {
+      setCaseContext(null);
+    }
   }
 
   function choosePrompt(item: string, index: number) {
     const matchingTicketIds = ["CS-002", "CS-003", "CS-001"];
+    void toggleTicket(matchingTicketIds[index]);
     setPrompt(item);
-    setSelectedTicketIds([matchingTicketIds[index]]);
   }
 
   return (
@@ -228,15 +273,34 @@ export default function Dashboard() {
         </nav>
 
         <div className="sidebar-section">
-          <div className="sidebar-label"><span>Active queue</span><small>{selectedTicketIds.length}/{tickets.length}</small></div>
+          <div className="sidebar-label"><span>Active queue</span><small>{tickets.length} cases</small></div>
           <div className="case-list">
-            {tickets.map((ticket) => (
-              <button key={ticket.ticket_id} className={selectedTicketIds.includes(ticket.ticket_id) ? "selected" : ""} onClick={() => toggleTicket(ticket.ticket_id)}>
-                <span className={`priority-dot ${ticket.priority}`} />
-                <span><strong>{ticket.ticket_id}</strong><small>{formatLabel(ticket.issue_type)}</small></span>
-                {selectedTicketIds.includes(ticket.ticket_id) && <Check size={14} />}
-              </button>
-            ))}
+            {tickets.map((ticket) => {
+              const sla = slaLabel(ticket.sla_deadline);
+              const selected = selectedTicketIds.includes(ticket.ticket_id);
+              return (
+                <button
+                  key={ticket.ticket_id}
+                  className={selected ? "selected" : ""}
+                  onClick={() => void toggleTicket(ticket.ticket_id)}
+                  aria-pressed={selected}
+                  aria-label={`${ticket.customer_name}, ${formatLabel(ticket.issue_type)}, ${ticket.priority} priority, ${sla.label}`}
+                  title={ticket.message}
+                >
+                  <span className={`priority-dot ${ticket.priority}`} />
+                  <span className="case-copy">
+                    <span className="case-title"><strong>{ticket.customer_name}</strong><em>{ticket.ticket_id}</em></span>
+                    <small>{formatLabel(ticket.issue_type)}</small>
+                    <span className="case-meta">
+                      <span>{formatLabel(ticket.sentiment)}</span>
+                      <span className={`sla ${sla.tone}`}><Clock3 size={9} />{sla.label}</span>
+                      {ticket.previous_interactions.length > 0 && <span>{ticket.previous_interactions.length} prior</span>}
+                    </span>
+                  </span>
+                  {selected && <Check size={14} />}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -273,8 +337,11 @@ export default function Dashboard() {
             run={run}
             primaryAction={primaryAction}
             quickReply={quickReply}
+            capabilityRoute={capabilityRoute}
+            directResult={directResult}
             submittedPrompt={submittedPrompt}
             selectedTickets={selectedTickets}
+            caseContext={caseContext}
             isRunning={isRunning}
             isBooting={isBooting}
             jobState={jobState}
@@ -305,8 +372,11 @@ interface AgentWorkspaceProps {
   run: RunResult | null;
   primaryAction: RunResult["final_actions"][number] | null;
   quickReply: string | null;
+  capabilityRoute: CapabilityRoute | null;
+  directResult: DirectCapabilityResult | null;
   submittedPrompt: string | null;
   selectedTickets: SupportTicket[];
+  caseContext: CaseContext | null;
   isRunning: boolean;
   isBooting: boolean;
   jobState: RunJobState | null;
@@ -322,10 +392,18 @@ interface AgentWorkspaceProps {
   onExecute: () => void;
 }
 
-function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, submittedPrompt, selectedTickets, isRunning, isBooting, jobState, executionMode, setExecutionMode, conversationKind, conversationTurns, feedbackSent, feedbackPending, elapsed, onChoosePrompt, onFeedback, onExecute }: AgentWorkspaceProps) {
+function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, capabilityRoute, directResult, submittedPrompt, selectedTickets, caseContext, isRunning, isBooting, jobState, executionMode, setExecutionMode, conversationKind, conversationTurns, feedbackSent, feedbackPending, elapsed, onChoosePrompt, onFeedback, onExecute }: AgentWorkspaceProps) {
   const [resolutionFeedback, setResolutionFeedback] = useState<"yes" | "partially" | "no">("partially");
   const [submittedRating, setSubmittedRating] = useState<number | null>(null);
   const cx = run?.sarvagun;
+  const responseHeld = cx?.response_quality_gate.decision === "human_review_required";
+  const responseState = quickReply
+    ? directResult?.status === "degraded" ? "Degraded" : capabilityRoute?.read_only ? "Verified read" : "Ready"
+    : responseHeld
+      ? "Human review required"
+      : cx?.response_quality_gate.decision === "rewritten"
+        ? "Quality gate rewritten"
+        : formatLabel(primaryAction?.approval_state ?? "draft");
   const historyTurns = useMemo(() => {
     let end = conversationTurns.length;
     const latest = conversationTurns[end - 1];
@@ -354,6 +432,10 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sub
           {conversationKind && <small className="context-classification">{formatLabel(conversationKind)}</small>}
         </div>
 
+        {selectedTickets[0] && !isRunning && !submittedPrompt && (
+          <SelectedCaseBrief ticket={selectedTickets[0]} context={caseContext} />
+        )}
+
         {historyTurns.length > 0 && (
           <div className="conversation-history" aria-label="Earlier conversation turns">
             {historyTurns.map((turn) => turn.role === "customer" ? (
@@ -377,16 +459,18 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sub
             <p className="answer-copy pending-copy">Investigating the request, retrieving governed evidence, and checking policy constraints. The job remains recoverable if the public AMD proxy briefly reconnects.</p>
           </article>
         ) : primaryAction || quickReply ? (
-          <article className="answer-card">
+          <article className={`answer-card${responseHeld ? " held-for-review" : ""}`}>
             <div className="answer-meta">
               <div className="agent-avatar"><Sparkles size={17} /></div>
-              <div><strong>Sarvagun</strong><span>Governed customer-support execution</span></div>
-              <span className={`approval-state ${primaryAction?.approval_state === "APPROVAL_REQUIRED" ? "review" : "safe"}`}>
-                {primaryAction?.approval_state === "APPROVAL_REQUIRED" ? <UserRoundCheck size={13} /> : <ShieldCheck size={13} />}
-                {quickReply ? "Ready" : formatLabel(primaryAction?.approval_state ?? "ready")}
+              <div><strong>Sarvagun</strong><span>{responseHeld ? "Draft held by SuperTuriya for human review" : directResult ? `${formatLabel(capabilityRoute?.execution_path ?? "direct capability")} · observed by SuperTuriya` : quickReply ? "Conversation manager" : "Governed customer-support response draft"}</span></div>
+              <span className={`approval-state ${responseHeld || primaryAction?.approval_state === "APPROVAL_REQUIRED" || directResult?.status === "degraded" ? "review" : "safe"}`}>
+                {responseHeld || primaryAction?.approval_state === "APPROVAL_REQUIRED" || directResult?.status === "degraded" ? <UserRoundCheck size={13} /> : <ShieldCheck size={13} />}
+                {responseState}
               </span>
             </div>
+            {primaryAction && !quickReply && <p className={`draft-disposition ${responseHeld ? "review" : "ready"}`}>{responseHeld ? "Internal draft preview · not sent to the customer" : "Quality-gated response shown in this support session"}</p>}
             <p className="answer-copy">{quickReply ?? primaryAction?.draft_response}</p>
+            {directResult && capabilityRoute && <DirectResultPanel route={capabilityRoute} result={directResult} />}
             {primaryAction && !quickReply && <>
               <div className="answer-details">
                 <span><Gauge size={14} />{Math.round((primaryAction.confidence_score ?? 0) * 100)}% confidence</span>
@@ -428,19 +512,23 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sub
                 <div><strong>{cx.tool_executions.length} audited tool executions{cx.tool_executions.every((tool) => tool.simulated) ? " · mock connector" : ""}</strong><p>{cx.tool_executions.map((tool) => `${formatLabel(tool.tool_name)} / ${formatLabel(tool.operation)} · ${tool.status}${tool.simulated ? " · simulated" : ""}`).join("  |  ")}</p></div>
                 <div><strong>Response provenance</strong><p>{cx.provenance[0]?.customer_view ?? "No customer-safe provenance summary was recorded."}</p>{cx.provenance[0]?.sources.length ? <p>{cx.provenance[0].sources.map((source) => `${source.source_id} · ${source.title} · ${source.version}`).join("  |  ")}</p> : null}</div>
                 <div><strong>Assurance</strong><p>{cx.assurances[0]?.assurance_text ?? "No customer assurance was recorded."}</p></div>
-                <div><strong>SuperTuriya response quality gate</strong><p>{Math.round(cx.response_quality_gate.score * 100)}% · {formatLabel(cx.response_quality_gate.decision)} · {Object.entries(cx.response_quality_gate.checks).filter(([, passed]) => passed).length}/{Object.keys(cx.response_quality_gate.checks).length} checks passed</p></div>
-                <div><strong>Transcript</strong><p>{cx.transcript.transcript_id} · {cx.transcript.turns.length} recorded turns · {cx.transcript.redaction_status}</p></div>
+                <div><strong>SuperTuriya response quality gate</strong><p>{Math.round(cx.response_quality_gate.score * 100)}% · {formatLabel(cx.response_quality_gate.decision)} · {Object.entries(cx.response_quality_gate.checks).filter(([, passed]) => passed).length}/{Object.keys(cx.response_quality_gate.checks).length} checks passed{cx.response_quality_gate.blocking_reasons.length ? ` · blockers: ${cx.response_quality_gate.blocking_reasons.map(formatLabel).join(", ")}` : ""}</p></div>
+                <div><strong>Transcript audit record</strong><p>{cx.transcript.transcript_id} · {cx.transcript.turns.length} recorded entries including drafts · {cx.transcript.redaction_status}</p></div>
               </div>
             </details>
-            <section className="satisfaction-tray" aria-label="Explicit customer satisfaction">
-              <div><strong>Was the issue resolved?</strong><span>Actual customer feedback remains separate from AI prediction.</span></div>
-              <div className="resolution-options">
-                {(["yes", "partially", "no"] as const).map((value) => <button className={resolutionFeedback === value ? "active" : ""} key={value} onClick={() => setResolutionFeedback(value)} disabled={feedbackSent || feedbackPending} aria-pressed={resolutionFeedback === value}>{formatLabel(value)}</button>)}
-              </div>
-              <div className="rating-options" aria-label="Rate support from one to five">
-                {feedbackSent ? <span className="feedback-confirmation"><Check size={13} />{submittedRating}/5 recorded</span> : [1, 2, 3, 4, 5].map((rating) => <button key={rating} disabled={feedbackPending} onClick={() => submitFeedback(rating)} aria-label={`${rating} out of 5`}>{feedbackPending && submittedRating === rating ? <LoaderCircle className="spin" size={13} /> : rating}</button>)}
-              </div>
-            </section>
+            {responseHeld ? (
+              <section className="review-hold" aria-label="Human review required"><UserRoundCheck size={17} /><div><strong>Customer feedback is not requested yet</strong><span>The draft is held for approval and has not been represented as sent.</span></div></section>
+            ) : (
+              <section className="satisfaction-tray" aria-label="Explicit customer satisfaction">
+                <div><strong>Was the issue resolved?</strong><span>Actual customer feedback remains separate from AI prediction.</span></div>
+                <div className="resolution-options">
+                  {(["yes", "partially", "no"] as const).map((value) => <button className={resolutionFeedback === value ? "active" : ""} key={value} onClick={() => setResolutionFeedback(value)} disabled={feedbackSent || feedbackPending} aria-pressed={resolutionFeedback === value}>{formatLabel(value)}</button>)}
+                </div>
+                <div className="rating-options" aria-label="Rate support from one to five">
+                  {feedbackSent ? <span className="feedback-confirmation"><Check size={13} />{submittedRating}/5 recorded</span> : [1, 2, 3, 4, 5].map((rating) => <button key={rating} disabled={feedbackPending} onClick={() => submitFeedback(rating)} aria-label={`${rating} out of 5`}>{feedbackPending && submittedRating === rating ? <LoaderCircle className="spin" size={13} /> : rating}</button>)}
+                </div>
+              </section>
+            )}
           </>
         )}
       </section>
@@ -487,6 +575,69 @@ function AgentWorkspace({ prompt, setPrompt, run, primaryAction, quickReply, sub
       </section>
     </div>
   );
+}
+
+function DirectResultPanel({ route, result }: { route: CapabilityRoute; result: DirectCapabilityResult }) {
+  const preferredFields = [
+    "customer_id", "customer_name", "case_id", "issue_type", "status", "queue",
+    "priority", "plan", "region", "identity_status", "contacted_at", "commitment_met"
+  ];
+  const fields = preferredFields.filter((field) => result.records.some((record) => record[field] !== undefined));
+  return (
+    <section className="direct-result" aria-label={`${formatLabel(route.capability)} result`}>
+      <header>
+        <div><Database size={14} /><span><strong>{formatLabel(route.capability)}</strong><small>{route.reason}</small></span></div>
+        <span>{result.record_count} {result.record_count === 1 ? "record" : "records"}</span>
+      </header>
+      {result.records.length > 0 && fields.length > 0 && (
+        <div className="direct-result-table-wrap">
+          <table>
+            <thead><tr>{fields.map((field) => <th key={field}>{formatLabel(field)}</th>)}</tr></thead>
+            <tbody>{result.records.map((record, index) => (
+              <tr key={String(record.case_id ?? record.customer_id ?? index)}>
+                {fields.map((field) => <td key={field}>{formatDirectValue(record[field])}</td>)}
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+      <footer>
+        <span><BrainCircuit size={11} />{route.observed_by} · {Math.round(route.confidence * 100)}% route confidence</span>
+        <span><ShieldCheck size={11} />{route.read_only ? "Read-only" : "Governed workflow"} · {formatLabel(result.generated_by)}</span>
+        {result.source_ids.map((source) => <span key={source}><Database size={11} />{source}</span>)}
+      </footer>
+    </section>
+  );
+}
+
+function SelectedCaseBrief({ ticket, context }: { ticket: SupportTicket; context: CaseContext | null }) {
+  const sla = slaLabel(ticket.sla_deadline);
+  return (
+    <section className="selected-case-brief" aria-label={`Selected case ${ticket.ticket_id}`}>
+      <header>
+        <div><span className={`priority-dot ${ticket.priority}`} /><span><small>Selected support case · {ticket.ticket_id}</small><strong>{ticket.customer_name}</strong></span></div>
+        <span className={`sla ${sla.tone}`}><Clock3 size={11} />{sla.label}</span>
+      </header>
+      <p>{ticket.message}</p>
+      <div>
+        <span><Database size={11} />{formatLabel(ticket.issue_type)}</span>
+        <span><Gauge size={11} />{formatLabel(ticket.priority)} priority</span>
+        <span><Activity size={11} />{formatLabel(ticket.sentiment)} sentiment</span>
+        <span><GitBranch size={11} />{ticket.previous_interactions.length} prior interactions</span>
+        <span><BookOpen size={11} />{ticket.expected_evidence_ids.length} expected evidence records</span>
+        {context && <span><Database size={11} />{context.transactions.length} transactions · {context.approval_requests.length} approvals</span>}
+        {context && <span><UserRoundCheck size={11} />{context.escalations.length} escalations</span>}
+      </div>
+      <small>{context?.workflow_states.length ? `Workflow: ${context.workflow_states.map((state) => formatLabel(String(state.state))).join(" → ")}. ` : ""}Describe the request below. Sarvagun will route it dynamically while preserving this customer identity.</small>
+    </section>
+  );
+}
+
+function formatDirectValue(value: unknown) {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value).replaceAll("_", " ");
 }
 
 function ExecutionRail({ run, isRunning, jobState, elapsed, evidenceCount, toolCount, riskCount }: { run: RunResult | null; isRunning: boolean; jobState: RunJobState | null; elapsed: number; evidenceCount: number; toolCount: number; riskCount: number }) {
@@ -576,6 +727,8 @@ function IntelligenceWorkspace({ run, vectorStatus, memoryStatus, kbStatus }: { 
       ) : (
         <section className="superturiya-loop awaiting-loop"><span className="product-kicker">Intelligence loop idle</span><strong>Run Sarvagun to let SuperTuriya observe, evaluate, and store a trajectory.</strong></section>
       )}
+
+      <SuperTuriyaTraceGraph run={run} />
 
       <section className="intelligence-grid">
         <article className="intelligence-panel">

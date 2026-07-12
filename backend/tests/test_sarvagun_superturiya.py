@@ -472,6 +472,7 @@ def test_explicit_csat_remains_separate_from_prediction() -> None:
     assert payload["predicted_satisfaction"] == prediction
     assert payload["explicit_csat"] == 2
     assert payload["metrics_are_separate"] is True
+    assert payload["relational_persistence"]["persisted"] is True
     persisted = runner.get_run(result.run_id)
     assert persisted is not None and persisted.sarvagun is not None
     assert persisted.sarvagun.satisfaction.predicted_satisfaction == prediction

@@ -9,6 +9,7 @@ from typing import Dict, List, Protocol
 import httpx
 
 from app.config import Settings, get_settings
+from app.services.observability import observability_context
 
 
 logger = logging.getLogger("uvicorn.error")
@@ -77,7 +78,14 @@ class OpenAICompatibleLLMClient:
         if self.settings.llm_disable_thinking:
             payload["chat_template_kwargs"] = {"enable_thinking": False}
         started_at = time.perf_counter()
-        logger.info("llm_call_started model=%s messages=%s", self.settings.llm_model, len(messages))
+        trace = observability_context()
+        logger.info(
+            "llm_call_started correlation_id=%s run_id=%s model=%s messages=%s",
+            trace["correlation_id"],
+            trace["run_id"],
+            self.settings.llm_model,
+            len(messages),
+        )
         try:
             with httpx.Client(timeout=self.settings.llm_timeout_seconds) as client:
                 response = client.post(
@@ -103,7 +111,9 @@ class OpenAICompatibleLLMClient:
                 data = response.json()
         except Exception:
             logger.exception(
-                "llm_call_failed model=%s duration_ms=%s",
+                "llm_call_failed correlation_id=%s run_id=%s model=%s duration_ms=%s",
+                trace["correlation_id"],
+                trace["run_id"],
                 self.settings.llm_model,
                 int((time.perf_counter() - started_at) * 1000),
             )
@@ -113,7 +123,9 @@ class OpenAICompatibleLLMClient:
         usage = data.get("usage", {})
         elapsed_ms = int((time.perf_counter() - started_at) * 1000)
         logger.info(
-            "llm_call_completed model=%s duration_ms=%s prompt_tokens=%s completion_tokens=%s raw_chars=%s public_chars=%s",
+            "llm_call_completed correlation_id=%s run_id=%s model=%s duration_ms=%s prompt_tokens=%s completion_tokens=%s raw_chars=%s public_chars=%s",
+            trace["correlation_id"],
+            trace["run_id"],
             self.settings.llm_model,
             elapsed_ms,
             usage.get("prompt_tokens", estimate_tokens(messages)),

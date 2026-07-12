@@ -30,6 +30,7 @@ from app.services.conversation import conversation_manager
 from app.services.customer_connectors import tool_executor
 from app.services.data_loader import load_cx_context
 from app.services.memory import add_long_term_memory, add_mid_term_summary, add_short_term_memory
+from app.services.observability import observability_context
 
 
 _INCIDENT_LOCK = Lock()
@@ -102,10 +103,37 @@ class EmotionAnalyzer:
 
 
 class RecontactDetector:
-    def analyze(self, customer_id: str, issue_type: str, cases: List[Dict[str, Any]]) -> RecontactAnalysis:
+    def analyze(
+        self,
+        customer_id: str,
+        issue_type: str,
+        cases: List[Dict[str, Any]],
+        *,
+        reference_time: str | None = None,
+    ) -> RecontactAnalysis:
         related = [case for case in cases if case.get("issue_type") == issue_type]
         missed = any(case.get("commitment_met") is False for case in related)
         now = _now()
+        if reference_time:
+            try:
+                now = datetime.fromisoformat(reference_time.replace("Z", "+00:00"))
+                if now.tzinfo is None:
+                    now = now.replace(tzinfo=timezone.utc)
+                now = now.astimezone(timezone.utc)
+            except ValueError:
+                now = _now()
+
+        for case in related:
+            raw = str(case.get("contacted_at", ""))
+            if not raw:
+                continue
+            try:
+                contacted_at = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+                if contacted_at.tzinfo is None:
+                    contacted_at = contacted_at.replace(tzinfo=timezone.utc)
+                now = max(now, contacted_at.astimezone(timezone.utc))
+            except ValueError:
+                continue
 
         def within(case: Dict[str, Any], days: int) -> bool:
             raw = str(case.get("contacted_at", ""))
@@ -623,7 +651,12 @@ class SarvagunLifecycle:
             open_case_ids=[str(item.get("case_id")) for item in open_cases],
             interaction_count=len(history),
         )
-        recontact = self.recontact_detector.analyze(ticket.customer_id, ticket.issue_type, history)
+        recontact = self.recontact_detector.analyze(
+            ticket.customer_id,
+            ticket.issue_type,
+            history,
+            reference_time=str(getattr(ticket, "created_at", "") or ""),
+        )
         emotion = self.emotion_analyzer.analyze(
             message,
             static_sentiment=str(ticket.sentiment),
@@ -661,6 +694,17 @@ class SarvagunLifecycle:
             self._event("message.received", conversation_id, run_id, "customer", {"message_type": conversation.message_type}),
             self._event("emotion.detected", conversation_id, run_id, "Sarvagun", emotion.model_dump()),
         ]
+        capability_routes = list((session or {}).get("capability_routes", []))
+        if capability_routes:
+            events.append(
+                self._event(
+                    "capability.routed",
+                    conversation_id,
+                    run_id,
+                    "SuperTuriya",
+                    capability_routes[-1],
+                )
+            )
         if strategy.recalled_intelligence_ids:
             events.append(
                 self._event(
@@ -1136,6 +1180,7 @@ class SarvagunLifecycle:
             timestamp=_now_iso(),
             conversation_id=conversation_id,
             run_id=run_id,
+            correlation_id=observability_context()["correlation_id"],
             actor=actor,
             payload=payload,
         )

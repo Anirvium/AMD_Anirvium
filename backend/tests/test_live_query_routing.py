@@ -37,12 +37,36 @@ def test_query_reroutes_mismatched_selected_case_before_planning() -> None:
     )
     action = result.final_actions[0]
 
-    assert result.selected_ticket_ids == ["CS-003"]
+    assert result.selected_ticket_ids == ["CS-001"]
+    assert action.customer_name == "Aisha Mehta"
     assert action.recommended_escalation == "Verification team"
     assert action.owner == "Verification review queue"
     assert all(not evidence_id.startswith("EVAL-") for evidence_id in action.evidence_ids)
     assert {"POL-CS-VERIFY-001", "PROC-CS-VERIFY-001", "TMPL-CS-VERIFY-001"}.issubset(action.evidence_ids)
+    assert "POL-CS-PAY-001" not in action.evidence_ids
     assert result.metadata["query_resolution"]["query_routed"] is True
+    assert result.metadata["query_resolution"]["customer_identity_preserved"] is True
+
+
+def test_frontend_customer_identity_survives_cross_domain_free_text() -> None:
+    result = AgentRunner().run(
+        RunRequest(
+            dataset="customer_support",
+            selection_mode="selected",
+            selected_ticket_ids=["CS-001"],
+            customer_id="CS-C001",
+            conversation_id="conv-cross-domain-identity",
+            customer_query="My account is restricted for KYC. Unblock it immediately.",
+        )
+    )
+
+    assert result.sarvagun is not None
+    assert result.selected_ticket_ids == ["CS-001"]
+    assert result.sarvagun.customer_context.customer_id == "CS-C001"
+    assert result.sarvagun.customer_context.customer_name == "Aisha Mehta"
+    assert result.sarvagun.transcript.customer_id == "CS-C001"
+    assert result.sarvagun.transcript.detected_issue == "verification_restriction"
+    assert result.final_actions[0].recommended_escalation == "Verification team"
 
 
 def test_async_progress_callback_reports_real_agent_steps() -> None:

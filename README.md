@@ -108,6 +108,10 @@ flowchart LR
 - Learning extraction agent that turns human handoffs, transcripts, satisfaction signals, and resolution logs into reusable improvement artifacts.
 - Recoverable asynchronous jobs with actual agent-step progress and browser refresh resumption.
 - Free-form query routing to the correct customer-support case before planning.
+- Typed hybrid capability routing for conversation, relational customer/case reads, deterministic analytics, public general knowledge, and the governed Sarvagun workflow.
+- Normalized SQLite operational truth for customers, cases, queues, conversations, runs, evaluations, tools, and feedback; Redis and vector memory have separate roles.
+- Truthful platform inventory at `GET /platform/status`, including active models, storage backends, collection roles, benchmark claim boundaries, and production limitations.
+- Deterministic stored-run comparison at `GET /runs/compare` with path signatures, metric/latency/token/tool/evidence deltas, failure/risk changes, and safety-aware verdicts.
 - Generation-safe hybrid retrieval that keeps evaluation-only records out of answer evidence.
 - Advisory recall of similar prior trajectories without automatic policy mutation.
 - Reflection agent that reviews completed responses and repeated mistake patterns before optimization.
@@ -203,6 +207,7 @@ Key endpoints:
 - `GET /runs/{run_id}`
 - `GET /runs/{run_id}/trajectory`
 - `GET /runs/{run_id}/evaluation`
+- `GET /runs/compare?baseline_run_id=...&candidate_run_id=...`
 - `GET /benchmarks/amd`
 - `GET /demo/customer-support-run`
 - `GET /kb/layers`
@@ -212,6 +217,29 @@ Key endpoints:
 - `GET /cx/operations`
 - `GET /cx/transcripts/{run_id}`
 - `POST /cx/feedback`
+- `GET /platform/status`
+- `GET /data/status`
+- `GET /data/customers`
+- `GET /data/cases?status=OPEN&queue=financial_operations`
+- `GET /data/cases/{case_id}/context`
+- `GET /data/accounts`
+- `GET /data/transactions`
+
+Fast hybrid-router proof:
+
+```bash
+curl -sS -X POST http://localhost:8000/conversations/turn \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"List all customers"}'
+curl -sS -X POST http://localhost:8000/conversations/turn \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"Show all payment-failure cases"}'
+curl -sS -X POST http://localhost:8000/conversations/turn \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"What is a capital market?"}'
+```
+
+The first two responses come from exact synthetic relational records. The third uses the configured live model; mock mode reports the missing live model truthfully instead of inventing an answer.
 
 ## Mock Mode
 
@@ -326,7 +354,7 @@ Do not commit secrets. Use `.env.example` as the only environment template.
 ## Roadmap
 
 - Add LLM-as-judge scoring behind the deterministic evaluator.
-- Add persistent SQLite run history and approval outcome tracking.
+- Upgrade the SQLite demo store to managed PostgreSQL with migrations and tenant isolation.
 - Add hosted demo deployment profile.
 - Add human approval UI for billing/security workflows.
 - Add model routing rules across small/large AMD-hosted models.

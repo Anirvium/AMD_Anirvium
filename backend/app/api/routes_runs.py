@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
+from app.schemas.comparison import RunComparisonResponse
 from app.schemas.run import RunJobResponse, RunRequest, RunResult
 from app.schemas.trajectory import TrajectoryResponse
 from app.services.agent_runner import InvalidRunSelectionError
 from app.services.graph_discovery import build_trajectory_property_graph
+from app.services.run_comparison import compare_run_results
 from app.services.runtime import get_agent_runner, get_run_job_manager
 
 
@@ -11,18 +13,22 @@ router = APIRouter(tags=["runs"])
 
 
 @router.post("/runs", response_model=RunResult)
-def create_run(request: RunRequest) -> RunResult:
+def create_run(payload: RunRequest, request: Request) -> RunResult:
     runner = get_agent_runner()
+    if payload.correlation_id is None:
+        payload = payload.model_copy(update={"correlation_id": request.state.correlation_id})
     try:
-        result = runner.run(request)
+        result = runner.run(payload)
     except InvalidRunSelectionError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return result
 
 
 @router.post("/runs/async", response_model=RunJobResponse, status_code=202)
-def create_async_run(request: RunRequest) -> RunJobResponse:
-    return get_run_job_manager().submit(request)
+def create_async_run(payload: RunRequest, request: Request) -> RunJobResponse:
+    if payload.correlation_id is None:
+        payload = payload.model_copy(update={"correlation_id": request.state.correlation_id})
+    return get_run_job_manager().submit(payload)
 
 
 @router.get("/runs/jobs/{job_id}", response_model=RunJobResponse)
@@ -58,6 +64,18 @@ def get_latest_graph_discovery() -> dict:
     if result is None:
         raise HTTPException(status_code=404, detail="No runs have been created yet")
     return build_trajectory_property_graph(result)
+
+
+@router.get("/runs/compare", response_model=RunComparisonResponse)
+def compare_runs(baseline_run_id: str, candidate_run_id: str) -> RunComparisonResponse:
+    runner = get_agent_runner()
+    baseline = runner.get_run(baseline_run_id)
+    if baseline is None:
+        raise HTTPException(status_code=404, detail=f"Baseline run not found: {baseline_run_id}")
+    candidate = runner.get_run(candidate_run_id)
+    if candidate is None:
+        raise HTTPException(status_code=404, detail=f"Candidate run not found: {candidate_run_id}")
+    return compare_run_results(baseline, candidate)
 
 
 @router.get("/runs/{run_id}", response_model=RunResult)

@@ -32,10 +32,16 @@ class RunJobManager:
             submitted_at=datetime.now(timezone.utc).isoformat(),
             current_agent="Planner Agent",
             progress_message="Waiting for the AMD agent runtime",
+            correlation_id=request.correlation_id,
         )
         with self.lock:
             self.jobs[job_id] = job
-        logger.info("run_job_queued job_id=%s tickets=%s", job_id, request.selected_ticket_ids or request.selection_mode)
+        logger.info(
+            "run_job_queued job_id=%s correlation_id=%s tickets=%s",
+            job_id,
+            request.correlation_id,
+            request.selected_ticket_ids or request.selection_mode,
+        )
         self.executor.submit(self._execute, job_id, request)
         return job.model_copy(deep=True)
 
@@ -49,7 +55,7 @@ class RunJobManager:
             self.jobs[job_id].status = "running"
             self.jobs[job_id].started_at = datetime.now(timezone.utc).isoformat()
             self.jobs[job_id].progress_message = "Agent workflow started"
-        logger.info("run_job_started job_id=%s", job_id)
+        logger.info("run_job_started job_id=%s correlation_id=%s", job_id, request.correlation_id)
         try:
             result = self.runner.run(
                 request,
@@ -63,7 +69,7 @@ class RunJobManager:
                 self.jobs[job_id].error = f"{type(exc).__name__}: {exc}"
                 self.jobs[job_id].completed_at = datetime.now(timezone.utc).isoformat()
                 self.jobs[job_id].progress_message = "Agent workflow failed"
-            logger.exception("run_job_failed job_id=%s", job_id)
+            logger.exception("run_job_failed job_id=%s correlation_id=%s", job_id, request.correlation_id)
             return
         with self.lock:
             self.jobs[job_id].status = "completed"
@@ -72,7 +78,13 @@ class RunJobManager:
             self.jobs[job_id].current_step = self.jobs[job_id].total_steps
             self.jobs[job_id].progress_percent = 100
             self.jobs[job_id].progress_message = "Trajectory captured and evaluated"
-        logger.info("run_job_completed job_id=%s run_id=%s score=%s", job_id, result.run_id, result.evaluation.metrics.overall_score)
+        logger.info(
+            "run_job_completed job_id=%s correlation_id=%s run_id=%s score=%s",
+            job_id,
+            request.correlation_id,
+            result.run_id,
+            result.evaluation.metrics.overall_score,
+        )
 
     def _update_progress(self, job_id: str, step: int, total: int, agent: str, phase: str) -> None:
         with self.lock:

@@ -184,6 +184,47 @@ export interface ConversationTurnResponse {
   };
   customer: Record<string, unknown> | null;
   turns: ConversationTurn[];
+  capability_route?: CapabilityRoute | null;
+  direct_result?: DirectCapabilityResult | null;
+}
+
+export interface CapabilityRoute {
+  route_id: string;
+  capability: "support_case_execution" | "customer_directory" | "payment_failure_cases" | "customer_lookup" | "case_directory" | "case_lookup" | "support_analytics" | "general_knowledge" | "conversation_fast_path";
+  execution_path: "sarvagun_agent_pipeline" | "direct_relational_read" | "deterministic_analytics" | "general_knowledge_llm" | "conversation_manager";
+  requires_agent_run: boolean;
+  confidence: number;
+  reason: string;
+  matched_signals: string[];
+  read_only: boolean;
+  data_scope: string;
+  event_type: string;
+  observed_by: string;
+}
+
+export interface DirectCapabilityResult {
+  capability: CapabilityRoute["capability"];
+  status: "success" | "not_found" | "degraded";
+  answer: string;
+  record_count: number;
+  records: Array<Record<string, unknown>>;
+  aggregates: Record<string, unknown>;
+  source_ids: string[];
+  generated_by: string;
+  fallback_reason: string | null;
+  synthetic_data_only: boolean;
+}
+
+export interface CaseContext {
+  synthetic_data_only: true;
+  case: Record<string, unknown>;
+  customer: Record<string, unknown>;
+  accounts: Array<Record<string, unknown>>;
+  transactions: Array<Record<string, unknown>>;
+  verification_records: Array<Record<string, unknown>>;
+  approval_requests: Array<Record<string, unknown>>;
+  escalations: Array<Record<string, unknown>>;
+  workflow_states: Array<Record<string, unknown>>;
 }
 
 export interface ToolExecutionRecord {

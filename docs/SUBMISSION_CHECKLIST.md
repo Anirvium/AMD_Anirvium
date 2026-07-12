@@ -14,11 +14,16 @@
 - [ ] `/demo/customer-support-run` returns curated `POL-CS-*`, `PROC-CS-*`, and `TMPL-CS-*` evidence IDs.
 - [ ] `/kb/vector/status` and `/kb/search?q=withdrawal%20processed` are captured for the demo.
 - [ ] `/memory/status` shows local or Redis-backed memory readiness.
+- [ ] `/platform/status` truthfully shows active model roles, storage backends, collection roles, and τ benchmark status.
+- [ ] `/data/cases/CS-002/context` returns the linked customer, account, transaction, approval, escalation, and workflow states.
+- [ ] `List all customers`, `Show open payment-failure cases`, `Open CS-001`, and `What is a capital market?` follow the correct typed routes.
+- [ ] Two persisted runs can be compared with `/runs/compare`.
 - [ ] Dashboard screenshot is saved under `amd/screenshots/`.
 - [ ] No real customer data is included.
 - [ ] No secrets are committed.
 - [ ] `.env.example` is present.
 - [ ] Backend tests pass with `cd backend && uv run pytest`.
 - [ ] Frontend builds with `cd frontend && npm install && npm run build`.
+- [ ] GitHub Actions backend and frontend jobs are green for the submission commit.
 - [ ] Hosted URL is included if available.
 - [ ] Slide deck highlights problem, product, architecture, AMD compute, and market.

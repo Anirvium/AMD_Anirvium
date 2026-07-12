@@ -40,9 +40,13 @@ class Settings(BaseSettings):
     short_term_memory_ttl_seconds: int = 3600
     mid_term_memory_limit: int = 50
 
+    # Exact operational facts belong in a relational store. KB search and
+    # trajectory recall remain in the vector collections above.
+    relational_db_path: str = "app/data/sarvagun_operational.sqlite3"
+
     amd_provider_name: str = "AMD Developer Cloud"
     amd_backend_name: str = "vLLM/ROCm"
-    amd_gpu_name: str = "AMD Instinct MI300X 192GB"
+    amd_gpu_name: str = "AMD GPU (runtime-reported)"
     amd_runtime_profile: str = "text"
 
     run_store_dir: str = Field(default="app/data/runs")
