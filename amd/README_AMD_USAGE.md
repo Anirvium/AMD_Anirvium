@@ -1,8 +1,8 @@
 # AMD Developer Cloud Usage
 
-Anirvium AI runs locally in deterministic mock mode and is prepared to switch to AMD Developer Cloud GPU-backed inference through vLLM/ROCm exposing an OpenAI-compatible API.
+Anirvium AI runs locally in deterministic mock mode and has also executed against AMD Developer Cloud GPU-backed inference through vLLM/ROCm exposing an OpenAI-compatible API.
 
-Use runtime profiles. Validate visible GPU memory before launch: some hackathon notebooks expose the intended MI300X 192GB device, while others may expose a smaller 48GB GPU profile. Vision is intentionally deferred until the text trajectory benchmark has real AMD logs.
+Use runtime profiles and validate visible GPU memory before launch. The verified event session exposed approximately 47.98 GiB and `gfx1100`; the 192GB MI300X configuration remains a target profile, not a measured result. Vision remains deferred in the text-first product path.
 
 ## A. AMD GPU Runbook
 
@@ -130,7 +130,7 @@ The screenshots should show the vLLM/ROCm server, benchmark output, and the dash
 
 ## B. Current Evidence Status
 
-Real AMD benchmark pending. Scripts and runbook are prepared. Sample files are marked as sample and are not claimed as verified AMD execution.
+The text-first AMD benchmark and live backend run were completed. The durable committed evidence is [benchmark_results_real.md](benchmark_results_real.md). Raw JSON logs were generated inside the ephemeral AMD notebook and were ignored by Git; do not cite those uncommitted paths as judge-accessible artifacts.
 
 Current files:
 
@@ -140,17 +140,17 @@ Current files:
 - `amd/run_agent_benchmark.sh`: prepared benchmark wrapper.
 - `amd/benchmark_agent_eval.py`: prepared trajectory benchmark script.
 - `amd/benchmark_results_sample.md`: sample-only local development values.
-- `amd/logs/.gitkeep`: placeholder for future logs.
-- `amd/screenshots/.gitkeep`: placeholder for future screenshots.
+- `amd/benchmark_results_real.md`: verified human-readable AMD execution evidence.
+- `amd/logs/.gitkeep`: placeholder; raw notebook logs are not committed.
 
-Future real evidence paths:
+Observed verified path:
 
-- `amd/logs/benchmark_amd_real_<date>.json`
-- `amd/benchmark_results_real.md`
-- `amd/screenshots/vllm_running.png`
-- `amd/screenshots/benchmark_output.png`
-- `amd/screenshots/dashboard_amd_panel.png`
+- `Qwen/Qwen3-8B` served as `anirvium-text`.
+- OpenAI-compatible vLLM endpoint on ROCm.
+- Approximately 47.98 GiB visible VRAM and `gfx1100` runtime target.
+- Thirteen-step Sarvagun/SuperTuriya execution through the live backend.
+- Detailed metrics and claim boundaries in `amd/benchmark_results_real.md`.
 
 ## Claim Boundary
 
-Do not present local mock results or sample values as verified AMD GPU execution. AMD proof should remain in the run logs, runbook, and submission evidence until real AMD Developer Cloud logs and screenshots are attached.
+Do not present local mock results, sample values, or the 192GB target profile as verified AMD execution. The real claim is limited to the text-first Qwen3-8B/vLLM/ROCm path summarized in `amd/benchmark_results_real.md`. The application did not run an official Track 3 performance benchmark.

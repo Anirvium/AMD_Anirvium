@@ -1,0 +1,3402 @@
+{
+  "run_id": "run_20260712153157_c1555820",
+  "status": "completed",
+  "selected_ticket_ids": [
+    "CS-001"
+  ],
+  "final_actions": [
+    {
+      "ticket_id": "CS-001",
+      "customer_name": "Aisha Mehta",
+      "recommended_escalation": "Financial operations",
+      "owner": "Deposit review queue",
+      "urgency": "high",
+      "approval_state": "APPROVAL_REQUIRED",
+      "draft_response": "I\u2019m sorry you\u2019ve had to contact us again about this, Aisha Mehta. I checked the case history and the current status is payment evidence received. The next governed step is with Deposit review queue. I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01",
+        "TMPL-CS-DEP-001"
+      ],
+      "risk_flags": [
+        "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "next_action": "Check elapsed payment window, request proof if needed, and create or update the financial task.",
+      "confidence_score": 0.54,
+      "compliance_status": "REVIEW_REQUIRED",
+      "human_escalation_required": true,
+      "handoff_team": "Deposit review queue",
+      "handoff_reason": "compliance_review_required, approval_required",
+      "handoff_summary": "CS-001 should be reviewed by Deposit review queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Check elapsed payment window, request proof if needed, and create or update the financial task..",
+      "generation_source": "deterministic_safe_fallback",
+      "generation_model": null,
+      "fallback_reason": "llm_not_configured"
+    }
+  ],
+  "visual_evidence_cards": [
+    {
+      "evidence_id": "VIS-001-01",
+      "ticket_id": "CS-001",
+      "source_type": "screenshot",
+      "filename": "deposit-success-screenshot.png",
+      "summary": "deposit-success-screenshot.png captured as screenshot support evidence.",
+      "ocr_text": "Customer-provided visual context captured for support review.",
+      "visual_findings": [
+        "visual customer evidence is available"
+      ],
+      "timestamp_refs": [],
+      "supported_claims": [
+        "I made a UPI deposit yesterday and the amount is still not visible. I have a successful payment screenshot."
+      ],
+      "risk_flags": [
+        "MULTIMODAL_EVIDENCE_PRESENT"
+      ],
+      "confidence": 0.88,
+      "requires_policy_check": true,
+      "model_name": "deterministic-attachment-evidence",
+      "raw_modality": "image/png"
+    }
+  ],
+  "trajectory": [
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_001",
+      "parent_step_id": null,
+      "agent_name": "Planner Agent",
+      "input_summary": "Build a plan-driven support workflow, stop conditions, and evidence contract for tickets: CS-001.",
+      "output_summary": "Created plan-driven support workflow for 1 selected tickets.",
+      "reasoning_summary": "Planner produced auditable reasoning summaries, required evidence, tool sequence, and stop conditions without exposing private reasoning.",
+      "full_output": {
+        "summary": "Created plan-driven support workflow for 1 selected tickets.",
+        "plans": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "intent": "deposit_missing",
+            "case_risk": "high_support_risk",
+            "plan_steps": [
+              "classify customer intent, sentiment, priority, and SLA pressure",
+              "retrieve support policy, procedure, template, and evidence records",
+              "apply plan-driven policy gates before drafting",
+              "draft a customer-safe response grounded in evidence IDs",
+              "run compliance and confidence gates before final action",
+              "handoff to a human when confidence, approval, or policy state requires it",
+              "feed completed trajectory into reflection, learning extraction, and optimizer loops"
+            ],
+            "required_tools": [
+              "triage_classifier",
+              "kb_search",
+              "policy_check",
+              "evidence_card_lookup"
+            ],
+            "required_evidence": [
+              "payment status",
+              "transaction proof",
+              "financial policy"
+            ],
+            "stop_conditions": [
+              "unsupported_commitment_without_evidence",
+              "refund_or_release_promise",
+              "financial_outcome_without_approval"
+            ],
+            "policy_mode": "hybrid_plan_driven_and_ai_driven",
+            "reasoning_summary": "Plan for CS-001: handle deposit_missing by retrieving evidence first, then enforcing policy gates before any customer-facing commitment."
+          }
+        },
+        "tools_used": [
+          "plan_policy_router",
+          "risk_stop_condition_builder",
+          "workflow_contract_generator",
+          "sarvagun.hybrid_execution_controller",
+          "superturiya.memory_guidance"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [
+          "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+          "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+          "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "reasoning_summary": "Planner produced auditable reasoning summaries, required evidence, tool sequence, and stop conditions without exposing private reasoning.",
+        "confidence": 0.9,
+        "execution_strategy": {
+          "execution_mode": "hybrid",
+          "decision_authority": "governed_plan_with_bounded_autonomy",
+          "policy_guardian": "deterministic_policy_and_compliance_gates",
+          "autonomous_scope": [
+            "tool_selection",
+            "response_composition",
+            "clarification"
+          ],
+          "mandatory_capabilities": [
+            "Planner Agent",
+            "Knowledge Retrieval Agent",
+            "Policy Checker Agent",
+            "Response Drafting Agent",
+            "Compliance Agent",
+            "Critic / Evaluator Agent",
+            "Reflection Agent",
+            "Learning Extraction Agent",
+            "Optimizer Agent"
+          ],
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "stop_conditions": [
+            "unsupported_commitment_without_evidence",
+            "policy_or_identity_bypass",
+            "unauthorized_enterprise_write",
+            "maximum_agent_steps_exceeded"
+          ],
+          "maximum_agent_steps": 13,
+          "replan_limit": 1,
+          "recalled_intelligence_ids": [
+            "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+            "LTM-run_20260712153157_724c9e58",
+            "LTM-run_20260712153157_262a4fd3"
+          ],
+          "memory_influenced_decisions": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "autonomous_decisions": [
+            {
+              "iteration": 1,
+              "observation": {
+                "issue_type": "deposit_missing",
+                "emotion_intensity": 0.66,
+                "recontact": true
+              },
+              "decision": "select_allowlisted_context_and_domain_tools",
+              "selected_tools": [
+                "mock_customer_system.get_open_cases",
+                "mock_customer_system.get_interaction_history",
+                "mock_customer_system.lookup_operational_status",
+                "mock_customer_system.create_escalation",
+                "superturiya.trajectory_memory_search"
+              ],
+              "policy_supervisor": "accepted",
+              "executed_tool_ids": [
+                "toolrun_892d396afd83",
+                "toolrun_ea03fd76ec6e",
+                "toolrun_3ec615ad0bd7"
+              ],
+              "mandatory_context_tool_ids": [
+                "toolrun_cfecd0a0411f"
+              ],
+              "observed_tool_statuses": {
+                "find_customer": "success",
+                "get_open_cases": "success",
+                "get_interaction_history": "success",
+                "lookup_operational_status": "success"
+              }
+            },
+            {
+              "iteration": 2,
+              "observation": {
+                "required_policy_gate": true
+              },
+              "decision": "commit_existing_agent_plan_inside_safety_envelope",
+              "policy_supervisor": "accepted"
+            }
+          ],
+          "termination_reason": "bounded_plan_committed_before_agent_execution"
+        }
+      },
+      "tools_used": [
+        "plan_policy_router",
+        "risk_stop_condition_builder",
+        "workflow_contract_generator",
+        "sarvagun.hybrid_execution_controller",
+        "superturiya.memory_guidance"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 19,
+      "tokens_out": 501,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.9,
+      "risk_flags": [
+        "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+        "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+        "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.829209Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_002",
+      "parent_step_id": "step_001",
+      "agent_name": "Attachment Evidence Agent",
+      "input_summary": "Extract lightweight attachment evidence cards without an image/video model for tickets: CS-001.",
+      "output_summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+      "reasoning_summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+      "full_output": {
+        "summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+        "visual_evidence_cards": [
+          {
+            "evidence_id": "VIS-001-01",
+            "ticket_id": "CS-001",
+            "source_type": "screenshot",
+            "filename": "deposit-success-screenshot.png",
+            "summary": "deposit-success-screenshot.png captured as screenshot support evidence.",
+            "ocr_text": "Customer-provided visual context captured for support review.",
+            "visual_findings": [
+              "visual customer evidence is available"
+            ],
+            "timestamp_refs": [],
+            "supported_claims": [
+              "I made a UPI deposit yesterday and the amount is still not visible. I have a successful payment screenshot."
+            ],
+            "risk_flags": [
+              "MULTIMODAL_EVIDENCE_PRESENT"
+            ],
+            "confidence": 0.88,
+            "requires_policy_check": true,
+            "model_name": "deterministic-attachment-evidence",
+            "raw_modality": "image/png"
+          }
+        ],
+        "tools_used": [
+          "attachment_metadata_parser",
+          "evidence_card_generator"
+        ],
+        "evidence_ids": [
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "MULTIMODAL_EVIDENCE_PRESENT"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-attachment-evidence",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "attachment_metadata_parser",
+        "evidence_card_generator"
+      ],
+      "evidence_ids": [
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 17,
+      "tokens_out": 152,
+      "model_name": "deterministic-attachment-evidence",
+      "confidence": 0.86,
+      "risk_flags": [
+        "MULTIMODAL_EVIDENCE_PRESENT"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.829256Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_003",
+      "parent_step_id": "step_002",
+      "agent_name": "Intake / Triage Agent",
+      "input_summary": "Classify selected support tickets: CS-001.",
+      "output_summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+      "reasoning_summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+      "full_output": {
+        "summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+        "classifications": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "issue_type": "deposit_missing",
+            "urgency": "high",
+            "customer_tier": "business",
+            "sla_risk": "high",
+            "sentiment": "frustrated",
+            "risk_flags": [
+              "SLA_REVIEW_REQUIRED",
+              "CUSTOMER_SENTIMENT_RISK"
+            ]
+          }
+        },
+        "tools_used": [
+          "priority_rules",
+          "sentiment_rules",
+          "sla_window_rules"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [
+          "CUSTOMER_SENTIMENT_RISK",
+          "SLA_REVIEW_REQUIRED"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.9
+      },
+      "tools_used": [
+        "priority_rules",
+        "sentiment_rules",
+        "sla_window_rules"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 7,
+      "tokens_out": 75,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.9,
+      "risk_flags": [
+        "CUSTOMER_SENTIMENT_RISK",
+        "SLA_REVIEW_REQUIRED"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.829275Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_004",
+      "parent_step_id": "step_003",
+      "agent_name": "Knowledge Retrieval Agent",
+      "input_summary": "Retrieve KB and policy evidence for selected tickets: CS-001.",
+      "output_summary": "Retrieved grounded evidence for 1 tickets.",
+      "reasoning_summary": "Retrieved grounded evidence for 1 tickets.",
+      "full_output": {
+        "summary": "Retrieved grounded evidence for 1 tickets.",
+        "retrieved_evidence": {
+          "CS-001": [
+            {
+              "id": "POL-CS-PAY-001",
+              "title": "Delayed deposit evidence gate",
+              "summary": "Customer reports that a deposit has not appeared.",
+              "category": "kb_policies"
+            },
+            {
+              "id": "PROC-CS-DEP-001",
+              "title": "Deposit not visible triage",
+              "summary": "We will check the deposit status and request payment proof if the normal processing window has passed.",
+              "category": "kb_procedures"
+            },
+            {
+              "id": "TMPL-CS-DEP-002",
+              "title": "Deposit proof request after waiting window",
+              "summary": "Hi {customer_name}, thanks for your patience. Since the normal deposit window has passed for the transaction on {transaction_date}, please share {required_proof}. Once we have it, we can forward the case for financial review.",
+              "category": "kb_templates"
+            },
+            {
+              "id": "VIS-001-01",
+              "title": "Attachment evidence: deposit-success-screenshot.png",
+              "summary": "deposit-success-screenshot.png captured as screenshot support evidence.",
+              "category": "screenshot"
+            },
+            {
+              "id": "TMPL-CS-DEP-001",
+              "title": "Deposit still within processing window",
+              "summary": "Hi {customer_name}, I understand you are waiting for your deposit to appear. I am checking the payment status for {payment_method}. If the normal processing window of {processing_window} has not passed yet, please allow that time first. {next_step}",
+              "category": "kb_templates",
+              "domain": "deposits",
+              "risk_level": "medium",
+              "requires_approval": false,
+              "allowed_for_generation": true
+            }
+          ]
+        },
+        "tools_used": [
+          "local_kb_search",
+          "policy_catalog_lookup",
+          "visual_evidence_lookup"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.92
+      },
+      "tools_used": [
+        "local_kb_search",
+        "policy_catalog_lookup",
+        "visual_evidence_lookup"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 12,
+      "tokens_out": 296,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.92,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.829898Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_005",
+      "parent_step_id": "step_004",
+      "agent_name": "Policy Checker Agent",
+      "input_summary": "Apply approval and policy gates using retrieved evidence for tickets: CS-001.",
+      "output_summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+      "reasoning_summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+      "full_output": {
+        "summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+        "policy_checks": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "approval_state": "APPROVAL_REQUIRED",
+            "constraints": [
+              "Do not promise deposit crediting, withdrawal release, bank receipt, or payment reversal before financial review approval.",
+              "Apply POL-CS-PAY-001: Customer reports that a deposit has not appeared.",
+              "Cite internal evidence IDs for material recommendations."
+            ],
+            "risk_flags": [
+              "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+            ],
+            "evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ]
+          }
+        },
+        "tools_used": [
+          "policy_rules_engine",
+          "approval_state_classifier"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "confidence": 0.91
+      },
+      "tools_used": [
+        "policy_rules_engine",
+        "approval_state_classifier"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 15,
+      "tokens_out": 130,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.91,
+      "risk_flags": [
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:57.829932Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_006",
+      "parent_step_id": "step_005",
+      "agent_name": "Escalation Agent",
+      "input_summary": "Route selected tickets to the right owner, urgency, and next action: CS-001.",
+      "output_summary": "Produced escalation routes and owners for 1 tickets.",
+      "reasoning_summary": "Produced escalation routes and owners for 1 tickets.",
+      "full_output": {
+        "summary": "Produced escalation routes and owners for 1 tickets.",
+        "escalations": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "recommended_escalation": "Financial operations",
+            "owner": "Deposit review queue",
+            "urgency": "high",
+            "next_action": "Check elapsed payment window, request proof if needed, and create or update the financial task.",
+            "evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ]
+          }
+        },
+        "tools_used": [
+          "escalation_matrix",
+          "customer_success_owner_lookup"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "ESCALATION_TIME_SENSITIVE"
+        ],
+        "approval_state": "ESCALATED",
+        "confidence": 0.88
+      },
+      "tools_used": [
+        "escalation_matrix",
+        "customer_success_owner_lookup"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 16,
+      "tokens_out": 103,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.88,
+      "risk_flags": [
+        "ESCALATION_TIME_SENSITIVE"
+      ],
+      "approval_state": "ESCALATED",
+      "timestamp": "2026-07-12T15:31:57.829955Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_007",
+      "parent_step_id": "step_006",
+      "agent_name": "Response Drafting Agent",
+      "input_summary": "Draft customer-safe replies using policy constraints and escalation outputs for tickets: CS-001.",
+      "output_summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+      "reasoning_summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+      "full_output": {
+        "summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+        "final_actions": [
+          {
+            "ticket_id": "CS-001",
+            "customer_name": "Aisha Mehta",
+            "recommended_escalation": "Financial operations",
+            "owner": "Deposit review queue",
+            "urgency": "high",
+            "approval_state": "APPROVAL_REQUIRED",
+            "draft_response": "I\u2019m sorry you\u2019ve had to contact us again about this, Aisha Mehta. I checked the case history and the current status is payment evidence received. The next governed step is with Deposit review queue. I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+            "evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ],
+            "risk_flags": [
+              "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+              "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+            ],
+            "next_action": "Check elapsed payment window, request proof if needed, and create or update the financial task.",
+            "confidence_score": 0.54,
+            "compliance_status": "REVIEW_REQUIRED",
+            "human_escalation_required": true,
+            "handoff_team": "Deposit review queue",
+            "handoff_reason": "compliance_review_required, approval_required",
+            "handoff_summary": "CS-001 should be reviewed by Deposit review queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Check elapsed payment window, request proof if needed, and create or update the financial task..",
+            "generation_source": "deterministic_safe_fallback",
+            "generation_model": null,
+            "fallback_reason": "llm_not_configured"
+          }
+        ],
+        "tools_used": [
+          "safe_response_template",
+          "approval_gate_check",
+          "trajectory_memory_recall",
+          "mock_customer_system.add_case_note"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "model_name": "deterministic-safe-response-v2",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "safe_response_template",
+        "approval_gate_check",
+        "trajectory_memory_recall",
+        "mock_customer_system.add_case_note"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 254,
+      "model_name": "deterministic-safe-response-v2",
+      "confidence": 0.86,
+      "risk_flags": [
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:57.830303Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_008",
+      "parent_step_id": "step_007",
+      "agent_name": "Compliance Agent",
+      "input_summary": "Check drafted replies against legal, regulatory, company, privacy, and evidence rules for tickets: CS-001.",
+      "output_summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+      "reasoning_summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+      "full_output": {
+        "summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+        "compliance_checks": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "compliance_status": "REVIEW_REQUIRED",
+            "violations": [
+              "approval_required_before_send"
+            ],
+            "remediations": [],
+            "required_evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ],
+            "approval_state": "APPROVAL_REQUIRED",
+            "safe_rewrite": "I\u2019m sorry you\u2019ve had to contact us again about this, Aisha Mehta. I checked the case history and the current status is payment evidence received. The next governed step is with Deposit review queue. I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks."
+          }
+        },
+        "tools_used": [
+          "deterministic_compliance_rules",
+          "safe_rewrite_filter",
+          "evidence_support_check"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "confidence": 0.91
+      },
+      "tools_used": [
+        "deterministic_compliance_rules",
+        "safe_rewrite_filter",
+        "evidence_support_check"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 20,
+      "tokens_out": 182,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.91,
+      "risk_flags": [
+        "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:57.830372Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_009",
+      "parent_step_id": "step_008",
+      "agent_name": "Human Escalation Agent",
+      "input_summary": "Route low-confidence, blocked, or approval-required support cases to human review for tickets: CS-001.",
+      "output_summary": "Routed 1 of 1 cases to human review.",
+      "reasoning_summary": "Routed 1 of 1 cases to human review.",
+      "full_output": {
+        "summary": "Routed 1 of 1 cases to human review.",
+        "human_handoffs": {
+          "CS-001": {
+            "ticket_id": "CS-001",
+            "route": "human_required",
+            "team": "Deposit review queue",
+            "reason": "compliance_review_required, approval_required",
+            "confidence": 0.54,
+            "handoff_summary": "CS-001 should be reviewed by Deposit review queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Check elapsed payment window, request proof if needed, and create or update the financial task..",
+            "evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ]
+          }
+        },
+        "confidence_threshold": 0.45,
+        "tools_used": [
+          "confidence_gate",
+          "human_queue_router",
+          "handoff_summary_builder"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "APPROVAL_REQUIRED",
+          "COMPLIANCE_REVIEW_REQUIRED"
+        ],
+        "approval_state": "ESCALATED",
+        "confidence": 0.89
+      },
+      "tools_used": [
+        "confidence_gate",
+        "human_queue_router",
+        "handoff_summary_builder"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 19,
+      "tokens_out": 139,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.89,
+      "risk_flags": [
+        "APPROVAL_REQUIRED",
+        "COMPLIANCE_REVIEW_REQUIRED"
+      ],
+      "approval_state": "ESCALATED",
+      "timestamp": "2026-07-12T15:31:57.830399Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_010",
+      "parent_step_id": "step_009",
+      "agent_name": "Critic / Evaluator Agent",
+      "input_summary": "Evaluate the full support-agent trajectory, final actions, evidence coverage, policy compliance, and operational risk.",
+      "output_summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+      "reasoning_summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+      "full_output": {
+        "summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+        "metrics": {
+          "task_completion": 1.0,
+          "evidence_grounding": 1.0,
+          "policy_compliance": 1.0,
+          "hallucination_risk": 0.08,
+          "escalation_quality": 1.0,
+          "actionability": 1.0,
+          "missing_information": 1.0,
+          "customer_tone": 1.0,
+          "token_efficiency": 1.0,
+          "latency_efficiency": 1.0,
+          "overall_score": 90.2
+        },
+        "diagnosis": [
+          {
+            "category": "weak_response",
+            "severity": "MEDIUM",
+            "ticket_id": "CS-001",
+            "message": "High-urgency response does not state a customer update cadence.",
+            "evidence_ids": [
+              "POL-CS-PAY-001",
+              "PROC-CS-DEP-001",
+              "TMPL-CS-DEP-002",
+              "VIS-001-01",
+              "TMPL-CS-DEP-001"
+            ],
+            "suggested_fix": "Require a next-update field for critical and high-priority customer replies.",
+            "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+            "affected_agent": "Response Drafting Agent",
+            "business_impact": "Urgent customers may remain uncertain about ownership and timing, increasing churn or SLA pressure.",
+            "recommended_fix": "Require a next-update field for critical and high-priority customer replies.",
+            "metric_impact": [
+              "missing_information",
+              "customer_tone",
+              "actionability"
+            ],
+            "confidence": 0.88
+          }
+        ],
+        "llm_review": null,
+        "tools_used": [
+          "deterministic_eval_rules",
+          "failure_diagnosis_engine"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-trajectory-evaluator-v1",
+        "confidence": 0.87
+      },
+      "tools_used": [
+        "deterministic_eval_rules",
+        "failure_diagnosis_engine"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 21,
+      "tokens_out": 215,
+      "model_name": "deterministic-trajectory-evaluator-v1",
+      "confidence": 0.87,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.830473Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_011",
+      "parent_step_id": "step_010",
+      "agent_name": "Reflection Agent",
+      "input_summary": "Review completed support responses, diagnose repeated mistakes, and propose durable behavior improvements.",
+      "output_summary": "Reflected on 1 completed response quality signals.",
+      "reasoning_summary": "Reflected on 1 completed response quality signals.",
+      "full_output": {
+        "summary": "Reflected on 1 completed response quality signals.",
+        "reflections": [
+          {
+            "ticket_id": "CS-001",
+            "target_agent": "Response Drafting Agent",
+            "repeated_mistake": true,
+            "reflection_score": 0.56,
+            "improvement": "Require a next-update field for critical and high-priority customer replies.",
+            "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+            "metric_impact": [
+              "missing_information",
+              "customer_tone",
+              "actionability"
+            ]
+          }
+        ],
+        "tools_used": [
+          "post_run_reflection_rules",
+          "repeated_mistake_detector"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "post_run_reflection_rules",
+        "repeated_mistake_detector"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 96,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.86,
+      "risk_flags": [
+        "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.830491Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_012",
+      "parent_step_id": "step_011",
+      "agent_name": "Learning Extraction Agent",
+      "input_summary": "Extract reusable learning artifacts from human handoffs, trajectory logs, transcripts, and satisfaction signals.",
+      "output_summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+      "reasoning_summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+      "full_output": {
+        "summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+        "learning_artifacts": [
+          {
+            "ticket_id": "CS-001",
+            "lesson_type": "policy_gap",
+            "failure_pattern": "compliance_review_required, approval_required",
+            "source_signals": [
+              "human_handoff",
+              "chat_transcript",
+              "agent_resolution_notes",
+              "customer_satisfaction",
+              "agent_satisfaction"
+            ],
+            "recommended_kb_update": "Review CS-001 after human resolution and update the relevant policy/template for Financial operations.",
+            "new_eval_case": "Add eval case for CS-001 requiring evidence IDs POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01 and preserving the same approval-state decision.",
+            "confidence_adjustment": -0.12
+          }
+        ],
+        "tools_used": [
+          "handoff_log_extractor",
+          "transcript_signal_mapper",
+          "eval_case_generator"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01"
+        ],
+        "risk_flags": [
+          "POLICY_GAP"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.83
+      },
+      "tools_used": [
+        "handoff_log_extractor",
+        "transcript_signal_mapper",
+        "eval_case_generator"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 20,
+      "tokens_out": 140,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.83,
+      "risk_flags": [
+        "POLICY_GAP"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.830512Z"
+    },
+    {
+      "run_id": "run_20260712153157_c1555820",
+      "step_id": "step_013",
+      "parent_step_id": "step_012",
+      "agent_name": "Optimizer Agent",
+      "input_summary": "Recommend workflow changes from critic findings, deterministic scores, and final support actions.",
+      "output_summary": "Generated 1 workflow optimization recommendations.",
+      "reasoning_summary": "Generated 1 workflow optimization recommendations.",
+      "full_output": {
+        "summary": "Generated 1 workflow optimization recommendations.",
+        "recommendations": [
+          {
+            "recommendation_id": "OPT-002",
+            "title": "Require owner and update cadence for urgent cases",
+            "change_type": "mandatory_check",
+            "rationale": "Critical support replies need an assigned owner and clear update cadence to reduce escalation ambiguity.",
+            "expected_impact": "+6 actionability points and lower SLA risk",
+            "before": "High-urgency drafts can omit next-update timing.",
+            "after": "Critical and high-priority drafts include owner, route, urgency, and next-update timing.",
+            "related_ticket_ids": [
+              "CS-001"
+            ],
+            "priority": "HIGH",
+            "target_agent": "Escalation Agent",
+            "problem": "High-risk tickets can have an escalation route but no customer-visible update cadence.",
+            "root_cause": "The escalation schema has owner and next_action but the response drafting rule does not require next_update timing.",
+            "fix": "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets.",
+            "expected_metric_lift": {
+              "actionability": "+0.12",
+              "missing_information": "-0.20"
+            },
+            "implementation_hint": "Update response_agent.py templates and evaluator.py missing_information rule to require next update language."
+          }
+        ],
+        "llm_optimizer_note": null,
+        "tools_used": [
+          "optimization_rules",
+          "workflow_change_mapper"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-workflow-optimizer-v1",
+        "confidence": 0.84
+      },
+      "tools_used": [
+        "optimization_rules",
+        "workflow_change_mapper"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 237,
+      "model_name": "deterministic-workflow-optimizer-v1",
+      "confidence": 0.84,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:57.830554Z"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "step_001",
+        "label": "Planner Agent",
+        "status": "warning",
+        "score": 0.9,
+        "risk_flags": [
+          "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+          "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+          "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+        ]
+      },
+      {
+        "id": "step_002",
+        "label": "Attachment Evidence Agent",
+        "status": "warning",
+        "score": 0.86,
+        "risk_flags": [
+          "MULTIMODAL_EVIDENCE_PRESENT"
+        ]
+      },
+      {
+        "id": "step_003",
+        "label": "Intake / Triage Agent",
+        "status": "warning",
+        "score": 0.9,
+        "risk_flags": [
+          "CUSTOMER_SENTIMENT_RISK",
+          "SLA_REVIEW_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_004",
+        "label": "Knowledge Retrieval Agent",
+        "status": "success",
+        "score": 0.92,
+        "risk_flags": []
+      },
+      {
+        "id": "step_005",
+        "label": "Policy Checker Agent",
+        "status": "warning",
+        "score": 0.91,
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_006",
+        "label": "Escalation Agent",
+        "status": "warning",
+        "score": 0.88,
+        "risk_flags": [
+          "ESCALATION_TIME_SENSITIVE"
+        ]
+      },
+      {
+        "id": "step_007",
+        "label": "Response Drafting Agent",
+        "status": "warning",
+        "score": 0.86,
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_008",
+        "label": "Compliance Agent",
+        "status": "warning",
+        "score": 0.91,
+        "risk_flags": [
+          "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_009",
+        "label": "Human Escalation Agent",
+        "status": "warning",
+        "score": 0.89,
+        "risk_flags": [
+          "APPROVAL_REQUIRED",
+          "COMPLIANCE_REVIEW_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_010",
+        "label": "Critic / Evaluator Agent",
+        "status": "success",
+        "score": 0.87,
+        "risk_flags": []
+      },
+      {
+        "id": "step_011",
+        "label": "Reflection Agent",
+        "status": "warning",
+        "score": 0.86,
+        "risk_flags": [
+          "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+        ]
+      },
+      {
+        "id": "step_012",
+        "label": "Learning Extraction Agent",
+        "status": "warning",
+        "score": 0.83,
+        "risk_flags": [
+          "POLICY_GAP"
+        ]
+      },
+      {
+        "id": "step_013",
+        "label": "Optimizer Agent",
+        "status": "success",
+        "score": 0.84,
+        "risk_flags": []
+      }
+    ],
+    "edges": [
+      {
+        "source": "step_001",
+        "target": "step_002",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_002",
+        "target": "step_003",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_003",
+        "target": "step_004",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_004",
+        "target": "step_005",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_005",
+        "target": "step_006",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_006",
+        "target": "step_007",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_007",
+        "target": "step_008",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_008",
+        "target": "step_009",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_009",
+        "target": "step_010",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_010",
+        "target": "step_011",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_011",
+        "target": "step_012",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_012",
+        "target": "step_013",
+        "label": "passes structured context"
+      }
+    ]
+  },
+  "evaluation": {
+    "run_id": "run_20260712153157_c1555820",
+    "metrics": {
+      "task_completion": 1.0,
+      "evidence_grounding": 1.0,
+      "policy_compliance": 1.0,
+      "hallucination_risk": 0.08,
+      "escalation_quality": 1.0,
+      "actionability": 1.0,
+      "missing_information": 1.0,
+      "customer_tone": 1.0,
+      "token_efficiency": 1.0,
+      "latency_efficiency": 1.0,
+      "overall_score": 90.2
+    },
+    "diagnosis": [
+      {
+        "category": "weak_response",
+        "severity": "MEDIUM",
+        "ticket_id": "CS-001",
+        "message": "High-urgency response does not state a customer update cadence.",
+        "evidence_ids": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01",
+          "TMPL-CS-DEP-001"
+        ],
+        "suggested_fix": "Require a next-update field for critical and high-priority customer replies.",
+        "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+        "affected_agent": "Response Drafting Agent",
+        "business_impact": "Urgent customers may remain uncertain about ownership and timing, increasing churn or SLA pressure.",
+        "recommended_fix": "Require a next-update field for critical and high-priority customer replies.",
+        "metric_impact": [
+          "missing_information",
+          "customer_tone",
+          "actionability"
+        ],
+        "confidence": 0.88
+      }
+    ],
+    "recommendations": [
+      {
+        "recommendation_id": "OPT-002",
+        "title": "Require owner and update cadence for urgent cases",
+        "change_type": "mandatory_check",
+        "rationale": "Critical support replies need an assigned owner and clear update cadence to reduce escalation ambiguity.",
+        "expected_impact": "+6 actionability points and lower SLA risk",
+        "before": "High-urgency drafts can omit next-update timing.",
+        "after": "Critical and high-priority drafts include owner, route, urgency, and next-update timing.",
+        "related_ticket_ids": [
+          "CS-001"
+        ],
+        "priority": "HIGH",
+        "target_agent": "Escalation Agent",
+        "problem": "High-risk tickets can have an escalation route but no customer-visible update cadence.",
+        "root_cause": "The escalation schema has owner and next_action but the response drafting rule does not require next_update timing.",
+        "fix": "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets.",
+        "expected_metric_lift": {
+          "actionability": "+0.12",
+          "missing_information": "-0.20"
+        },
+        "implementation_hint": "Update response_agent.py templates and evaluator.py missing_information rule to require next update language."
+      }
+    ],
+    "summary": "Trajectory health score 90.2/100 across 1 selected tickets.",
+    "details": {
+      "selected_ticket_count": 1,
+      "agent_step_count": 13,
+      "model_name": "mock-trajectory-model",
+      "provider": "mock",
+      "compliance_status_counts": {
+        "REVIEW_REQUIRED": 1
+      },
+      "human_handoff_count": 1,
+      "learning_artifact_count": 1,
+      "reflection_count": 1,
+      "sarvagun_execution_mode": "hybrid",
+      "superturiya_event_count": 41,
+      "cx_quality_rubric": {
+        "correctness": 0.9,
+        "evidence_grounding": 1.0,
+        "empathy": 1.0,
+        "acknowledgement": 0.4,
+        "assurance_validity": 1.0,
+        "actionability": 1.0,
+        "tone": 0.92,
+        "policy_compliance": 1.0,
+        "completeness": 0.9,
+        "repetition": 0.92,
+        "escalation_compliance": 1.0,
+        "overall_quality": 0.913
+      }
+    }
+  },
+  "sarvagun": {
+    "system_name": "Sarvagun",
+    "platform": "Anirvium AI",
+    "conversation": {
+      "conversation_id": "conv_46a6c07d9dce",
+      "message_type": "SUPPORT_QUERY",
+      "requires_agent_run": true,
+      "is_follow_up": false,
+      "topic_changed": false,
+      "confidence": 0.94,
+      "response": null
+    },
+    "execution_strategy": {
+      "execution_mode": "hybrid",
+      "decision_authority": "governed_plan_with_bounded_autonomy",
+      "policy_guardian": "deterministic_policy_and_compliance_gates",
+      "autonomous_scope": [
+        "tool_selection",
+        "response_composition",
+        "clarification"
+      ],
+      "mandatory_capabilities": [
+        "Planner Agent",
+        "Knowledge Retrieval Agent",
+        "Policy Checker Agent",
+        "Response Drafting Agent",
+        "Compliance Agent",
+        "Critic / Evaluator Agent",
+        "Reflection Agent",
+        "Learning Extraction Agent",
+        "Optimizer Agent"
+      ],
+      "selected_tools": [
+        "mock_customer_system.get_open_cases",
+        "mock_customer_system.get_interaction_history",
+        "mock_customer_system.lookup_operational_status",
+        "mock_customer_system.create_escalation",
+        "superturiya.trajectory_memory_search"
+      ],
+      "stop_conditions": [
+        "unsupported_commitment_without_evidence",
+        "policy_or_identity_bypass",
+        "unauthorized_enterprise_write",
+        "maximum_agent_steps_exceeded"
+      ],
+      "maximum_agent_steps": 13,
+      "replan_limit": 1,
+      "recalled_intelligence_ids": [
+        "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+        "LTM-run_20260712153157_724c9e58",
+        "LTM-run_20260712153157_262a4fd3"
+      ],
+      "memory_influenced_decisions": [
+        "review_prior_failure_patterns_before_planning",
+        "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+      ],
+      "autonomous_decisions": [
+        {
+          "iteration": 1,
+          "observation": {
+            "issue_type": "deposit_missing",
+            "emotion_intensity": 0.66,
+            "recontact": true
+          },
+          "decision": "select_allowlisted_context_and_domain_tools",
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "policy_supervisor": "accepted",
+          "executed_tool_ids": [
+            "toolrun_892d396afd83",
+            "toolrun_ea03fd76ec6e",
+            "toolrun_3ec615ad0bd7"
+          ],
+          "mandatory_context_tool_ids": [
+            "toolrun_cfecd0a0411f"
+          ],
+          "observed_tool_statuses": {
+            "find_customer": "success",
+            "get_open_cases": "success",
+            "get_interaction_history": "success",
+            "lookup_operational_status": "success"
+          }
+        },
+        {
+          "iteration": 2,
+          "observation": {
+            "required_policy_gate": true
+          },
+          "decision": "commit_existing_agent_plan_inside_safety_envelope",
+          "policy_supervisor": "accepted"
+        }
+      ],
+      "termination_reason": "bounded_plan_committed_before_agent_execution"
+    },
+    "customer_context": {
+      "customer_id": "CS-C001",
+      "customer_name": "Aisha Mehta",
+      "plan": "business",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "verified",
+      "crm_account_id": "CRM-CS-001",
+      "open_case_ids": [
+        "CASE-DEP-701"
+      ],
+      "interaction_count": 1
+    },
+    "emotion": {
+      "primary_emotion": "frustration",
+      "intensity": 0.66,
+      "irritation_detected": true,
+      "repeat_contact_contribution": 0.25,
+      "requires_acknowledgement": true,
+      "requires_apology": true,
+      "escalation_risk": 0.504,
+      "signals": [
+        "ticket_sentiment"
+      ]
+    },
+    "recontact": {
+      "customer_id": "CS-C001",
+      "current_issue": "deposit_missing",
+      "related_cases": [
+        "CASE-DEP-701"
+      ],
+      "contacts_last_24_hours": 2,
+      "contacts_last_7_days": 2,
+      "contacts_last_14_days": 2,
+      "contacts_last_30_days": 2,
+      "recontact_detected": true,
+      "previous_commitment_missed": false,
+      "semantic_similarity": 0.96,
+      "recommended_action": "attach_prior_case_history"
+    },
+    "tool_executions": [
+      {
+        "tool_execution_id": "toolrun_cfecd0a0411f",
+        "tool_name": "mock_customer_system.find_customer",
+        "operation": "find_customer",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:find_customer:CS-C001",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_2386ad4876fd",
+        "before_state": {},
+        "after_state": {
+          "customer_id": "CS-C001",
+          "customer_name": "Aisha Mehta",
+          "plan": "business",
+          "region": "IN",
+          "preferred_channel": "chat",
+          "identity_status": "verified",
+          "crm_account_id": "CRM-CS-001"
+        },
+        "result": {
+          "customer_id": "CS-C001",
+          "customer_name": "Aisha Mehta",
+          "plan": "business",
+          "region": "IN",
+          "preferred_channel": "chat",
+          "identity_status": "verified",
+          "crm_account_id": "CRM-CS-001"
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_892d396afd83",
+        "tool_name": "mock_customer_system.get_open_cases",
+        "operation": "get_open_cases",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:open_cases:CS-C001",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_16d2f770d65b",
+        "before_state": {},
+        "after_state": {
+          "records": [
+            {
+              "case_id": "CASE-DEP-701",
+              "customer_id": "CS-C001",
+              "issue_type": "deposit_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-10T08:00:00Z",
+              "commitment_deadline": null,
+              "commitment_met": null
+            }
+          ]
+        },
+        "result": {
+          "records": [
+            {
+              "case_id": "CASE-DEP-701",
+              "customer_id": "CS-C001",
+              "issue_type": "deposit_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-10T08:00:00Z",
+              "commitment_deadline": null,
+              "commitment_met": null
+            }
+          ]
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_ea03fd76ec6e",
+        "tool_name": "mock_customer_system.get_interaction_history",
+        "operation": "get_interaction_history",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:history:CS-C001",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_330b6ad42426",
+        "before_state": {},
+        "after_state": {
+          "records": [
+            {
+              "case_id": "CASE-DEP-701",
+              "customer_id": "CS-C001",
+              "issue_type": "deposit_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-10T08:00:00Z",
+              "commitment_deadline": null,
+              "commitment_met": null
+            }
+          ]
+        },
+        "result": {
+          "records": [
+            {
+              "case_id": "CASE-DEP-701",
+              "customer_id": "CS-C001",
+              "issue_type": "deposit_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-10T08:00:00Z",
+              "commitment_deadline": null,
+              "commitment_met": null
+            }
+          ]
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_3ec615ad0bd7",
+        "tool_name": "mock_customer_system.lookup_operational_status",
+        "operation": "lookup_operational_status",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:status:deposit_missing",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_a6d500f5b4a4",
+        "before_state": {},
+        "after_state": {
+          "status": "payment_evidence_received",
+          "outcome_confirmed": false,
+          "reference": "DEP-7781",
+          "next_system_action": "financial_review"
+        },
+        "result": {
+          "status": "payment_evidence_received",
+          "outcome_confirmed": false,
+          "reference": "DEP-7781",
+          "next_system_action": "financial_review"
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_4bce50ea68d6",
+        "tool_name": "mock_customer_system.add_case_note",
+        "operation": "add_case_note",
+        "access_type": "write",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:case_note:CASE-DEP-701",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_f8af49eafed7",
+        "before_state": {},
+        "after_state": {
+          "case_id": "CASE-DEP-701",
+          "note_id": "NOTE-DF498175",
+          "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+          "stored": true
+        },
+        "result": {
+          "case_id": "CASE-DEP-701",
+          "note_id": "NOTE-DF498175",
+          "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+          "stored": true
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_6ab6260f183d",
+        "tool_name": "mock_customer_system.attach_transcript",
+        "operation": "attach_transcript",
+        "access_type": "write",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153157_c1555820:attach_transcript:CASE-DEP-701",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_7db4444e516b",
+        "before_state": {},
+        "after_state": {
+          "case_id": "CASE-DEP-701",
+          "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+          "attached": true
+        },
+        "result": {
+          "case_id": "CASE-DEP-701",
+          "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+          "attached": true
+        },
+        "error": null,
+        "simulated": true
+      }
+    ],
+    "assurances": [
+      {
+        "assurance_given": true,
+        "assurance_type": "ownership",
+        "assurance_text": "I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+        "supported_by": [
+          "POL-CS-PAY-001",
+          "PROC-CS-DEP-001",
+          "TMPL-CS-DEP-002",
+          "VIS-001-01",
+          "TMPL-CS-DEP-001"
+        ],
+        "deadline": null,
+        "commitment_owner": "Deposit review queue",
+        "approval_required": false,
+        "fulfilment_status": "documented"
+      }
+    ],
+    "escalation": {
+      "escalation_id": "esc_157_c1555820",
+      "reason": "financial_or_bonus_review",
+      "severity": "medium",
+      "destination": "finance_supervisor",
+      "sla_minutes": 60,
+      "supporting_evidence": [
+        "CASE-DEP-701",
+        "CS-001"
+      ],
+      "status": "APPROVAL_REQUIRED"
+    },
+    "incident": {
+      "incident_id": null,
+      "issue_signature": "support:deposit_missing:in:web:v1",
+      "unique_customers": 1,
+      "window_minutes": 60,
+      "threshold": 5,
+      "detected": false,
+      "severity": "none",
+      "status": "not_triggered",
+      "linked_cases": [
+        "CS-001"
+      ],
+      "recommended_action": "monitor"
+    },
+    "satisfaction": {
+      "predicted_satisfaction": 0.61,
+      "predicted_label": "partially_satisfied",
+      "explicit_csat": null,
+      "explicit_resolution": null,
+      "resolution_status": "escalated",
+      "customer_effort_score": 0.47,
+      "dissatisfaction_reasons": [
+        "repeat_contact",
+        "issue_not_resolved_during_chat"
+      ],
+      "rubric": {
+        "correctness": 0.9,
+        "evidence_grounding": 1.0,
+        "empathy": 1.0,
+        "acknowledgement": 0.4,
+        "assurance_validity": 1.0,
+        "actionability": 1.0,
+        "tone": 0.92,
+        "policy_compliance": 1.0,
+        "completeness": 0.9,
+        "repetition": 0.92,
+        "escalation_compliance": 1.0,
+        "overall_quality": 0.913
+      }
+    },
+    "response_quality_gate": {
+      "decision": "human_review_required",
+      "passed": true,
+      "checks": {
+        "evidence_grounded": true,
+        "policy_checked": true,
+        "no_unsupported_outcome_guarantee": true,
+        "no_private_reasoning": true,
+        "emotion_acknowledged": true,
+        "assurance_supported": true,
+        "escalation_claim_supported": true,
+        "concise_enough": true
+      },
+      "score": 1.0,
+      "original_length": 374,
+      "final_length": 374,
+      "rewrite_applied": true,
+      "blocking_reasons": []
+    },
+    "provenance": [
+      {
+        "response_id": "RESP-run_20260712153157_c1555820",
+        "sources": [
+          {
+            "source_id": "POL-CS-PAY-001",
+            "title": "Delayed deposit evidence gate",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_policies"
+          },
+          {
+            "source_id": "PROC-CS-DEP-001",
+            "title": "Deposit not visible triage",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_procedures"
+          },
+          {
+            "source_id": "TMPL-CS-DEP-002",
+            "title": "Deposit proof request after waiting window",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_templates"
+          },
+          {
+            "source_id": "VIS-001-01",
+            "title": "Attachment evidence: deposit-success-screenshot.png",
+            "section": null,
+            "version": "demo-v1",
+            "category": "screenshot"
+          },
+          {
+            "source_id": "TMPL-CS-DEP-001",
+            "title": "Deposit still within processing window",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_templates"
+          }
+        ],
+        "tool_executions": [
+          {
+            "tool_execution_id": "toolrun_cfecd0a0411f",
+            "tool_name": "mock_customer_system.find_customer",
+            "operation": "find_customer",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:find_customer:CS-C001",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_2386ad4876fd",
+            "before_state": {},
+            "after_state": {
+              "customer_id": "CS-C001",
+              "customer_name": "Aisha Mehta",
+              "plan": "business",
+              "region": "IN",
+              "preferred_channel": "chat",
+              "identity_status": "verified",
+              "crm_account_id": "CRM-CS-001"
+            },
+            "result": {
+              "customer_id": "CS-C001",
+              "customer_name": "Aisha Mehta",
+              "plan": "business",
+              "region": "IN",
+              "preferred_channel": "chat",
+              "identity_status": "verified",
+              "crm_account_id": "CRM-CS-001"
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_892d396afd83",
+            "tool_name": "mock_customer_system.get_open_cases",
+            "operation": "get_open_cases",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:open_cases:CS-C001",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_16d2f770d65b",
+            "before_state": {},
+            "after_state": {
+              "records": [
+                {
+                  "case_id": "CASE-DEP-701",
+                  "customer_id": "CS-C001",
+                  "issue_type": "deposit_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-10T08:00:00Z",
+                  "commitment_deadline": null,
+                  "commitment_met": null
+                }
+              ]
+            },
+            "result": {
+              "records": [
+                {
+                  "case_id": "CASE-DEP-701",
+                  "customer_id": "CS-C001",
+                  "issue_type": "deposit_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-10T08:00:00Z",
+                  "commitment_deadline": null,
+                  "commitment_met": null
+                }
+              ]
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_ea03fd76ec6e",
+            "tool_name": "mock_customer_system.get_interaction_history",
+            "operation": "get_interaction_history",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:history:CS-C001",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_330b6ad42426",
+            "before_state": {},
+            "after_state": {
+              "records": [
+                {
+                  "case_id": "CASE-DEP-701",
+                  "customer_id": "CS-C001",
+                  "issue_type": "deposit_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-10T08:00:00Z",
+                  "commitment_deadline": null,
+                  "commitment_met": null
+                }
+              ]
+            },
+            "result": {
+              "records": [
+                {
+                  "case_id": "CASE-DEP-701",
+                  "customer_id": "CS-C001",
+                  "issue_type": "deposit_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-10T08:00:00Z",
+                  "commitment_deadline": null,
+                  "commitment_met": null
+                }
+              ]
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_3ec615ad0bd7",
+            "tool_name": "mock_customer_system.lookup_operational_status",
+            "operation": "lookup_operational_status",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:status:deposit_missing",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_a6d500f5b4a4",
+            "before_state": {},
+            "after_state": {
+              "status": "payment_evidence_received",
+              "outcome_confirmed": false,
+              "reference": "DEP-7781",
+              "next_system_action": "financial_review"
+            },
+            "result": {
+              "status": "payment_evidence_received",
+              "outcome_confirmed": false,
+              "reference": "DEP-7781",
+              "next_system_action": "financial_review"
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_4bce50ea68d6",
+            "tool_name": "mock_customer_system.add_case_note",
+            "operation": "add_case_note",
+            "access_type": "write",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:case_note:CASE-DEP-701",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_f8af49eafed7",
+            "before_state": {},
+            "after_state": {
+              "case_id": "CASE-DEP-701",
+              "note_id": "NOTE-DF498175",
+              "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+              "stored": true
+            },
+            "result": {
+              "case_id": "CASE-DEP-701",
+              "note_id": "NOTE-DF498175",
+              "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+              "stored": true
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_6ab6260f183d",
+            "tool_name": "mock_customer_system.attach_transcript",
+            "operation": "attach_transcript",
+            "access_type": "write",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153157_c1555820:attach_transcript:CASE-DEP-701",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_7db4444e516b",
+            "before_state": {},
+            "after_state": {
+              "case_id": "CASE-DEP-701",
+              "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+              "attached": true
+            },
+            "result": {
+              "case_id": "CASE-DEP-701",
+              "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+              "attached": true
+            },
+            "error": null,
+            "simulated": true
+          }
+        ],
+        "answer_confidence": 0.54,
+        "customer_view": "Based on the verified case history and the applicable support policy.",
+        "auditor_view": "Sources: POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01. Tool executions: mock_customer_system.find_customer, mock_customer_system.get_open_cases, mock_customer_system.get_interaction_history, mock_customer_system.lookup_operational_status, mock_customer_system.add_case_note, mock_customer_system.attach_transcript."
+      }
+    ],
+    "transcript": {
+      "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+      "conversation_id": "conv_46a6c07d9dce",
+      "customer_id": "CS-C001",
+      "started_at": "2026-07-12T15:31:57.826096+00:00",
+      "ended_at": "2026-07-12T15:31:57.830599+00:00",
+      "turns": [
+        {
+          "turn_id": "turn_b7a00e099b",
+          "role": "customer",
+          "content": "My UPI deposit is missing",
+          "created_at": "2026-07-12T15:31:57.826104+00:00",
+          "delivery_status": "recorded"
+        },
+        {
+          "turn_id": "turn_c0d8f747f0",
+          "role": "agent",
+          "content": "I\u2019m sorry you\u2019ve had to contact us again about this, Aisha Mehta. I checked the case history and the current status is payment evidence received. The next governed step is with Deposit review queue. I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "created_at": "2026-07-12T15:31:57.830580+00:00",
+          "delivery_status": "recorded"
+        }
+      ],
+      "detected_issue": "deposit_missing",
+      "customer_intent": "SUPPORT_QUERY",
+      "emotion_timeline": [
+        {
+          "primary_emotion": "frustration",
+          "intensity": 0.66,
+          "irritation_detected": true,
+          "repeat_contact_contribution": 0.25,
+          "requires_acknowledgement": true,
+          "requires_apology": true,
+          "escalation_risk": 0.504,
+          "signals": [
+            "ticket_sentiment"
+          ]
+        }
+      ],
+      "previous_related_cases": [
+        "CASE-DEP-701"
+      ],
+      "knowledge_sources_used": [
+        "POL-CS-PAY-001",
+        "PROC-CS-DEP-001",
+        "TMPL-CS-DEP-001",
+        "TMPL-CS-DEP-002",
+        "VIS-001-01"
+      ],
+      "tools_called": [
+        "mock_customer_system.find_customer",
+        "mock_customer_system.get_open_cases",
+        "mock_customer_system.get_interaction_history",
+        "mock_customer_system.lookup_operational_status",
+        "mock_customer_system.add_case_note",
+        "mock_customer_system.attach_transcript"
+      ],
+      "assurances": [
+        {
+          "assurance_given": true,
+          "assurance_type": "ownership",
+          "assurance_text": "I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "supported_by": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01",
+            "TMPL-CS-DEP-001"
+          ],
+          "deadline": null,
+          "commitment_owner": "Deposit review queue",
+          "approval_required": false,
+          "fulfilment_status": "documented"
+        }
+      ],
+      "escalation": {
+        "escalation_id": "esc_157_c1555820",
+        "reason": "financial_or_bonus_review",
+        "severity": "medium",
+        "destination": "finance_supervisor",
+        "sla_minutes": 60,
+        "supporting_evidence": [
+          "CASE-DEP-701",
+          "CS-001"
+        ],
+        "status": "APPROVAL_REQUIRED"
+      },
+      "resolution_status": "escalated",
+      "unresolved_questions": [
+        "Check elapsed payment window, request proof if needed, and create or update the financial task."
+      ],
+      "satisfaction": {
+        "predicted_satisfaction": 0.61,
+        "predicted_label": "partially_satisfied",
+        "explicit_csat": null,
+        "explicit_resolution": null,
+        "resolution_status": "escalated",
+        "customer_effort_score": 0.47,
+        "dissatisfaction_reasons": [
+          "repeat_contact",
+          "issue_not_resolved_during_chat"
+        ],
+        "rubric": {
+          "correctness": 0.9,
+          "evidence_grounding": 1.0,
+          "empathy": 1.0,
+          "acknowledgement": 0.4,
+          "assurance_validity": 1.0,
+          "actionability": 1.0,
+          "tone": 0.92,
+          "policy_compliance": 1.0,
+          "completeness": 0.9,
+          "repetition": 0.92,
+          "escalation_compliance": 1.0,
+          "overall_quality": 0.913
+        }
+      },
+      "follow_up_owner": "Deposit review queue",
+      "redaction_status": "synthetic_data_no_pii"
+    },
+    "resolution_stage": "closed"
+  },
+  "superturiya": {
+    "system_name": "SuperTuriya",
+    "platform": "Anirvium AI",
+    "observed_system": "Sarvagun",
+    "role": "core_trajectory_intelligence",
+    "lifecycle": [
+      "observe",
+      "trace",
+      "discover",
+      "evaluate",
+      "diagnose",
+      "recommend",
+      "store",
+      "recall",
+      "improve"
+    ],
+    "trace_count": 13,
+    "event_count": 41,
+    "events": [
+      {
+        "event_id": "evt_ff4d196cda42",
+        "event_type": "conversation.started",
+        "timestamp": "2026-07-12T15:31:57.829006+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun",
+        "payload": {
+          "execution_mode": "hybrid"
+        }
+      },
+      {
+        "event_id": "evt_229f5c2d6c42",
+        "event_type": "message.received",
+        "timestamp": "2026-07-12T15:31:57.829018+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "customer",
+        "payload": {
+          "message_type": "SUPPORT_QUERY"
+        }
+      },
+      {
+        "event_id": "evt_0dd1715e1d0a",
+        "event_type": "emotion.detected",
+        "timestamp": "2026-07-12T15:31:57.829027+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun",
+        "payload": {
+          "primary_emotion": "frustration",
+          "intensity": 0.66,
+          "irritation_detected": true,
+          "repeat_contact_contribution": 0.25,
+          "requires_acknowledgement": true,
+          "requires_apology": true,
+          "escalation_risk": 0.504,
+          "signals": [
+            "ticket_sentiment"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_6aeb601fea9e",
+        "event_type": "capability.routed",
+        "timestamp": "2026-07-12T15:31:57.829032+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "SuperTuriya",
+        "payload": {
+          "route_id": "route_feb9e223e37b",
+          "capability": "support_case_execution",
+          "execution_path": "sarvagun_agent_pipeline",
+          "requires_agent_run": true,
+          "confidence": 0.82,
+          "reason": "The request requires the governed Sarvagun support workflow.",
+          "matched_signals": [
+            "conversation_support_signal",
+            "support_intent",
+            "deposit_missing"
+          ],
+          "read_only": false,
+          "data_scope": "selected_customer_support_case",
+          "event_type": "capability.routed",
+          "observed_by": "SuperTuriya",
+          "recorded_at": "2026-07-12T15:31:57.826115+00:00",
+          "result_status": "routed",
+          "record_count": 0
+        }
+      },
+      {
+        "event_id": "evt_d1970419712b",
+        "event_type": "memory.recalled",
+        "timestamp": "2026-07-12T15:31:57.829038+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "SuperTuriya",
+        "payload": {
+          "memory_ids": [
+            "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+            "LTM-run_20260712153157_724c9e58",
+            "LTM-run_20260712153157_262a4fd3"
+          ],
+          "accepted_influences": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "policy_override_allowed": false
+        }
+      },
+      {
+        "event_id": "evt_c1189e47470f",
+        "event_type": "recontact.detected",
+        "timestamp": "2026-07-12T15:31:57.829045+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun",
+        "payload": {
+          "customer_id": "CS-C001",
+          "current_issue": "deposit_missing",
+          "related_cases": [
+            "CASE-DEP-701"
+          ],
+          "contacts_last_24_hours": 2,
+          "contacts_last_7_days": 2,
+          "contacts_last_14_days": 2,
+          "contacts_last_30_days": 2,
+          "recontact_detected": true,
+          "previous_commitment_missed": false,
+          "semantic_similarity": 0.96,
+          "recommended_action": "attach_prior_case_history"
+        }
+      },
+      {
+        "event_id": "evt_b929f11f3ac6",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.829051+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.find_customer",
+        "payload": {
+          "tool_execution_id": "toolrun_cfecd0a0411f",
+          "operation": "find_customer",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:find_customer:CS-C001"
+        }
+      },
+      {
+        "event_id": "evt_6524af2f076a",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.829061+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.find_customer",
+        "payload": {
+          "tool_execution_id": "toolrun_cfecd0a0411f",
+          "tool_name": "mock_customer_system.find_customer",
+          "operation": "find_customer",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:find_customer:CS-C001",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_2386ad4876fd",
+          "before_state": {},
+          "after_state": {
+            "customer_id": "CS-C001",
+            "customer_name": "Aisha Mehta",
+            "plan": "business",
+            "region": "IN",
+            "preferred_channel": "chat",
+            "identity_status": "verified",
+            "crm_account_id": "CRM-CS-001"
+          },
+          "result": {
+            "customer_id": "CS-C001",
+            "customer_name": "Aisha Mehta",
+            "plan": "business",
+            "region": "IN",
+            "preferred_channel": "chat",
+            "identity_status": "verified",
+            "crm_account_id": "CRM-CS-001"
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_9d79d38043c1",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.829066+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.get_open_cases",
+        "payload": {
+          "tool_execution_id": "toolrun_892d396afd83",
+          "operation": "get_open_cases",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:open_cases:CS-C001"
+        }
+      },
+      {
+        "event_id": "evt_1848d256f0ba",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.829075+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.get_open_cases",
+        "payload": {
+          "tool_execution_id": "toolrun_892d396afd83",
+          "tool_name": "mock_customer_system.get_open_cases",
+          "operation": "get_open_cases",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:open_cases:CS-C001",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_16d2f770d65b",
+          "before_state": {},
+          "after_state": {
+            "records": [
+              {
+                "case_id": "CASE-DEP-701",
+                "customer_id": "CS-C001",
+                "issue_type": "deposit_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-10T08:00:00Z",
+                "commitment_deadline": null,
+                "commitment_met": null
+              }
+            ]
+          },
+          "result": {
+            "records": [
+              {
+                "case_id": "CASE-DEP-701",
+                "customer_id": "CS-C001",
+                "issue_type": "deposit_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-10T08:00:00Z",
+                "commitment_deadline": null,
+                "commitment_met": null
+              }
+            ]
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_09193228ff54",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.829086+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.get_interaction_history",
+        "payload": {
+          "tool_execution_id": "toolrun_ea03fd76ec6e",
+          "operation": "get_interaction_history",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:history:CS-C001"
+        }
+      },
+      {
+        "event_id": "evt_757fb047c482",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.829093+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.get_interaction_history",
+        "payload": {
+          "tool_execution_id": "toolrun_ea03fd76ec6e",
+          "tool_name": "mock_customer_system.get_interaction_history",
+          "operation": "get_interaction_history",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:history:CS-C001",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_330b6ad42426",
+          "before_state": {},
+          "after_state": {
+            "records": [
+              {
+                "case_id": "CASE-DEP-701",
+                "customer_id": "CS-C001",
+                "issue_type": "deposit_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-10T08:00:00Z",
+                "commitment_deadline": null,
+                "commitment_met": null
+              }
+            ]
+          },
+          "result": {
+            "records": [
+              {
+                "case_id": "CASE-DEP-701",
+                "customer_id": "CS-C001",
+                "issue_type": "deposit_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-10T08:00:00Z",
+                "commitment_deadline": null,
+                "commitment_met": null
+              }
+            ]
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_7810f458193b",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.829098+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.lookup_operational_status",
+        "payload": {
+          "tool_execution_id": "toolrun_3ec615ad0bd7",
+          "operation": "lookup_operational_status",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:status:deposit_missing"
+        }
+      },
+      {
+        "event_id": "evt_e1fec6f98046",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.829104+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.lookup_operational_status",
+        "payload": {
+          "tool_execution_id": "toolrun_3ec615ad0bd7",
+          "tool_name": "mock_customer_system.lookup_operational_status",
+          "operation": "lookup_operational_status",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:status:deposit_missing",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_a6d500f5b4a4",
+          "before_state": {},
+          "after_state": {
+            "status": "payment_evidence_received",
+            "outcome_confirmed": false,
+            "reference": "DEP-7781",
+            "next_system_action": "financial_review"
+          },
+          "result": {
+            "status": "payment_evidence_received",
+            "outcome_confirmed": false,
+            "reference": "DEP-7781",
+            "next_system_action": "financial_review"
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_181314c4a5e8",
+        "event_type": "plan.created",
+        "timestamp": "2026-07-12T15:31:57.829145+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Planner Agent",
+        "payload": {
+          "execution_mode": "hybrid",
+          "decision_authority": "governed_plan_with_bounded_autonomy",
+          "policy_guardian": "deterministic_policy_and_compliance_gates",
+          "autonomous_scope": [
+            "tool_selection",
+            "response_composition",
+            "clarification"
+          ],
+          "mandatory_capabilities": [
+            "Planner Agent",
+            "Knowledge Retrieval Agent",
+            "Policy Checker Agent",
+            "Response Drafting Agent",
+            "Compliance Agent",
+            "Critic / Evaluator Agent",
+            "Reflection Agent",
+            "Learning Extraction Agent",
+            "Optimizer Agent"
+          ],
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "stop_conditions": [
+            "unsupported_commitment_without_evidence",
+            "policy_or_identity_bypass",
+            "unauthorized_enterprise_write",
+            "maximum_agent_steps_exceeded"
+          ],
+          "maximum_agent_steps": 13,
+          "replan_limit": 1,
+          "recalled_intelligence_ids": [
+            "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+            "LTM-run_20260712153157_724c9e58",
+            "LTM-run_20260712153157_262a4fd3"
+          ],
+          "memory_influenced_decisions": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "autonomous_decisions": [
+            {
+              "iteration": 1,
+              "observation": {
+                "issue_type": "deposit_missing",
+                "emotion_intensity": 0.66,
+                "recontact": true
+              },
+              "decision": "select_allowlisted_context_and_domain_tools",
+              "selected_tools": [
+                "mock_customer_system.get_open_cases",
+                "mock_customer_system.get_interaction_history",
+                "mock_customer_system.lookup_operational_status",
+                "mock_customer_system.create_escalation",
+                "superturiya.trajectory_memory_search"
+              ],
+              "policy_supervisor": "accepted",
+              "executed_tool_ids": [
+                "toolrun_892d396afd83",
+                "toolrun_ea03fd76ec6e",
+                "toolrun_3ec615ad0bd7"
+              ],
+              "mandatory_context_tool_ids": [
+                "toolrun_cfecd0a0411f"
+              ],
+              "observed_tool_statuses": {
+                "find_customer": "success",
+                "get_open_cases": "success",
+                "get_interaction_history": "success",
+                "lookup_operational_status": "success"
+              }
+            },
+            {
+              "iteration": 2,
+              "observation": {
+                "required_policy_gate": true
+              },
+              "decision": "commit_existing_agent_plan_inside_safety_envelope",
+              "policy_supervisor": "accepted"
+            }
+          ],
+          "termination_reason": "bounded_plan_committed_before_agent_execution"
+        }
+      },
+      {
+        "event_id": "evt_a41ec98431eb",
+        "event_type": "source.retrieved",
+        "timestamp": "2026-07-12T15:31:57.829860+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Knowledge Retrieval Agent",
+        "payload": {
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "source_count": 5
+        }
+      },
+      {
+        "event_id": "evt_e26ee697e1c5",
+        "event_type": "policy.checked",
+        "timestamp": "2026-07-12T15:31:57.829914+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Policy Checker Agent",
+        "payload": {
+          "approval_state": "APPROVAL_REQUIRED",
+          "risk_flags": [
+            "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_f44f3f68f381",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.830203+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.add_case_note",
+        "payload": {
+          "tool_execution_id": "toolrun_4bce50ea68d6",
+          "operation": "add_case_note",
+          "access_type": "write",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:case_note:CASE-DEP-701"
+        }
+      },
+      {
+        "event_id": "evt_839d642fdf12",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.830214+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.add_case_note",
+        "payload": {
+          "tool_execution_id": "toolrun_4bce50ea68d6",
+          "tool_name": "mock_customer_system.add_case_note",
+          "operation": "add_case_note",
+          "access_type": "write",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:case_note:CASE-DEP-701",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_f8af49eafed7",
+          "before_state": {},
+          "after_state": {
+            "case_id": "CASE-DEP-701",
+            "note_id": "NOTE-DF498175",
+            "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+            "stored": true
+          },
+          "result": {
+            "case_id": "CASE-DEP-701",
+            "note_id": "NOTE-DF498175",
+            "note": "Sarvagun prepared a governed response for CS-001 with evidence POL-CS-PAY-001, PROC-CS-DEP-001, TMPL-CS-DEP-002, VIS-001-01, TMPL-CS-DEP-001.",
+            "stored": true
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_1b80a1690d84",
+        "event_type": "assurance.created",
+        "timestamp": "2026-07-12T15:31:57.830270+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun assurance policy engine",
+        "payload": {
+          "assurance_given": true,
+          "assurance_type": "ownership",
+          "assurance_text": "I have documented the complete case history for Deposit review queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "supported_by": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01",
+            "TMPL-CS-DEP-001"
+          ],
+          "deadline": null,
+          "commitment_owner": "Deposit review queue",
+          "approval_required": false,
+          "fulfilment_status": "documented"
+        }
+      },
+      {
+        "event_id": "evt_ff2383f9c23e",
+        "event_type": "response.quality_checked",
+        "timestamp": "2026-07-12T15:31:57.830347+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "SuperTuriya response quality gate",
+        "payload": {
+          "decision": "human_review_required",
+          "passed": true,
+          "checks": {
+            "evidence_grounded": true,
+            "policy_checked": true,
+            "no_unsupported_outcome_guarantee": true,
+            "no_private_reasoning": true,
+            "emotion_acknowledged": true,
+            "assurance_supported": true,
+            "escalation_claim_supported": true,
+            "concise_enough": true
+          },
+          "score": 1.0,
+          "original_length": 374,
+          "final_length": 374,
+          "rewrite_applied": true,
+          "blocking_reasons": []
+        }
+      },
+      {
+        "event_id": "evt_beaf10a55d92",
+        "event_type": "compliance.checked",
+        "timestamp": "2026-07-12T15:31:57.830353+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Compliance Agent",
+        "payload": {
+          "approval_state": "APPROVAL_REQUIRED",
+          "risk_flags": [
+            "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+            "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_6827f9358cec",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:57.830943+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.attach_transcript",
+        "payload": {
+          "tool_execution_id": "toolrun_6ab6260f183d",
+          "operation": "attach_transcript",
+          "access_type": "write",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153157_c1555820:attach_transcript:CASE-DEP-701"
+        }
+      },
+      {
+        "event_id": "evt_0dcda71793f1",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:57.830954+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "mock_customer_system.attach_transcript",
+        "payload": {
+          "tool_execution_id": "toolrun_6ab6260f183d",
+          "tool_name": "mock_customer_system.attach_transcript",
+          "operation": "attach_transcript",
+          "access_type": "write",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153157_c1555820:attach_transcript:CASE-DEP-701",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_7db4444e516b",
+          "before_state": {},
+          "after_state": {
+            "case_id": "CASE-DEP-701",
+            "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+            "attached": true
+          },
+          "result": {
+            "case_id": "CASE-DEP-701",
+            "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820",
+            "attached": true
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_3f5ee06e8b53",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.830982+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Planner Agent",
+        "payload": {
+          "step_id": "step_001",
+          "tools": [
+            "plan_policy_router",
+            "risk_stop_condition_builder",
+            "workflow_contract_generator",
+            "sarvagun.hybrid_execution_controller",
+            "superturiya.memory_guidance"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.9
+        }
+      },
+      {
+        "event_id": "evt_0560a7fb461f",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.830988+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Attachment Evidence Agent",
+        "payload": {
+          "step_id": "step_002",
+          "tools": [
+            "attachment_metadata_parser",
+            "evidence_card_generator"
+          ],
+          "evidence_ids": [
+            "VIS-001-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_2dda57e918f1",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.830992+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Intake / Triage Agent",
+        "payload": {
+          "step_id": "step_003",
+          "tools": [
+            "priority_rules",
+            "sentiment_rules",
+            "sla_window_rules"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.9
+        }
+      },
+      {
+        "event_id": "evt_3e9ea6b98421",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.830997+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Knowledge Retrieval Agent",
+        "payload": {
+          "step_id": "step_004",
+          "tools": [
+            "local_kb_search",
+            "policy_catalog_lookup",
+            "visual_evidence_lookup"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.92
+        }
+      },
+      {
+        "event_id": "evt_7e52d6707c02",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831001+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Policy Checker Agent",
+        "payload": {
+          "step_id": "step_005",
+          "tools": [
+            "policy_rules_engine",
+            "approval_state_classifier"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.91
+        }
+      },
+      {
+        "event_id": "evt_448d30d834ab",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831010+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Escalation Agent",
+        "payload": {
+          "step_id": "step_006",
+          "tools": [
+            "escalation_matrix",
+            "customer_success_owner_lookup"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.88
+        }
+      },
+      {
+        "event_id": "evt_a52e0276e2b6",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831015+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Response Drafting Agent",
+        "payload": {
+          "step_id": "step_007",
+          "tools": [
+            "safe_response_template",
+            "approval_gate_check",
+            "trajectory_memory_recall",
+            "mock_customer_system.add_case_note"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_1f7e98fb69f3",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831020+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Compliance Agent",
+        "payload": {
+          "step_id": "step_008",
+          "tools": [
+            "deterministic_compliance_rules",
+            "safe_rewrite_filter",
+            "evidence_support_check"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.91
+        }
+      },
+      {
+        "event_id": "evt_b6a23b364b72",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831024+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Human Escalation Agent",
+        "payload": {
+          "step_id": "step_009",
+          "tools": [
+            "confidence_gate",
+            "human_queue_router",
+            "handoff_summary_builder"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.89
+        }
+      },
+      {
+        "event_id": "evt_2576baf2f1e7",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831029+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Critic / Evaluator Agent",
+        "payload": {
+          "step_id": "step_010",
+          "tools": [
+            "deterministic_eval_rules",
+            "failure_diagnosis_engine"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.87
+        }
+      },
+      {
+        "event_id": "evt_40ac09d6e82b",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831033+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Reflection Agent",
+        "payload": {
+          "step_id": "step_011",
+          "tools": [
+            "post_run_reflection_rules",
+            "repeated_mistake_detector"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_7b0506a79f21",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831038+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Learning Extraction Agent",
+        "payload": {
+          "step_id": "step_012",
+          "tools": [
+            "handoff_log_extractor",
+            "transcript_signal_mapper",
+            "eval_case_generator"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-001",
+            "PROC-CS-DEP-001",
+            "TMPL-CS-DEP-001",
+            "TMPL-CS-DEP-002",
+            "VIS-001-01"
+          ],
+          "confidence": 0.83
+        }
+      },
+      {
+        "event_id": "evt_6feea9190999",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:57.831042+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Optimizer Agent",
+        "payload": {
+          "step_id": "step_013",
+          "tools": [
+            "optimization_rules",
+            "workflow_change_mapper"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.84
+        }
+      },
+      {
+        "event_id": "evt_dde86eefa1d6",
+        "event_type": "response.drafted",
+        "timestamp": "2026-07-12T15:31:57.831047+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun",
+        "payload": {
+          "response_id": "RESP-run_20260712153157_c1555820"
+        }
+      },
+      {
+        "event_id": "evt_0011e793647e",
+        "event_type": "response.ready_for_review",
+        "timestamp": "2026-07-12T15:31:57.831056+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "SuperTuriya response quality gate",
+        "payload": {
+          "decision": "human_review_required",
+          "passed": true,
+          "checks": {
+            "evidence_grounded": true,
+            "policy_checked": true,
+            "no_unsupported_outcome_guarantee": true,
+            "no_private_reasoning": true,
+            "emotion_acknowledged": true,
+            "assurance_supported": true,
+            "escalation_claim_supported": true,
+            "concise_enough": true
+          },
+          "score": 1.0,
+          "original_length": 374,
+          "final_length": 374,
+          "rewrite_applied": true,
+          "blocking_reasons": []
+        }
+      },
+      {
+        "event_id": "evt_14c9954cd895",
+        "event_type": "conversation.closed",
+        "timestamp": "2026-07-12T15:31:57.831060+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "Sarvagun",
+        "payload": {
+          "resolution_status": "escalated"
+        }
+      },
+      {
+        "event_id": "evt_87eef59d0677",
+        "event_type": "transcript.generated",
+        "timestamp": "2026-07-12T15:31:57.831065+00:00",
+        "conversation_id": "conv_46a6c07d9dce",
+        "run_id": "run_20260712153157_c1555820",
+        "correlation_id": "ui-linked-route-test",
+        "actor": "SuperTuriya",
+        "payload": {
+          "transcript_id": "TRANSCRIPT-run_20260712153157_c1555820"
+        }
+      }
+    ],
+    "discovered_path": [
+      "Planner Agent",
+      "Attachment Evidence Agent",
+      "Intake / Triage Agent",
+      "Knowledge Retrieval Agent",
+      "Policy Checker Agent",
+      "Escalation Agent",
+      "Response Drafting Agent",
+      "Compliance Agent",
+      "Human Escalation Agent",
+      "Critic / Evaluator Agent",
+      "Reflection Agent",
+      "Learning Extraction Agent",
+      "Optimizer Agent"
+    ],
+    "successes": [
+      "evidence_grounded",
+      "policy_compliant",
+      "escalation_routed",
+      "customer_safe_tone",
+      "assurance_valid"
+    ],
+    "failures": [
+      "MISSING_CUSTOMER_UPDATE_CADENCE"
+    ],
+    "intelligence": [
+      "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets."
+    ],
+    "improvement_recommendation_ids": [
+      "OPT-002"
+    ],
+    "recalled_memory_ids": [
+      "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+      "LTM-run_20260712153157_724c9e58",
+      "LTM-run_20260712153157_262a4fd3"
+    ],
+    "applied_memory_ids": [
+      "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+      "LTM-run_20260712153157_724c9e58",
+      "LTM-run_20260712153157_262a4fd3"
+    ],
+    "created_memory_ids": [
+      "TRAJ-run_20260712153157_c1555820",
+      "LTM-run_20260712153157_c1555820",
+      "TRANSCRIPT-MEM-run_20260712153157_c1555820"
+    ],
+    "feedback_loop_status": "closed",
+    "automatic_policy_mutation": false
+  },
+  "metadata": {
+    "created_at": "2026-07-12T15:31:57.831158+00:00",
+    "llm_provider": "mock",
+    "model_name": "mock-trajectory-model",
+    "runtime_profile": "text",
+    "dataset": "customer_support",
+    "customer_query": "My UPI deposit is missing",
+    "correlation_id": "ui-linked-route-test",
+    "system_identity": {
+      "platform": "Anirvium AI",
+      "execution_system": "Sarvagun",
+      "intelligence_system": "SuperTuriya"
+    },
+    "execution_mode": "hybrid",
+    "conversation_id": "conv_46a6c07d9dce",
+    "query_resolution": {
+      "requested_ticket_ids": [
+        "CS-001"
+      ],
+      "resolved_ticket_ids": [
+        "CS-001"
+      ],
+      "resolved_issue_type": "deposit_missing",
+      "confidence": 0.82,
+      "query_routed": false,
+      "customer_identity_preserved": true,
+      "routing_strategy": "selected_case_or_priority_selection"
+    },
+    "model_routes": {
+      "sarvagun_text": {
+        "active_model": "mock-trajectory-model",
+        "provider": "mock",
+        "active": false
+      },
+      "superturiya_critic": {
+        "active_model": "deterministic-trajectory-evaluator-v1",
+        "configured_optional_model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        "llm_review_active": false
+      },
+      "embedding": {
+        "active_model": "deterministic-token-hash-64d",
+        "configured_optional_model": "Qwen/Qwen3-Embedding-4B",
+        "external_model_active": false
+      },
+      "reranker": {
+        "active_model": "deterministic-hybrid-rank-fusion",
+        "configured_optional_model": "Qwen/Qwen3-Reranker-4B",
+        "external_model_active": false
+      },
+      "classification_and_guardrails": {
+        "active_model": "deterministic-rules",
+        "external_model_active": false
+      }
+    },
+    "image_video_model_status": "deferred_text_first",
+    "memory_backend": "local",
+    "vector_collections": {
+      "kb": "anirvium_sarvagun_kb",
+      "memory": "anirvium_superturiya_memory",
+      "trajectory": "anirvium_superturiya_trajectories"
+    },
+    "observability": {
+      "trace_schema_version": "anirvium.trajectory.v1",
+      "primary_trace_store": "custom_json_trajectory_logger",
+      "span_count": 13,
+      "event_sources": [
+        "planner_contract",
+        "agent_span",
+        "tool_action",
+        "evidence_card",
+        "policy_decision",
+        "compliance_decision",
+        "human_handoff",
+        "evaluation_signal",
+        "reflection_signal",
+        "learning_artifact",
+        "optimizer_recommendation",
+        "trajectory_property_graph",
+        "sarvagun_conversation_event",
+        "enterprise_tool_execution",
+        "superturiya_intelligence_event"
+      ],
+      "production_export_path": "otel_otlp_optional_after_gpu_validation"
+    },
+    "synthetic_data_only": true,
+    "learning_loop": {
+      "mode": "retrieve_evaluate_recommend_reuse",
+      "prior_memories_recalled": 3,
+      "recalled_memory_ids": [
+        "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+        "LTM-run_20260712153157_724c9e58",
+        "LTM-run_20260712153157_262a4fd3"
+      ],
+      "applied_learning_ids": [
+        "TRANSCRIPT-MEM-run_20260712153157_daf13d72",
+        "LTM-run_20260712153157_724c9e58",
+        "LTM-run_20260712153157_262a4fd3"
+      ],
+      "reuse_stage": "pre_plan_strategy_and_response_drafting",
+      "writes_trajectory_memory": true,
+      "automatic_policy_mutation": false
+    },
+    "relational_persistence": {
+      "backend": "sqlite",
+      "schema_version": "sarvagun-operational-v1",
+      "run_id": "run_20260712153157_c1555820",
+      "persisted": true
+    }
+  }
+}

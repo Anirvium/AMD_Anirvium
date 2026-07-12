@@ -17,6 +17,8 @@ The remaining support documents add 12 anonymized source files covering support 
 
 The source material was anonymized before being added to the repo.
 
+This final release also applies a repository-level identifier scrub for wallet numbers, payment-method identifiers, card suffixes, and transaction reference numbers. Placeholder tokens such as `[REDACTED_PAYMENT_METHOD]` are intentional.
+
 Removed or generalized:
 
 - specific company/platform names
@@ -31,6 +33,14 @@ Removed or generalized:
 - source-specific DOCX filenames that exposed internal labels
 
 The source-specific anonymization script was not retained in the repo because it contained the original sensitive identifiers as replacement patterns.
+
+## Provenance And License Boundary
+
+The operational product does **not** retrieve these raw files directly. Runtime retrieval uses the project-authored, reviewed records under `backend/app/data/kb_layers/`.
+
+The material in `source_material/` was supplied to the project as anonymized domain reference material. Anyone redistributing or adapting that corpus must independently confirm they have the necessary rights to do so. The root MIT license covers project code and project-authored documentation; it must not be interpreted as a representation that any third-party-derived source text has been relicensed without the underlying rights.
+
+No real customer identifier should be added to this directory. If ownership or anonymization cannot be verified, remove the affected source file from a public release and retain only reviewed synthetic KB records.
 
 ## Intended Product Use
 

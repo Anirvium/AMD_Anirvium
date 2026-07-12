@@ -74,6 +74,9 @@ button:focus-visible, textarea:focus-visible, select:focus-visible, summary:focu
 .system-error { margin: 16px 32px 0; border: 1px solid rgba(255,124,135,.25); background: rgba(255,124,135,.07); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 9px; font-size: 12px; color: #ffabb2; }
 .system-error span { flex: 1; }
 .system-error button { border: 0; background: transparent; color: white; cursor: pointer; text-decoration: underline; }
+.static-demo-banner { margin: 16px 32px 0; border: 1px solid rgba(114,230,209,.18); background: linear-gradient(90deg, rgba(114,230,209,.06), rgba(139,124,255,.055)); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 9px; color: #8da9aa; font-size: 10px; line-height: 1.45; }
+.static-demo-banner svg { color: var(--cyan); flex: 0 0 auto; }
+.static-demo-banner strong { color: #b9d2d2; }
 
 .agent-workspace { flex: 1; display: flex; flex-direction: column; min-height: calc(100vh - 96px); }
 .conversation-stream { flex: 1; padding: 30px clamp(26px,5vw,76px) 20px; max-width: 960px; width: 100%; margin: 0 auto; }

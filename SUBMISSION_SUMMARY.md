@@ -1,74 +1,59 @@
 # Submission Summary
 
-## Project Name
+## Project
 
-Anirvium AI
+**Anirvium AI: The Control Plane for AI Agents**
 
-## One-Sentence Mission
+Track: **AMD Developer Hackathon ACT II — Track 3, Unicorn Track**
 
-Anirvium AI combines Sarvagun, a governed customer-support agentic system, with SuperTuriya, the trajectory intelligence that makes every execution observable, auditable, and continuously improvable.
+## Mission
+
+Sarvagun executes governed customer-support work; SuperTuriya observes, evaluates, diagnoses, and safely reuses trajectory intelligence to guide future plans.
 
 ## Problem
 
-Enterprise AI support agents fail silently. Teams often cannot see why an agent made a decision, whether it used evidence, whether it violated policy, or how to prevent the same failure next time.
+Enterprise AI agents are entering payment, identity, refund, security, and SLA-sensitive workflows, yet most products expose only a final response. Operators cannot prove what evidence was used, which tools acted, where policy intervened, or why a failure repeated.
 
-## Solution
+## Product
 
-Sarvagun runs governed support workflows with conversation context, evidence, policy, CX signals, and audited tools. SuperTuriya observes and evaluates those trajectories, diagnoses failures, stores trusted intelligence, and applies it before future plans.
+- typed routing to conversation, exact data, analytics, public knowledge, or a full governed workflow;
+- nine-span Sarvagun execution with evidence, tools, compliance, and human approval;
+- four-span SuperTuriya intelligence with evaluation, reflection, learning extraction, optimization, graph discovery, and evaluated advisory memory;
+- React product UI, FastAPI backend, SQLite operational truth, Redis operational memory, Qdrant semantic memory, Docker, and CI;
+- real Qwen3-8B text generation through vLLM/ROCm on the observed AMD Developer Cloud allocation;
+- deterministic safe fallback and synthetic-data-only demo.
 
-## Why Now
+## Canonical demo
 
-Companies are deploying AI agents into SLA-sensitive, refund-sensitive, and security-sensitive workflows faster than they can govern them.
+Use `CS-002`, a third unresolved withdrawal contact. Sarvagun retrieves linked context, detects recontact and frustration, retrieves governed evidence, executes audited simulated tools, escalates safely, and holds the commitment for approval. SuperTuriya then exposes the 13-step path, scores it, diagnoses failures, recommends a measurable fix, and stores trusted advisory intelligence.
 
-## Demo Scenario
+## Verification
 
-Run synthetic case `CS-002`: Priya Shah’s third unresolved withdrawal contact becomes the sixth matching unique customer, triggering deterministic recontact and incident escalation while SuperTuriya closes the trajectory-memory loop.
+- Public GitHub repository confirmed.
+- 95 backend tests pass.
+- Normal frontend build passes.
+- Static resilience frontend build passes.
+- Existing CI run for the prior implementation commit succeeded; final release CI must be checked after push.
+- Docker and Compose definitions are present; final GitHub CI includes a full Compose smoke test.
+- MIT license added.
+- No official τ score, Gemma use, or Fireworks use is claimed.
 
-## Technical Architecture
+## Submission assets
 
-- FastAPI backend.
-- React/Vite dashboard.
-- Stable 13-agent Sarvagun/SuperTuriya workflow.
-- Governed policy, plan, autonomous, and hybrid execution modes.
-- Redis operational memory and vector trajectory memory with trusted-recall controls.
-- Pydantic schemas.
-- Synthetic support data.
-- Structured trajectory logger.
-- Deterministic evaluator.
-- Diagnosis and optimization engines.
-- Mock and OpenAI-compatible LLM provider abstraction.
-- AMD vLLM/ROCm benchmark runbook and scripts.
+- Cover: `docs/assets/anirvium-cover-16x9.png`
+- Sarvagun presentation render: `docs/assets/anirvium-main-ui-render.png`
+- SuperTuriya presentation render: `docs/assets/anirvium-superturiya-ui-render.png`
+- Form copy: `docs/FINAL_SUBMISSION_FORM.md`
+- Product story: `docs/PRODUCT_0_1.md`
+- Pitch source: `docs/FINAL_TEAM_PITCH_DECK.md`
+- Final PowerPoint: `docs/assets/Anirvium_AI_ACT_II_Deck.pptx`
+- Narrated fallback video: `docs/assets/Anirvium_AI_ACT_II_Video.mp4` — 4:08, 5.4 MB
+- AMD evidence: `amd/benchmark_results_real.md`
 
-## AMD Usage Plan / Current Status
+## Remaining external submission blockers
 
-Current status:
-
-```text
-Real AMD/vLLM benchmark completed on AMD Developer Cloud using the 48GB text profile.
-```
-
-Verified path:
-
-1. Start vLLM/ROCm on AMD Developer Cloud.
-2. Serve `Qwen/Qwen3-8B` as `anirvium-text`.
-3. Run `amd/benchmark_agent_eval.py` in `--mode llm`.
-4. Save logs under `amd/logs/benchmark_llm_*.json`.
-5. Use the FastAPI backend and graph-discovery endpoint for live product proof.
-
-## What Judges Should Inspect
-
-1. `JUDGES_READ_THIS_FIRST.md`
-2. `GET /demo/winning-run`
-3. Dashboard `Load Winning Demo`
-4. `architecture_diagram.md`
-5. `docs/EVALUATION_METRICS.md`
-6. `amd/README_AMD_USAGE.md`
-
-## Submission Artifacts Checklist
-
-- [ ] GitHub repository URL
-- [ ] Demo video
-- [ ] Slide deck PDF
-- [ ] AMD benchmark logs when GPU access is available
-- [ ] AMD screenshots when GPU access is available
-- [ ] Optional hosted URL
+- Upload the prepared narrated video and incognito-test playback or its public URL.
+- Attach/upload the prepared slide deck and incognito-test its public URL if the form requires one.
+- Enable and verify the GitHub Pages resilience demo, or provide another stable application URL.
+- Confirm rights to redistribute all team-supplied anonymized reference material.
+- Complete the lablab.ai form before the platform deadline.

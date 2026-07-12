@@ -986,7 +986,7 @@ Customer Support Department
 Please take a few minutes to answer this questionnaire: [link removed]
 
 Withdrawal payment method unavailable or withdrawal limit
-Dear Customer,  This is Support Specialist and I am here to assist you today.  It seems that you are currently seeing only one option for requesting a withdrawal. Upon reviewing your account, I found that there are two withdrawal options available. However, one of them, Easypaisa (number: 03158365945), is currently unavailable as you have exceeded the withdrawal limit for that method.
+Dear Customer,  This is Support Specialist and I am here to assist you today.  It seems that you are currently seeing only one option for requesting a withdrawal. Upon reviewing your account, I found that there are two withdrawal options available. However, one of them, Easypaisa (number: [REDACTED_WALLET_NUMBER]), is currently unavailable as you have exceeded the withdrawal limit for that method.
 When depositing with multiple payment methods, each method has its withdrawal limit. The withdrawal limit for a payment method equals the total amount deposited using that same method. Here’s a simple formula to clarify:
 	•	Total deposits with Payment Method payment method = Withdrawal limit for that method
 	•	Total deposits with Payment Method payment method = Withdrawal limit for that method
@@ -1085,7 +1085,7 @@ With best regards, Customer Support Department  Please take a few minutes
 ARN
 Dear Customer,  Thank you for contacting us. This is Support Specialist and I am here to assist you today.  I apologize for the inconvenience you experienced due to the delay in your withdrawal. As I can check in the system your withdrawal of 100.00 USD was successfully processed on 2025-01-01. Since the minimum timeframe has already passed, we have created the ARN for your withdrawal. The ARN number for your transaction is:
 
-ARN: 75332995002003872699289
+ARN: [REDACTED_ARN]
 
 The Acquirer Reference Number (ARN) is a unique tracking number that identifies a card transaction as it moves between banks. You can use this number to track a transaction with your bank. Simply contact your bank and provide them with the ARN code.
  If you have any additional inquiries or requests, please do not hesitate to contact us. We are always happy to help you.

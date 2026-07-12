@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Anirvium Sarvagun customer-support workspace</title>
+  <desc id="desc">Presentation render of the implemented dark-mode Sarvagun interface with queue, selected customer case, governed response, and observable thirteen-step trajectory.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0a0c12"/><stop offset="1" stop-color="#10121a"/></linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#161923"/><stop offset="1" stop-color="#11131b"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#72e6d1"/><stop offset="1" stop-color="#8b7cff"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .sans{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.muted{fill:#74798a}.soft{fill:#9ca1b0}.text{fill:#e4e6ed}.tiny{font-size:10px}.small{font-size:12px}.body{font-size:14px}.label{font-size:10px;font-weight:700;letter-spacing:1.5px}.title{font-size:24px;font-weight:650}.card{fill:#12151e;stroke:#292d3a}.chip{fill:#1a1d27;stroke:#2a2e3b}.line{stroke:#292d3a}.teal{fill:#72e6d1}.violet{fill:#a69aff}.amber{fill:#f4c76b}.red{fill:#ff7c87}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="18" y="18" width="1564" height="864" rx="18" fill="#0d0f16" stroke="#272b37"/>
+
+  <!-- Sidebar -->
+  <rect x="18" y="18" width="250" height="864" rx="18" fill="#0f1118"/>
+  <line x1="268" y1="18" x2="268" y2="882" class="line"/>
+  <circle cx="48" cy="50" r="11" fill="#8b7cff" opacity=".2"/><path d="M43 50h10M48 45v10" stroke="#a69aff" stroke-width="2"/>
+  <text x="68" y="56" class="sans text" font-size="18" font-weight="700">Anirvium</text>
+  <rect x="34" y="84" width="218" height="38" rx="9" fill="#8b7cff" opacity=".12"/>
+  <circle cx="52" cy="103" r="7" fill="none" stroke="#a69aff"/><text x="70" y="108" class="sans text small" font-weight="650">Sarvagun</text>
+  <circle cx="52" cy="143" r="7" fill="none" stroke="#565c6b"/><text x="70" y="148" class="sans muted small">SuperTuriya</text>
+  <text x="36" y="194" class="sans muted label">ACTIVE QUEUE</text><text x="221" y="194" class="sans muted tiny">6 CASES</text>
+
+  <g class="sans">
+    <rect x="31" y="209" width="224" height="76" rx="10" fill="#8b7cff" opacity=".075" stroke="#8b7cff" stroke-opacity=".25"/>
+    <circle cx="45" cy="229" r="4" class="red"/><text x="59" y="230" class="text small" font-weight="650">Priya Shah</text><text x="208" y="230" class="mono muted tiny">CS-002</text>
+    <text x="59" y="247" class="muted tiny">Withdrawal processed, not received</text>
+    <rect x="59" y="257" width="55" height="18" rx="9" fill="#ff7c87" opacity=".08"/><text x="68" y="270" class="red" font-size="9">frustrated</text>
+    <rect x="120" y="257" width="62" height="18" rx="9" fill="#f4c76b" opacity=".08"/><text x="130" y="270" class="amber" font-size="9">SLA risk</text>
+    <text x="238" y="252" class="teal" font-size="18">✓</text>
+
+    <circle cx="45" cy="306" r="4" class="amber"/><text x="59" y="309" class="soft small" font-weight="600">Aisha Mehta</text><text x="208" y="309" class="mono muted tiny">CS-001</text>
+    <text x="59" y="326" class="muted tiny">UPI deposit missing</text>
+    <circle cx="45" cy="354" r="4" fill="#707586"/><text x="59" y="357" class="soft small" font-weight="600">Rahul Verma</text><text x="208" y="357" class="mono muted tiny">CS-003</text>
+    <text x="59" y="374" class="muted tiny">KYC verification restriction</text>
+    <circle cx="45" cy="402" r="4" class="amber"/><text x="59" y="405" class="soft small" font-weight="600">Meera Iyer</text><text x="208" y="405" class="mono muted tiny">CS-004</text>
+    <text x="59" y="422" class="muted tiny">Account access review</text>
+  </g>
+
+  <rect x="34" y="754" width="218" height="110" rx="12" class="card"/>
+  <circle cx="49" cy="776" r="4" class="teal" filter="url(#glow)"/><text x="62" y="780" class="sans text small" font-weight="650">Static judge demo</text>
+  <text x="48" y="806" class="sans muted tiny">PROVIDER</text><text x="116" y="806" class="sans soft tiny">snapshot mode</text>
+  <text x="48" y="828" class="sans muted tiny">MODEL</text><text x="116" y="828" class="sans soft tiny">synthetic trajectory</text>
+  <text x="48" y="850" class="sans muted tiny">VECTOR</text><text x="116" y="850" class="sans soft tiny">static snapshot</text>
+
+  <!-- Main product area -->
+  <line x1="268" y1="96" x2="1234" y2="96" class="line"/>
+  <text x="302" y="45" class="sans muted label">SARVAGUN CUSTOMER SUPPORT</text>
+  <text x="302" y="73" class="sans text title">Resolve with evidence, empathy, and governed action.</text>
+  <rect x="1060" y="42" width="145" height="28" rx="14" class="chip"/><circle cx="1077" cy="56" r="4" class="teal"/><text x="1088" y="60" class="mono muted tiny">run…28afa7a3</text>
+
+  <rect x="293" y="112" width="916" height="42" rx="10" fill="#72e6d1" opacity=".055" stroke="#72e6d1" stroke-opacity=".18"/>
+  <circle cx="314" cy="133" r="7" fill="none" stroke="#72e6d1"/><path d="m310 133 3 3 6-7" fill="none" stroke="#72e6d1" stroke-width="1.5"/>
+  <text x="332" y="137" class="sans soft tiny"><tspan fill="#b9d2d2" font-weight="700">RESILIENCE DEMO</tspan><tspan> · precomputed synthetic trajectory; live AMD/Qwen evidence is documented in the repository.</tspan></text>
+
+  <rect x="318" y="180" width="856" height="115" rx="13" fill="url(#panel)" stroke="#292d3a"/>
+  <circle cx="340" cy="205" r="4" class="red"/><text x="354" y="202" class="sans muted tiny">SELECTED SUPPORT CASE · CS-002</text><text x="354" y="222" class="sans text body" font-weight="650">Priya Shah</text>
+  <rect x="1062" y="194" width="88" height="24" rx="12" fill="#ff7c87" opacity=".08"/><text x="1078" y="210" class="sans red tiny">SLA breached</text>
+  <text x="340" y="249" class="sans soft small">“This is my third contact. My withdrawal says processed, but the bank still has not received it.”</text>
+  <g class="sans tiny muted"><rect x="340" y="265" width="142" height="19" rx="9" class="chip"/><text x="351" y="278">withdrawal processed missing</text><rect x="489" y="265" width="83" height="19" rx="9" class="chip"/><text x="502" y="278">critical</text><rect x="579" y="265" width="94" height="19" rx="9" class="chip"/><text x="591" y="278">3 prior contacts</text><rect x="680" y="265" width="112" height="19" rx="9" class="chip"/><text x="692" y="278">approval required</text></g>
+
+  <text x="330" y="336" class="sans muted tiny">CUSTOMER</text>
+  <rect x="318" y="348" width="856" height="62" rx="12" class="card"/>
+  <circle cx="343" cy="379" r="14" fill="#202430"/><text x="338" y="384" class="sans soft small">P</text>
+  <text x="368" y="374" class="sans text small">My withdrawal is still missing and nobody replied to the promised update.</text>
+  <text x="368" y="393" class="sans muted tiny">Hybrid governed · customer identity preserved</text>
+
+  <text x="330" y="447" class="sans muted tiny">SARVAGUN · GOVERNED RESPONSE</text>
+  <rect x="318" y="460" width="856" height="198" rx="14" fill="url(#panel)" stroke="#303545"/>
+  <circle cx="344" cy="491" r="15" fill="#8b7cff" opacity=".16"/><path d="M338 491h12M344 485v12" stroke="#a69aff"/>
+  <text x="370" y="486" class="sans text body" font-weight="650">Draft held for human review</text>
+  <text x="370" y="504" class="sans amber tiny">APPROVAL REQUIRED · SuperTuriya quality gate 100% · policy-safe draft</text>
+  <text x="342" y="539" class="sans text body">I’m sorry you have had to contact us again. I found the processed withdrawal and</text>
+  <text x="342" y="562" class="sans text body">the missed update. I have prepared an escalation to Financial Operations with the</text>
+  <text x="342" y="585" class="sans text body">transaction evidence attached. A reviewer must approve the commitment before it is sent.</text>
+  <g class="sans tiny muted"><rect x="342" y="612" width="91" height="24" rx="12" class="chip"/><text x="356" y="628">Policy checked</text><rect x="442" y="612" width="110" height="24" rx="12" class="chip"/><text x="456" y="628">Evidence grounded</text><rect x="561" y="612" width="106" height="24" rx="12" class="chip"/><text x="575" y="628">Mock connector</text><rect x="676" y="612" width="96" height="24" rx="12" class="chip"/><text x="690" y="628">90.2 health</text></g>
+
+  <rect x="318" y="688" width="856" height="98" rx="14" class="card"/>
+  <text x="340" y="713" class="sans muted tiny">QUICK START</text>
+  <rect x="340" y="724" width="135" height="25" rx="12" class="chip"/><text x="359" y="741" class="sans soft tiny">Withdrawal delay</text>
+  <rect x="484" y="724" width="121" height="25" rx="12" class="chip"/><text x="508" y="741" class="sans soft tiny">KYC restriction</text>
+  <rect x="614" y="724" width="118" height="25" rx="12" class="chip"/><text x="636" y="741" class="sans soft tiny">Missing deposit</text>
+  <rect x="340" y="758" width="814" height="12" rx="6" fill="#1e222d"/><text x="347" y="768" class="sans muted" font-size="9">Describe the customer issue…</text><circle cx="1138" cy="764" r="14" fill="url(#accent)"/><path d="m1132 766 6-7 6 7M1138 759v12" stroke="#0d0f16" stroke-width="1.5" fill="none"/>
+  <text x="340" y="814" class="sans muted tiny">Responses remain drafts until policy and approval checks complete.</text>
+
+  <!-- Execution rail -->
+  <rect x="1234" y="18" width="348" height="864" rx="18" fill="#0f1118"/>
+  <line x1="1234" y1="18" x2="1234" y2="882" class="line"/>
+  <text x="1260" y="50" class="sans muted label">SARVAGUN EXECUTION</text>
+  <text x="1260" y="72" class="sans text body" font-weight="650">Live trajectory</text><text x="1371" y="72" class="sans violet tiny">· SuperTuriya observing</text>
+  <rect x="1487" y="44" width="68" height="24" rx="12" fill="#72e6d1" opacity=".08"/><circle cx="1500" cy="56" r="4" class="teal"/><text x="1511" y="60" class="sans teal tiny">complete</text>
+  <g class="sans"><text x="1260" y="111" class="text" font-size="18" font-weight="700">13</text><text x="1286" y="111" class="muted tiny">steps</text><text x="1348" y="111" class="text" font-size="18" font-weight="700">8</text><text x="1367" y="111" class="muted tiny">tools</text><text x="1426" y="111" class="text" font-size="18" font-weight="700">9</text><text x="1445" y="111" class="muted tiny">evidence</text><text x="1516" y="111" class="text" font-size="18" font-weight="700">4</text><text x="1535" y="111" class="muted tiny">risks</text></g>
+  <line x1="1280" y1="145" x2="1280" y2="770" stroke="#2e3341" stroke-width="2"/>
+  <g class="sans small">
+    <g><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Planner</text><text x="1302" y="173" class="muted tiny">Sarvagun · 97% confidence</text></g>
+    <g transform="translate(0 48)"><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Attachment evidence</text><text x="1302" y="173" class="muted tiny">text-first · reviewed metadata</text></g>
+    <g transform="translate(0 96)"><circle cx="1280" cy="158" r="11" fill="#312a18" stroke="#f4c76b"/><text x="1276" y="162" class="amber tiny">3</text><text x="1302" y="157" class="text">Triage</text><text x="1302" y="173" class="muted tiny">recontact + frustration risk</text></g>
+    <g transform="translate(0 144)"><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Knowledge retrieval</text><text x="1302" y="173" class="muted tiny">curated policy evidence</text></g>
+    <g transform="translate(0 192)"><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Policy check</text><text x="1302" y="173" class="muted tiny">sensitive action gated</text></g>
+    <g transform="translate(0 240)"><circle cx="1280" cy="158" r="11" fill="#312a18" stroke="#f4c76b"/><text x="1276" y="162" class="amber tiny">6</text><text x="1302" y="157" class="text">Escalation</text><text x="1302" y="173" class="muted tiny">Financial Operations</text></g>
+    <g transform="translate(0 288)"><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Response drafting</text><text x="1302" y="173" class="muted tiny">safe deterministic fallback</text></g>
+    <g transform="translate(0 336)"><circle cx="1280" cy="158" r="11" fill="#16332f" stroke="#72e6d1"/><text x="1276" y="162" class="teal tiny">✓</text><text x="1302" y="157" class="text">Compliance</text><text x="1302" y="173" class="muted tiny">policy + privacy passed</text></g>
+    <g transform="translate(0 384)"><circle cx="1280" cy="158" r="11" fill="#312a18" stroke="#f4c76b"/><text x="1276" y="162" class="amber tiny">9</text><text x="1302" y="157" class="text">Human handoff</text><text x="1302" y="173" class="muted tiny">draft held for approval</text></g>
+    <g transform="translate(0 432)"><circle cx="1280" cy="158" r="11" fill="#251f43" stroke="#a69aff"/><text x="1276" y="162" class="violet tiny">10</text><text x="1302" y="157" class="text">Critic</text><text x="1302" y="173" class="violet tiny">SuperTuriya · evaluated</text></g>
+    <g transform="translate(0 480)"><circle cx="1280" cy="158" r="11" fill="#251f43" stroke="#a69aff"/><text x="1276" y="162" class="violet tiny">11</text><text x="1302" y="157" class="text">Reflection</text><text x="1302" y="173" class="violet tiny">failure pattern reviewed</text></g>
+    <g transform="translate(0 528)"><circle cx="1280" cy="158" r="11" fill="#251f43" stroke="#a69aff"/><text x="1276" y="162" class="violet tiny">12</text><text x="1302" y="157" class="text">Learning extraction</text><text x="1302" y="173" class="violet tiny">trusted memory created</text></g>
+    <g transform="translate(0 576)"><circle cx="1280" cy="158" r="11" fill="#251f43" stroke="#a69aff"/><text x="1276" y="162" class="violet tiny">13</text><text x="1302" y="157" class="text">Optimizer</text><text x="1302" y="173" class="violet tiny">measurable fix proposed</text></g>
+  </g>
+  <rect x="1256" y="792" width="300" height="58" rx="10" fill="#72e6d1" opacity=".055" stroke="#72e6d1" stroke-opacity=".18"/>
+  <circle cx="1278" cy="821" r="9" fill="#16332f" stroke="#72e6d1"/><text x="1274" y="825" class="sans teal tiny">✓</text>
+  <text x="1296" y="817" class="sans text tiny" font-weight="650">Trajectory captured and evaluated</text><text x="1296" y="834" class="sans muted tiny">Trusted guidance stored; policy unchanged.</text>
+
+  <text x="30" y="894" class="sans muted" font-size="8">PRESENTATION RENDER · Current implemented interface structure · Static synthetic demo shown · Not a live AMD execution screenshot</text>
+</svg>

@@ -112,11 +112,24 @@ Open this browser route for the current AMD instance:
 https://radeon-global.anruicloud.com/spaces/hf-415-81f7a8dd/8501/
 ```
 
-If the instance ID changes, replace `hf-415-81f7a8dd`. The `/instances/<id>/lab` URL is the Jupyter workspace, not the frontend. Do not open `http://localhost:8501` on the Mac.
+If the instance ID changes, replace `hf-415-81f7a8dd`. The `/instances/<id>/lab` URL is the Jupyter workspace, not the frontend. Do not open `http://localhost:8501` on the Mac. This proxy route works only while the matching AMD instance is active and the viewer is authorized; it is evidence infrastructure, not a durable public application URL.
 
 ## Submission-Day AMD Restart
 
-After the final commit is pushed from the Mac, use three AMD terminals in addition to the already-running vLLM terminal.
+After the final commit is pushed from the Mac, use four AMD terminals.
+
+### AMD terminal 1 — verify and run the model server
+
+Activate the platform-provided ROCm/vLLM environment, not `backend/.venv`:
+
+```bash
+cd /workspace/AMD_Anirvium
+source /opt/venv/bin/activate
+python -c 'import vllm; print(vllm.__version__)'
+PROFILE=text_48gb bash amd/run_runtime_profile.sh 2>&1 | tee /workspace/anirvium_vllm.log
+```
+
+If the current image uses a different environment path, locate and activate its preinstalled vLLM environment, then repeat the import check. A failed `import vllm` means this terminal is not ready; do not install vLLM into the lightweight FastAPI virtual environment.
 
 ### AMD terminal 2 — synchronize and run FastAPI
 
@@ -176,6 +189,7 @@ Node must be 20 or newer. The observed AMD VM now has Node `v20.20.2`, which is 
 ```bash
 curl -sS http://localhost:8001/v1/models
 curl -sS http://localhost:8000/health
+curl -sS http://localhost:8000/health/ready
 curl -sS http://localhost:8501/api/health
 curl -sS http://localhost:8501/api/platform/status
 curl -sS http://localhost:8501/api/data/cases/CS-002/context
@@ -185,7 +199,7 @@ curl -sS -X POST http://localhost:8501/api/conversations/turn \
   -d '{"message":"Hi","customer_id":"CS-C002"}'
 ```
 
-Only after all five checks succeed should the browser be opened. In Safari, use `Option + Command + R` to reload without the normal page cache after a new frontend build.
+Only after all eight checks succeed should the browser be opened. In Safari, use `Option + Command + R` to reload without the normal page cache after a new frontend build.
 
 ## Collect Correlated Logs On AMD
 
@@ -215,6 +229,7 @@ Collect files for debugging:
 ```bash
 tail -n 200 /workspace/anirvium_frontend.log
 tail -n 200 /workspace/anirvium_backend.log
+tail -n 200 /workspace/anirvium_vllm.log
 ```
 
 The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job exposes the actual current agent, current step, total steps, and progress percentage. The browser persists the active job ID and resumes it after refresh. Transient `429`, `502`, `503`, and `504` polling responses are retried while the server-side job continues. Completed Sarvagun execution, SuperTuriya intelligence, spans, CX signals, audited tools, and memory IDs arrive with the final result.
@@ -233,7 +248,7 @@ The judged UI uses `POST /runs/async` and polls `/runs/jobs/{job_id}`. Each job 
 10. Submit explicit CSAT only for a released response and point out that it remains separate from predicted satisfaction.
 11. Show the vLLM terminal’s real `/v1/chat/completions` activity and AMD model identity.
 
-Keep a prerecorded screen capture of the same sequence as the fallback.
+Use the prepared narrated presentation at `docs/assets/Anirvium_AI_ACT_II_Video.mp4` as the submission fallback; it is a deck-based presentation, not a live AMD recording.
 
 ## Hosting for Submission
 
@@ -247,9 +262,10 @@ Before submission, test the public URL in an incognito browser and on a phone us
 
 - Blank page: inspect the frontend terminal and run `npm run build`.
 - “Backend unavailable”: verify `curl http://127.0.0.1:8000/health`.
-- Frontend loads but no data: verify `curl http://127.0.0.1:5173/api/health`.
+- Local Vite frontend loads but no data: verify `curl http://127.0.0.1:5173/api/health`.
+- AMD gateway loads but no data: verify `curl http://127.0.0.1:8501/api/health` inside the VM and the external `/spaces/<instance-id>/8501/api/health` route in the browser.
 - AMD model degraded: verify `curl http://localhost:8001/v1/models` and `curl http://localhost:8501/api/health/ready`.
-- A browser shows a transient 502 during a run: leave the backend running and reload once; the persisted job ID resumes automatically.
+- A browser shows a transient 502 during a run: inspect gateway/backend logs and reload once only if the same FastAPI process is still alive; the saved job ID can resume an in-memory job, but a backend restart loses that non-durable job and requires a new run.
 - Port 8000 already used: reuse a healthy Anirvium backend or stop the unrelated process.
 - Port 5173 already used: use the URL Vite prints, or stop the old Vite process.
 - Remote notebook works only inside notebook: use an approved tunnel/public proxy or keep AMD as separate evidence.

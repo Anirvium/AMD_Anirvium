@@ -169,6 +169,7 @@ export default function Dashboard() {
   const primaryAction = run?.final_actions[0] ?? null;
   const modelName = String(run?.metadata.model_name ?? runtimeStatus?.model_id ?? "runtime pending");
   const provider = String(run?.metadata.llm_provider ?? runtimeStatus?.provider ?? "connecting");
+  const staticJudgeDemo = runtimeStatus?.provider === "static_submission_demo";
   const evidenceCount = new Set(run?.trajectory.flatMap((span) => span.evidence_ids) ?? []).size;
   const toolCount = run?.trajectory.reduce((total, span) => total + span.tools_used.length, 0) ?? 0;
   const riskCount = new Set(run?.trajectory.flatMap((span) => span.risk_flags) ?? []).size;
@@ -305,7 +306,7 @@ export default function Dashboard() {
         </div>
 
         <div className="runtime-card">
-          <div><span className={`status-light ${error || runtimeStatus?.model_ready === false ? "error" : "online"}`} /><strong>{isBooting ? "Checking runtime" : error ? "Runtime issue" : runtimeStatus?.model_ready ? "AMD model ready" : "Model degraded"}</strong></div>
+          <div><span className={`status-light ${error || (!staticJudgeDemo && runtimeStatus?.model_ready === false) ? "error" : "online"}`} /><strong>{isBooting ? "Checking runtime" : error ? "Runtime issue" : staticJudgeDemo ? "Static judge demo" : runtimeStatus?.model_ready ? "AMD model ready" : "Model degraded"}</strong></div>
           <dl>
             <div><dt>Provider</dt><dd>{provider}</dd></div>
             <div><dt>Model</dt><dd title={modelName}>{modelName}</dd></div>
@@ -328,6 +329,10 @@ export default function Dashboard() {
 
         {error && (
           <div className="system-error" role="alert"><CircleAlert size={17} /><span>{error}</span><button onClick={() => void loadRuntime()}>Reconnect</button></div>
+        )}
+
+        {staticJudgeDemo && !error && (
+          <div className="static-demo-banner" role="status"><ShieldCheck size={16} /><span><strong>Resilience demo:</strong> interactive precomputed synthetic trajectories. Live AMD/Qwen execution evidence is documented in the public repository.</span></div>
         )}
 
         {view === "agent" ? (

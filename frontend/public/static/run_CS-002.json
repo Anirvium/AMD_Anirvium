@@ -1,0 +1,3769 @@
+{
+  "run_id": "run_20260712153158_28afa7a3",
+  "status": "completed",
+  "selected_ticket_ids": [
+    "CS-002"
+  ],
+  "final_actions": [
+    {
+      "ticket_id": "CS-002",
+      "customer_name": "Priya Shah",
+      "recommended_escalation": "Financial operations + Incident Manager",
+      "owner": "Incident Manager queue",
+      "urgency": "high",
+      "approval_state": "APPROVAL_REQUIRED",
+      "draft_response": "I\u2019m sorry you\u2019ve had to contact us again about this, Priya Shah. I checked the case history and the current status is bank trace under review. I created an escalation to incident manager with the related cases and policy evidence attached. I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "risk_flags": [
+        "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "next_action": "Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes.",
+      "confidence_score": 0.54,
+      "compliance_status": "REVIEW_REQUIRED",
+      "human_escalation_required": true,
+      "handoff_team": "Incident Manager queue",
+      "handoff_reason": "compliance_review_required, approval_required",
+      "handoff_summary": "CS-002 should be reviewed by Incident Manager queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes..",
+      "generation_source": "deterministic_safe_fallback",
+      "generation_model": null,
+      "fallback_reason": "llm_not_configured"
+    }
+  ],
+  "visual_evidence_cards": [
+    {
+      "evidence_id": "VIS-002-01",
+      "ticket_id": "CS-002",
+      "source_type": "document",
+      "filename": "bank-response-redacted.pdf",
+      "summary": "bank-response-redacted.pdf captured as document support evidence.",
+      "ocr_text": "",
+      "visual_findings": [
+        "bank-response-redacted.pdf is available for support review"
+      ],
+      "timestamp_refs": [],
+      "supported_claims": [
+        "My withdrawal says processed, but my bank did not receive it after 5 working days. The UTR did not help the bank trace i"
+      ],
+      "risk_flags": [],
+      "confidence": 0.8,
+      "requires_policy_check": false,
+      "model_name": "deterministic-attachment-evidence",
+      "raw_modality": "application/pdf"
+    }
+  ],
+  "trajectory": [
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_001",
+      "parent_step_id": null,
+      "agent_name": "Planner Agent",
+      "input_summary": "Build a plan-driven support workflow, stop conditions, and evidence contract for tickets: CS-002.",
+      "output_summary": "Created plan-driven support workflow for 1 selected tickets.",
+      "reasoning_summary": "Planner produced auditable reasoning summaries, required evidence, tool sequence, and stop conditions without exposing private reasoning.",
+      "full_output": {
+        "summary": "Created plan-driven support workflow for 1 selected tickets.",
+        "plans": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "intent": "withdrawal_processed_missing",
+            "case_risk": "high_support_risk",
+            "plan_steps": [
+              "classify customer intent, sentiment, priority, and SLA pressure",
+              "retrieve support policy, procedure, template, and evidence records",
+              "apply plan-driven policy gates before drafting",
+              "draft a customer-safe response grounded in evidence IDs",
+              "run compliance and confidence gates before final action",
+              "handoff to a human when confidence, approval, or policy state requires it",
+              "feed completed trajectory into reflection, learning extraction, and optimizer loops"
+            ],
+            "required_tools": [
+              "triage_classifier",
+              "kb_search",
+              "policy_check",
+              "evidence_card_lookup"
+            ],
+            "required_evidence": [
+              "payment status",
+              "transaction proof",
+              "financial policy"
+            ],
+            "stop_conditions": [
+              "unsupported_commitment_without_evidence",
+              "refund_or_release_promise",
+              "financial_outcome_without_approval"
+            ],
+            "policy_mode": "hybrid_plan_driven_and_ai_driven",
+            "reasoning_summary": "Plan for CS-002: handle withdrawal_processed_missing by retrieving evidence first, then enforcing policy gates before any customer-facing commitment."
+          }
+        },
+        "tools_used": [
+          "plan_policy_router",
+          "risk_stop_condition_builder",
+          "workflow_contract_generator",
+          "sarvagun.hybrid_execution_controller",
+          "superturiya.memory_guidance"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [
+          "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+          "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+          "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "reasoning_summary": "Planner produced auditable reasoning summaries, required evidence, tool sequence, and stop conditions without exposing private reasoning.",
+        "confidence": 0.9,
+        "execution_strategy": {
+          "execution_mode": "hybrid",
+          "decision_authority": "governed_plan_with_bounded_autonomy",
+          "policy_guardian": "deterministic_policy_and_compliance_gates",
+          "autonomous_scope": [
+            "tool_selection",
+            "response_composition",
+            "clarification"
+          ],
+          "mandatory_capabilities": [
+            "Planner Agent",
+            "Knowledge Retrieval Agent",
+            "Policy Checker Agent",
+            "Response Drafting Agent",
+            "Compliance Agent",
+            "Critic / Evaluator Agent",
+            "Reflection Agent",
+            "Learning Extraction Agent",
+            "Optimizer Agent"
+          ],
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "stop_conditions": [
+            "unsupported_commitment_without_evidence",
+            "policy_or_identity_bypass",
+            "unauthorized_enterprise_write",
+            "maximum_agent_steps_exceeded"
+          ],
+          "maximum_agent_steps": 13,
+          "replan_limit": 1,
+          "recalled_intelligence_ids": [
+            "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+            "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+            "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+          ],
+          "memory_influenced_decisions": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "autonomous_decisions": [
+            {
+              "iteration": 1,
+              "observation": {
+                "issue_type": "withdrawal_processed_missing",
+                "emotion_intensity": 0.82,
+                "recontact": true
+              },
+              "decision": "select_allowlisted_context_and_domain_tools",
+              "selected_tools": [
+                "mock_customer_system.get_open_cases",
+                "mock_customer_system.get_interaction_history",
+                "mock_customer_system.lookup_operational_status",
+                "mock_customer_system.create_escalation",
+                "superturiya.trajectory_memory_search"
+              ],
+              "policy_supervisor": "accepted",
+              "executed_tool_ids": [
+                "toolrun_8b1a3077aff3",
+                "toolrun_c3f7196e8ff4",
+                "toolrun_91d62cf0d286"
+              ],
+              "mandatory_context_tool_ids": [
+                "toolrun_1979db2e1df4"
+              ],
+              "observed_tool_statuses": {
+                "find_customer": "success",
+                "get_open_cases": "success",
+                "get_interaction_history": "success",
+                "lookup_operational_status": "success"
+              }
+            },
+            {
+              "iteration": 2,
+              "observation": {
+                "required_policy_gate": true
+              },
+              "decision": "commit_existing_agent_plan_inside_safety_envelope",
+              "policy_supervisor": "accepted"
+            }
+          ],
+          "termination_reason": "bounded_plan_committed_before_agent_execution"
+        }
+      },
+      "tools_used": [
+        "plan_policy_router",
+        "risk_stop_condition_builder",
+        "workflow_contract_generator",
+        "sarvagun.hybrid_execution_controller",
+        "superturiya.memory_guidance"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 19,
+      "tokens_out": 505,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.9,
+      "risk_flags": [
+        "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+        "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+        "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.423882Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_002",
+      "parent_step_id": "step_001",
+      "agent_name": "Attachment Evidence Agent",
+      "input_summary": "Extract lightweight attachment evidence cards without an image/video model for tickets: CS-002.",
+      "output_summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+      "reasoning_summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+      "full_output": {
+        "summary": "Extracted 1 attachment evidence cards without loading an image/video model.",
+        "visual_evidence_cards": [
+          {
+            "evidence_id": "VIS-002-01",
+            "ticket_id": "CS-002",
+            "source_type": "document",
+            "filename": "bank-response-redacted.pdf",
+            "summary": "bank-response-redacted.pdf captured as document support evidence.",
+            "ocr_text": "",
+            "visual_findings": [
+              "bank-response-redacted.pdf is available for support review"
+            ],
+            "timestamp_refs": [],
+            "supported_claims": [
+              "My withdrawal says processed, but my bank did not receive it after 5 working days. The UTR did not help the bank trace i"
+            ],
+            "risk_flags": [],
+            "confidence": 0.8,
+            "requires_policy_check": false,
+            "model_name": "deterministic-attachment-evidence",
+            "raw_modality": "application/pdf"
+          }
+        ],
+        "tools_used": [
+          "attachment_metadata_parser",
+          "evidence_card_generator"
+        ],
+        "evidence_ids": [
+          "VIS-002-01"
+        ],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-attachment-evidence",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "attachment_metadata_parser",
+        "evidence_card_generator"
+      ],
+      "evidence_ids": [
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 17,
+      "tokens_out": 147,
+      "model_name": "deterministic-attachment-evidence",
+      "confidence": 0.86,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.423926Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_003",
+      "parent_step_id": "step_002",
+      "agent_name": "Intake / Triage Agent",
+      "input_summary": "Classify selected support tickets: CS-002.",
+      "output_summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+      "reasoning_summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+      "full_output": {
+        "summary": "Classified 1 support tickets and identified 2 distinct risk flags.",
+        "classifications": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "issue_type": "withdrawal_processed_missing",
+            "urgency": "high",
+            "customer_tier": "pro",
+            "sla_risk": "high",
+            "sentiment": "angry",
+            "risk_flags": [
+              "SLA_REVIEW_REQUIRED",
+              "CUSTOMER_SENTIMENT_RISK"
+            ]
+          }
+        },
+        "tools_used": [
+          "priority_rules",
+          "sentiment_rules",
+          "sla_window_rules"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [
+          "CUSTOMER_SENTIMENT_RISK",
+          "SLA_REVIEW_REQUIRED"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.9
+      },
+      "tools_used": [
+        "priority_rules",
+        "sentiment_rules",
+        "sla_window_rules"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 7,
+      "tokens_out": 75,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.9,
+      "risk_flags": [
+        "CUSTOMER_SENTIMENT_RISK",
+        "SLA_REVIEW_REQUIRED"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.423944Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_004",
+      "parent_step_id": "step_003",
+      "agent_name": "Knowledge Retrieval Agent",
+      "input_summary": "Retrieve KB and policy evidence for selected tickets: CS-002.",
+      "output_summary": "Retrieved grounded evidence for 1 tickets.",
+      "reasoning_summary": "Retrieved grounded evidence for 1 tickets.",
+      "full_output": {
+        "summary": "Retrieved grounded evidence for 1 tickets.",
+        "retrieved_evidence": {
+          "CS-002": [
+            {
+              "id": "POL-CS-PAY-002",
+              "title": "Processed withdrawal not received proof gate",
+              "summary": "Customer says a withdrawal is marked processed but funds are not visible in their account.",
+              "category": "kb_policies"
+            },
+            {
+              "id": "PROC-CS-WDR-001",
+              "title": "Processed withdrawal not received",
+              "summary": "We will verify the processed withdrawal details and request bank proof if the normal receiving window has passed.",
+              "category": "kb_procedures"
+            },
+            {
+              "id": "TMPL-CS-WDR-002",
+              "title": "Processed withdrawal proof request",
+              "summary": "Hi {customer_name}, I understand the concern. The withdrawal shows as processed on {processed_date}. To investigate further, please share {proof_needed}. We will attach it to the financial review and follow up with the next confirmed update.",
+              "category": "kb_templates"
+            },
+            {
+              "id": "VIS-002-01",
+              "title": "Attachment evidence: bank-response-redacted.pdf",
+              "summary": "bank-response-redacted.pdf captured as document support evidence.",
+              "category": "document"
+            }
+          ]
+        },
+        "tools_used": [
+          "local_kb_search",
+          "policy_catalog_lookup",
+          "visual_evidence_lookup"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.92
+      },
+      "tools_used": [
+        "local_kb_search",
+        "policy_catalog_lookup",
+        "visual_evidence_lookup"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 12,
+      "tokens_out": 222,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.92,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.424424Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_005",
+      "parent_step_id": "step_004",
+      "agent_name": "Policy Checker Agent",
+      "input_summary": "Apply approval and policy gates using retrieved evidence for tickets: CS-002.",
+      "output_summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+      "reasoning_summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+      "full_output": {
+        "summary": "Applied policy gates to 1 tickets; 1 sensitive conditions found.",
+        "policy_checks": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "approval_state": "APPROVAL_REQUIRED",
+            "constraints": [
+              "Do not promise deposit crediting, withdrawal release, bank receipt, or payment reversal before financial review approval.",
+              "Apply POL-CS-PAY-002: Customer says a withdrawal is marked processed but funds are not visible in their account.",
+              "Cite internal evidence IDs for material recommendations."
+            ],
+            "risk_flags": [
+              "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+            ],
+            "evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ]
+          }
+        },
+        "tools_used": [
+          "policy_rules_engine",
+          "approval_state_classifier"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "confidence": 0.91
+      },
+      "tools_used": [
+        "policy_rules_engine",
+        "approval_state_classifier"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 15,
+      "tokens_out": 135,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.91,
+      "risk_flags": [
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:58.424451Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_006",
+      "parent_step_id": "step_005",
+      "agent_name": "Escalation Agent",
+      "input_summary": "Route selected tickets to the right owner, urgency, and next action: CS-002.",
+      "output_summary": "Produced escalation routes and owners for 1 tickets.",
+      "reasoning_summary": "Produced escalation routes and owners for 1 tickets.",
+      "full_output": {
+        "summary": "Produced escalation routes and owners for 1 tickets.",
+        "escalations": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "recommended_escalation": "Financial operations + Incident Manager",
+            "owner": "Incident Manager queue",
+            "urgency": "high",
+            "next_action": "Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes.",
+            "evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ]
+          }
+        },
+        "tools_used": [
+          "escalation_matrix",
+          "customer_success_owner_lookup",
+          "mock_customer_system.create_escalation"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "ESCALATION_TIME_SENSITIVE"
+        ],
+        "approval_state": "ESCALATED",
+        "confidence": 0.88
+      },
+      "tools_used": [
+        "escalation_matrix",
+        "customer_success_owner_lookup",
+        "mock_customer_system.create_escalation"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 16,
+      "tokens_out": 116,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.88,
+      "risk_flags": [
+        "ESCALATION_TIME_SENSITIVE"
+      ],
+      "approval_state": "ESCALATED",
+      "timestamp": "2026-07-12T15:31:58.424714Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_007",
+      "parent_step_id": "step_006",
+      "agent_name": "Response Drafting Agent",
+      "input_summary": "Draft customer-safe replies using policy constraints and escalation outputs for tickets: CS-002.",
+      "output_summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+      "reasoning_summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+      "full_output": {
+        "summary": "Drafted 1 customer-safe responses with approval states and evidence IDs.",
+        "final_actions": [
+          {
+            "ticket_id": "CS-002",
+            "customer_name": "Priya Shah",
+            "recommended_escalation": "Financial operations + Incident Manager",
+            "owner": "Incident Manager queue",
+            "urgency": "high",
+            "approval_state": "APPROVAL_REQUIRED",
+            "draft_response": "I\u2019m sorry you\u2019ve had to contact us again about this, Priya Shah. I checked the case history and the current status is bank trace under review. I created an escalation to incident manager with the related cases and policy evidence attached. I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+            "evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ],
+            "risk_flags": [
+              "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+              "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+            ],
+            "next_action": "Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes.",
+            "confidence_score": 0.54,
+            "compliance_status": "REVIEW_REQUIRED",
+            "human_escalation_required": true,
+            "handoff_team": "Incident Manager queue",
+            "handoff_reason": "compliance_review_required, approval_required",
+            "handoff_summary": "CS-002 should be reviewed by Incident Manager queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes..",
+            "generation_source": "deterministic_safe_fallback",
+            "generation_model": null,
+            "fallback_reason": "llm_not_configured"
+          }
+        ],
+        "tools_used": [
+          "safe_response_template",
+          "approval_gate_check",
+          "trajectory_memory_recall",
+          "mock_customer_system.add_case_note"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "model_name": "deterministic-safe-response-v2",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "safe_response_template",
+        "approval_gate_check",
+        "trajectory_memory_recall",
+        "mock_customer_system.add_case_note"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 273,
+      "model_name": "deterministic-safe-response-v2",
+      "confidence": 0.86,
+      "risk_flags": [
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:58.425018Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_008",
+      "parent_step_id": "step_007",
+      "agent_name": "Compliance Agent",
+      "input_summary": "Check drafted replies against legal, regulatory, company, privacy, and evidence rules for tickets: CS-002.",
+      "output_summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+      "reasoning_summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+      "full_output": {
+        "summary": "Checked 1 drafted responses against legal, regulatory, company, and evidence rules.",
+        "compliance_checks": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "compliance_status": "REVIEW_REQUIRED",
+            "violations": [
+              "approval_required_before_send"
+            ],
+            "remediations": [],
+            "required_evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ],
+            "approval_state": "APPROVAL_REQUIRED",
+            "safe_rewrite": "I\u2019m sorry you\u2019ve had to contact us again about this, Priya Shah. I checked the case history and the current status is bank trace under review. I created an escalation to incident manager with the related cases and policy evidence attached. I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks."
+          }
+        },
+        "tools_used": [
+          "deterministic_compliance_rules",
+          "safe_rewrite_filter",
+          "evidence_support_check"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ],
+        "approval_state": "APPROVAL_REQUIRED",
+        "confidence": 0.91
+      },
+      "tools_used": [
+        "deterministic_compliance_rules",
+        "safe_rewrite_filter",
+        "evidence_support_check"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 20,
+      "tokens_out": 187,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.91,
+      "risk_flags": [
+        "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+        "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+      ],
+      "approval_state": "APPROVAL_REQUIRED",
+      "timestamp": "2026-07-12T15:31:58.425081Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_009",
+      "parent_step_id": "step_008",
+      "agent_name": "Human Escalation Agent",
+      "input_summary": "Route low-confidence, blocked, or approval-required support cases to human review for tickets: CS-002.",
+      "output_summary": "Routed 1 of 1 cases to human review.",
+      "reasoning_summary": "Routed 1 of 1 cases to human review.",
+      "full_output": {
+        "summary": "Routed 1 of 1 cases to human review.",
+        "human_handoffs": {
+          "CS-002": {
+            "ticket_id": "CS-002",
+            "route": "human_required",
+            "team": "Incident Manager queue",
+            "reason": "compliance_review_required, approval_required",
+            "confidence": 0.54,
+            "handoff_summary": "CS-002 should be reviewed by Incident Manager queue. Confidence 0.54; reason: compliance_review_required, approval_required. Next action: Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes..",
+            "evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ]
+          }
+        },
+        "confidence_threshold": 0.45,
+        "tools_used": [
+          "confidence_gate",
+          "human_queue_router",
+          "handoff_summary_builder"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "APPROVAL_REQUIRED",
+          "COMPLIANCE_REVIEW_REQUIRED"
+        ],
+        "approval_state": "ESCALATED",
+        "confidence": 0.89
+      },
+      "tools_used": [
+        "confidence_gate",
+        "human_queue_router",
+        "handoff_summary_builder"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 19,
+      "tokens_out": 144,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.89,
+      "risk_flags": [
+        "APPROVAL_REQUIRED",
+        "COMPLIANCE_REVIEW_REQUIRED"
+      ],
+      "approval_state": "ESCALATED",
+      "timestamp": "2026-07-12T15:31:58.425105Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_010",
+      "parent_step_id": "step_009",
+      "agent_name": "Critic / Evaluator Agent",
+      "input_summary": "Evaluate the full support-agent trajectory, final actions, evidence coverage, policy compliance, and operational risk.",
+      "output_summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+      "reasoning_summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+      "full_output": {
+        "summary": "Scored trajectory at 90.2/100 with 1 diagnosis items.",
+        "metrics": {
+          "task_completion": 1.0,
+          "evidence_grounding": 1.0,
+          "policy_compliance": 1.0,
+          "hallucination_risk": 0.08,
+          "escalation_quality": 1.0,
+          "actionability": 1.0,
+          "missing_information": 1.0,
+          "customer_tone": 1.0,
+          "token_efficiency": 1.0,
+          "latency_efficiency": 1.0,
+          "overall_score": 90.2
+        },
+        "diagnosis": [
+          {
+            "category": "weak_response",
+            "severity": "MEDIUM",
+            "ticket_id": "CS-002",
+            "message": "High-urgency response does not state a customer update cadence.",
+            "evidence_ids": [
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ],
+            "suggested_fix": "Require a next-update field for critical and high-priority customer replies.",
+            "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+            "affected_agent": "Response Drafting Agent",
+            "business_impact": "Urgent customers may remain uncertain about ownership and timing, increasing churn or SLA pressure.",
+            "recommended_fix": "Require a next-update field for critical and high-priority customer replies.",
+            "metric_impact": [
+              "missing_information",
+              "customer_tone",
+              "actionability"
+            ],
+            "confidence": 0.88
+          }
+        ],
+        "llm_review": null,
+        "tools_used": [
+          "deterministic_eval_rules",
+          "failure_diagnosis_engine"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-trajectory-evaluator-v1",
+        "confidence": 0.87
+      },
+      "tools_used": [
+        "deterministic_eval_rules",
+        "failure_diagnosis_engine"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 21,
+      "tokens_out": 211,
+      "model_name": "deterministic-trajectory-evaluator-v1",
+      "confidence": 0.87,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.425171Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_011",
+      "parent_step_id": "step_010",
+      "agent_name": "Reflection Agent",
+      "input_summary": "Review completed support responses, diagnose repeated mistakes, and propose durable behavior improvements.",
+      "output_summary": "Reflected on 1 completed response quality signals.",
+      "reasoning_summary": "Reflected on 1 completed response quality signals.",
+      "full_output": {
+        "summary": "Reflected on 1 completed response quality signals.",
+        "reflections": [
+          {
+            "ticket_id": "CS-002",
+            "target_agent": "Response Drafting Agent",
+            "repeated_mistake": true,
+            "reflection_score": 0.56,
+            "improvement": "Require a next-update field for critical and high-priority customer replies.",
+            "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+            "metric_impact": [
+              "missing_information",
+              "customer_tone",
+              "actionability"
+            ]
+          }
+        ],
+        "tools_used": [
+          "post_run_reflection_rules",
+          "repeated_mistake_detector"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.86
+      },
+      "tools_used": [
+        "post_run_reflection_rules",
+        "repeated_mistake_detector"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 94,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.86,
+      "risk_flags": [
+        "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.425187Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_012",
+      "parent_step_id": "step_011",
+      "agent_name": "Learning Extraction Agent",
+      "input_summary": "Extract reusable learning artifacts from human handoffs, trajectory logs, transcripts, and satisfaction signals.",
+      "output_summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+      "reasoning_summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+      "full_output": {
+        "summary": "Extracted 1 learning artifacts from handoffs, trajectory logs, and satisfaction placeholders.",
+        "learning_artifacts": [
+          {
+            "ticket_id": "CS-002",
+            "lesson_type": "policy_gap",
+            "failure_pattern": "compliance_review_required, approval_required",
+            "source_signals": [
+              "human_handoff",
+              "chat_transcript",
+              "agent_resolution_notes",
+              "customer_satisfaction",
+              "agent_satisfaction"
+            ],
+            "recommended_kb_update": "Review CS-002 after human resolution and update the relevant policy/template for Financial operations + Incident Manager.",
+            "new_eval_case": "Add eval case for CS-002 requiring evidence IDs POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01 and preserving the same approval-state decision.",
+            "confidence_adjustment": -0.12
+          }
+        ],
+        "tools_used": [
+          "handoff_log_extractor",
+          "transcript_signal_mapper",
+          "eval_case_generator"
+        ],
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "risk_flags": [
+          "POLICY_GAP"
+        ],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "confidence": 0.83
+      },
+      "tools_used": [
+        "handoff_log_extractor",
+        "transcript_signal_mapper",
+        "eval_case_generator"
+      ],
+      "evidence_ids": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "latency_ms": 0,
+      "tokens_in": 20,
+      "tokens_out": 142,
+      "model_name": "mock-trajectory-model",
+      "confidence": 0.83,
+      "risk_flags": [
+        "POLICY_GAP"
+      ],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.425205Z"
+    },
+    {
+      "run_id": "run_20260712153158_28afa7a3",
+      "step_id": "step_013",
+      "parent_step_id": "step_012",
+      "agent_name": "Optimizer Agent",
+      "input_summary": "Recommend workflow changes from critic findings, deterministic scores, and final support actions.",
+      "output_summary": "Generated 1 workflow optimization recommendations.",
+      "reasoning_summary": "Generated 1 workflow optimization recommendations.",
+      "full_output": {
+        "summary": "Generated 1 workflow optimization recommendations.",
+        "recommendations": [
+          {
+            "recommendation_id": "OPT-002",
+            "title": "Require owner and update cadence for urgent cases",
+            "change_type": "mandatory_check",
+            "rationale": "Critical support replies need an assigned owner and clear update cadence to reduce escalation ambiguity.",
+            "expected_impact": "+6 actionability points and lower SLA risk",
+            "before": "High-urgency drafts can omit next-update timing.",
+            "after": "Critical and high-priority drafts include owner, route, urgency, and next-update timing.",
+            "related_ticket_ids": [
+              "CS-002"
+            ],
+            "priority": "HIGH",
+            "target_agent": "Escalation Agent",
+            "problem": "High-risk tickets can have an escalation route but no customer-visible update cadence.",
+            "root_cause": "The escalation schema has owner and next_action but the response drafting rule does not require next_update timing.",
+            "fix": "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets.",
+            "expected_metric_lift": {
+              "actionability": "+0.12",
+              "missing_information": "-0.20"
+            },
+            "implementation_hint": "Update response_agent.py templates and evaluator.py missing_information rule to require next update language."
+          }
+        ],
+        "llm_optimizer_note": null,
+        "tools_used": [
+          "optimization_rules",
+          "workflow_change_mapper"
+        ],
+        "evidence_ids": [],
+        "risk_flags": [],
+        "approval_state": "DRAFT_RECOMMENDATION",
+        "model_name": "deterministic-workflow-optimizer-v1",
+        "confidence": 0.84
+      },
+      "tools_used": [
+        "optimization_rules",
+        "workflow_change_mapper"
+      ],
+      "evidence_ids": [],
+      "latency_ms": 0,
+      "tokens_in": 18,
+      "tokens_out": 237,
+      "model_name": "deterministic-workflow-optimizer-v1",
+      "confidence": 0.84,
+      "risk_flags": [],
+      "approval_state": "DRAFT_RECOMMENDATION",
+      "timestamp": "2026-07-12T15:31:58.425238Z"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "step_001",
+        "label": "Planner Agent",
+        "status": "warning",
+        "score": 0.9,
+        "risk_flags": [
+          "PLAN_STOP_FINANCIAL_OUTCOME_WITHOUT_APPROVAL",
+          "PLAN_STOP_REFUND_OR_RELEASE_PROMISE",
+          "PLAN_STOP_UNSUPPORTED_COMMITMENT_WITHOUT_EVIDENCE"
+        ]
+      },
+      {
+        "id": "step_002",
+        "label": "Attachment Evidence Agent",
+        "status": "success",
+        "score": 0.86,
+        "risk_flags": []
+      },
+      {
+        "id": "step_003",
+        "label": "Intake / Triage Agent",
+        "status": "warning",
+        "score": 0.9,
+        "risk_flags": [
+          "CUSTOMER_SENTIMENT_RISK",
+          "SLA_REVIEW_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_004",
+        "label": "Knowledge Retrieval Agent",
+        "status": "success",
+        "score": 0.92,
+        "risk_flags": []
+      },
+      {
+        "id": "step_005",
+        "label": "Policy Checker Agent",
+        "status": "warning",
+        "score": 0.91,
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_006",
+        "label": "Escalation Agent",
+        "status": "warning",
+        "score": 0.88,
+        "risk_flags": [
+          "ESCALATION_TIME_SENSITIVE"
+        ]
+      },
+      {
+        "id": "step_007",
+        "label": "Response Drafting Agent",
+        "status": "warning",
+        "score": 0.86,
+        "risk_flags": [
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_008",
+        "label": "Compliance Agent",
+        "status": "warning",
+        "score": 0.91,
+        "risk_flags": [
+          "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+          "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_009",
+        "label": "Human Escalation Agent",
+        "status": "warning",
+        "score": 0.89,
+        "risk_flags": [
+          "APPROVAL_REQUIRED",
+          "COMPLIANCE_REVIEW_REQUIRED"
+        ]
+      },
+      {
+        "id": "step_010",
+        "label": "Critic / Evaluator Agent",
+        "status": "success",
+        "score": 0.87,
+        "risk_flags": []
+      },
+      {
+        "id": "step_011",
+        "label": "Reflection Agent",
+        "status": "warning",
+        "score": 0.86,
+        "risk_flags": [
+          "REPEATED_MISSING_CUSTOMER_UPDATE_CADENCE"
+        ]
+      },
+      {
+        "id": "step_012",
+        "label": "Learning Extraction Agent",
+        "status": "warning",
+        "score": 0.83,
+        "risk_flags": [
+          "POLICY_GAP"
+        ]
+      },
+      {
+        "id": "step_013",
+        "label": "Optimizer Agent",
+        "status": "success",
+        "score": 0.84,
+        "risk_flags": []
+      }
+    ],
+    "edges": [
+      {
+        "source": "step_001",
+        "target": "step_002",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_002",
+        "target": "step_003",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_003",
+        "target": "step_004",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_004",
+        "target": "step_005",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_005",
+        "target": "step_006",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_006",
+        "target": "step_007",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_007",
+        "target": "step_008",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_008",
+        "target": "step_009",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_009",
+        "target": "step_010",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_010",
+        "target": "step_011",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_011",
+        "target": "step_012",
+        "label": "passes structured context"
+      },
+      {
+        "source": "step_012",
+        "target": "step_013",
+        "label": "passes structured context"
+      }
+    ]
+  },
+  "evaluation": {
+    "run_id": "run_20260712153158_28afa7a3",
+    "metrics": {
+      "task_completion": 1.0,
+      "evidence_grounding": 1.0,
+      "policy_compliance": 1.0,
+      "hallucination_risk": 0.08,
+      "escalation_quality": 1.0,
+      "actionability": 1.0,
+      "missing_information": 1.0,
+      "customer_tone": 1.0,
+      "token_efficiency": 1.0,
+      "latency_efficiency": 1.0,
+      "overall_score": 90.2
+    },
+    "diagnosis": [
+      {
+        "category": "weak_response",
+        "severity": "MEDIUM",
+        "ticket_id": "CS-002",
+        "message": "High-urgency response does not state a customer update cadence.",
+        "evidence_ids": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "suggested_fix": "Require a next-update field for critical and high-priority customer replies.",
+        "failure_type": "MISSING_CUSTOMER_UPDATE_CADENCE",
+        "affected_agent": "Response Drafting Agent",
+        "business_impact": "Urgent customers may remain uncertain about ownership and timing, increasing churn or SLA pressure.",
+        "recommended_fix": "Require a next-update field for critical and high-priority customer replies.",
+        "metric_impact": [
+          "missing_information",
+          "customer_tone",
+          "actionability"
+        ],
+        "confidence": 0.88
+      }
+    ],
+    "recommendations": [
+      {
+        "recommendation_id": "OPT-002",
+        "title": "Require owner and update cadence for urgent cases",
+        "change_type": "mandatory_check",
+        "rationale": "Critical support replies need an assigned owner and clear update cadence to reduce escalation ambiguity.",
+        "expected_impact": "+6 actionability points and lower SLA risk",
+        "before": "High-urgency drafts can omit next-update timing.",
+        "after": "Critical and high-priority drafts include owner, route, urgency, and next-update timing.",
+        "related_ticket_ids": [
+          "CS-002"
+        ],
+        "priority": "HIGH",
+        "target_agent": "Escalation Agent",
+        "problem": "High-risk tickets can have an escalation route but no customer-visible update cadence.",
+        "root_cause": "The escalation schema has owner and next_action but the response drafting rule does not require next_update timing.",
+        "fix": "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets.",
+        "expected_metric_lift": {
+          "actionability": "+0.12",
+          "missing_information": "-0.20"
+        },
+        "implementation_hint": "Update response_agent.py templates and evaluator.py missing_information rule to require next update language."
+      }
+    ],
+    "summary": "Trajectory health score 90.2/100 across 1 selected tickets.",
+    "details": {
+      "selected_ticket_count": 1,
+      "agent_step_count": 13,
+      "model_name": "mock-trajectory-model",
+      "provider": "mock",
+      "compliance_status_counts": {
+        "REVIEW_REQUIRED": 1
+      },
+      "human_handoff_count": 1,
+      "learning_artifact_count": 1,
+      "reflection_count": 1,
+      "sarvagun_execution_mode": "hybrid",
+      "superturiya_event_count": 44,
+      "cx_quality_rubric": {
+        "correctness": 0.9,
+        "evidence_grounding": 1.0,
+        "empathy": 1.0,
+        "acknowledgement": 0.4,
+        "assurance_validity": 1.0,
+        "actionability": 1.0,
+        "tone": 0.92,
+        "policy_compliance": 1.0,
+        "completeness": 0.9,
+        "repetition": 0.92,
+        "escalation_compliance": 1.0,
+        "overall_quality": 0.913
+      }
+    }
+  },
+  "sarvagun": {
+    "system_name": "Sarvagun",
+    "platform": "Anirvium AI",
+    "conversation": {
+      "conversation_id": "conv_158_28afa7a3",
+      "message_type": "COMPLAINT",
+      "requires_agent_run": true,
+      "is_follow_up": true,
+      "topic_changed": false,
+      "confidence": 0.94,
+      "response": null
+    },
+    "execution_strategy": {
+      "execution_mode": "hybrid",
+      "decision_authority": "governed_plan_with_bounded_autonomy",
+      "policy_guardian": "deterministic_policy_and_compliance_gates",
+      "autonomous_scope": [
+        "tool_selection",
+        "response_composition",
+        "clarification"
+      ],
+      "mandatory_capabilities": [
+        "Planner Agent",
+        "Knowledge Retrieval Agent",
+        "Policy Checker Agent",
+        "Response Drafting Agent",
+        "Compliance Agent",
+        "Critic / Evaluator Agent",
+        "Reflection Agent",
+        "Learning Extraction Agent",
+        "Optimizer Agent"
+      ],
+      "selected_tools": [
+        "mock_customer_system.get_open_cases",
+        "mock_customer_system.get_interaction_history",
+        "mock_customer_system.lookup_operational_status",
+        "mock_customer_system.create_escalation",
+        "superturiya.trajectory_memory_search"
+      ],
+      "stop_conditions": [
+        "unsupported_commitment_without_evidence",
+        "policy_or_identity_bypass",
+        "unauthorized_enterprise_write",
+        "maximum_agent_steps_exceeded"
+      ],
+      "maximum_agent_steps": 13,
+      "replan_limit": 1,
+      "recalled_intelligence_ids": [
+        "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+        "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+        "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+      ],
+      "memory_influenced_decisions": [
+        "review_prior_failure_patterns_before_planning",
+        "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+      ],
+      "autonomous_decisions": [
+        {
+          "iteration": 1,
+          "observation": {
+            "issue_type": "withdrawal_processed_missing",
+            "emotion_intensity": 0.82,
+            "recontact": true
+          },
+          "decision": "select_allowlisted_context_and_domain_tools",
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "policy_supervisor": "accepted",
+          "executed_tool_ids": [
+            "toolrun_8b1a3077aff3",
+            "toolrun_c3f7196e8ff4",
+            "toolrun_91d62cf0d286"
+          ],
+          "mandatory_context_tool_ids": [
+            "toolrun_1979db2e1df4"
+          ],
+          "observed_tool_statuses": {
+            "find_customer": "success",
+            "get_open_cases": "success",
+            "get_interaction_history": "success",
+            "lookup_operational_status": "success"
+          }
+        },
+        {
+          "iteration": 2,
+          "observation": {
+            "required_policy_gate": true,
+            "escalation_reason": "multi_customer_incident",
+            "destination": "incident_manager",
+            "policy_status": "ESCALATED"
+          },
+          "decision": "commit_governed_plan_and_execute_allowlisted_escalation",
+          "policy_supervisor": "accepted",
+          "executed_tool_ids": [
+            "toolrun_9d8140f25d6e"
+          ],
+          "observed_tool_statuses": {
+            "create_escalation": "success"
+          }
+        }
+      ],
+      "termination_reason": "bounded_plan_committed_before_agent_execution"
+    },
+    "customer_context": {
+      "customer_id": "CS-C002",
+      "customer_name": "Priya Shah",
+      "plan": "pro",
+      "region": "IN",
+      "preferred_channel": "chat",
+      "identity_status": "verified",
+      "crm_account_id": "CRM-CS-002",
+      "open_case_ids": [
+        "CASE-WDR-881",
+        "CASE-WDR-912"
+      ],
+      "interaction_count": 2
+    },
+    "emotion": {
+      "primary_emotion": "frustration",
+      "intensity": 0.82,
+      "irritation_detected": true,
+      "repeat_contact_contribution": 0.5,
+      "requires_acknowledgement": true,
+      "requires_apology": true,
+      "escalation_risk": 0.698,
+      "signals": [
+        "frustration_or_repeated_contact_language",
+        "repeat_contact_history"
+      ]
+    },
+    "recontact": {
+      "customer_id": "CS-C002",
+      "current_issue": "withdrawal_processed_missing",
+      "related_cases": [
+        "CASE-WDR-881",
+        "CASE-WDR-912"
+      ],
+      "contacts_last_24_hours": 2,
+      "contacts_last_7_days": 3,
+      "contacts_last_14_days": 3,
+      "contacts_last_30_days": 3,
+      "recontact_detected": true,
+      "previous_commitment_missed": true,
+      "semantic_similarity": 0.96,
+      "recommended_action": "manager_or_senior_support_escalation"
+    },
+    "tool_executions": [
+      {
+        "tool_execution_id": "toolrun_1979db2e1df4",
+        "tool_name": "mock_customer_system.find_customer",
+        "operation": "find_customer",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:find_customer:CS-C002",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_ba7a4fda3019",
+        "before_state": {},
+        "after_state": {
+          "customer_id": "CS-C002",
+          "customer_name": "Priya Shah",
+          "plan": "pro",
+          "region": "IN",
+          "preferred_channel": "chat",
+          "identity_status": "verified",
+          "crm_account_id": "CRM-CS-002"
+        },
+        "result": {
+          "customer_id": "CS-C002",
+          "customer_name": "Priya Shah",
+          "plan": "pro",
+          "region": "IN",
+          "preferred_channel": "chat",
+          "identity_status": "verified",
+          "crm_account_id": "CRM-CS-002"
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_8b1a3077aff3",
+        "tool_name": "mock_customer_system.get_open_cases",
+        "operation": "get_open_cases",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:open_cases:CS-C002",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_c3787b7c524d",
+        "before_state": {},
+        "after_state": {
+          "records": [
+            {
+              "case_id": "CASE-WDR-881",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "ESCALATED",
+              "contacted_at": "2026-07-05T11:00:00Z",
+              "commitment_deadline": "2026-07-06T11:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            },
+            {
+              "case_id": "CASE-WDR-912",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-09T15:00:00Z",
+              "commitment_deadline": "2026-07-10T15:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            }
+          ]
+        },
+        "result": {
+          "records": [
+            {
+              "case_id": "CASE-WDR-881",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "ESCALATED",
+              "contacted_at": "2026-07-05T11:00:00Z",
+              "commitment_deadline": "2026-07-06T11:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            },
+            {
+              "case_id": "CASE-WDR-912",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-09T15:00:00Z",
+              "commitment_deadline": "2026-07-10T15:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            }
+          ]
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_c3f7196e8ff4",
+        "tool_name": "mock_customer_system.get_interaction_history",
+        "operation": "get_interaction_history",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:history:CS-C002",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_6436621442a3",
+        "before_state": {},
+        "after_state": {
+          "records": [
+            {
+              "case_id": "CASE-WDR-881",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "ESCALATED",
+              "contacted_at": "2026-07-05T11:00:00Z",
+              "commitment_deadline": "2026-07-06T11:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            },
+            {
+              "case_id": "CASE-WDR-912",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-09T15:00:00Z",
+              "commitment_deadline": "2026-07-10T15:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            }
+          ]
+        },
+        "result": {
+          "records": [
+            {
+              "case_id": "CASE-WDR-881",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "ESCALATED",
+              "contacted_at": "2026-07-05T11:00:00Z",
+              "commitment_deadline": "2026-07-06T11:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            },
+            {
+              "case_id": "CASE-WDR-912",
+              "customer_id": "CS-C002",
+              "issue_type": "withdrawal_processed_missing",
+              "status": "IN_PROGRESS",
+              "contacted_at": "2026-07-09T15:00:00Z",
+              "commitment_deadline": "2026-07-10T15:00:00Z",
+              "commitment_met": false,
+              "transaction_id": "WDR-2291"
+            }
+          ]
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_91d62cf0d286",
+        "tool_name": "mock_customer_system.lookup_operational_status",
+        "operation": "lookup_operational_status",
+        "access_type": "read",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:status:withdrawal_processed_missing",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_1d77ef96e525",
+        "before_state": {},
+        "after_state": {
+          "status": "bank_trace_under_review",
+          "outcome_confirmed": false,
+          "reference": "WDR-2291",
+          "next_system_action": "senior_financial_review"
+        },
+        "result": {
+          "status": "bank_trace_under_review",
+          "outcome_confirmed": false,
+          "reference": "WDR-2291",
+          "next_system_action": "senior_financial_review"
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_9d8140f25d6e",
+        "tool_name": "mock_customer_system.create_escalation",
+        "operation": "create_escalation",
+        "access_type": "write",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:create_escalation:CASE-WDR-912:multi_customer_incident",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_fe6931bfdf42",
+        "before_state": {},
+        "after_state": {
+          "escalation_id": "esc_158_28afa7a3",
+          "reason": "multi_customer_incident",
+          "severity": "high",
+          "destination": "incident_manager",
+          "sla_minutes": 15,
+          "supporting_evidence": [
+            "CASE-WDR-881",
+            "CASE-WDR-912",
+            "CS-002",
+            "INC-CASE-101",
+            "INC-CASE-102",
+            "INC-CASE-103",
+            "INC-CASE-104",
+            "INC-CASE-105",
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "status": "ESCALATED",
+          "case_id": "CASE-WDR-912",
+          "created": true
+        },
+        "result": {
+          "escalation_id": "esc_158_28afa7a3",
+          "reason": "multi_customer_incident",
+          "severity": "high",
+          "destination": "incident_manager",
+          "sla_minutes": 15,
+          "supporting_evidence": [
+            "CASE-WDR-881",
+            "CASE-WDR-912",
+            "CS-002",
+            "INC-CASE-101",
+            "INC-CASE-102",
+            "INC-CASE-103",
+            "INC-CASE-104",
+            "INC-CASE-105",
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "status": "ESCALATED",
+          "case_id": "CASE-WDR-912",
+          "created": true
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_72d8a0a5f30a",
+        "tool_name": "mock_customer_system.add_case_note",
+        "operation": "add_case_note",
+        "access_type": "write",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:case_note:CASE-WDR-912",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_c39fa12ca484",
+        "before_state": {},
+        "after_state": {
+          "case_id": "CASE-WDR-912",
+          "note_id": "NOTE-8B070AAC",
+          "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+          "stored": true
+        },
+        "result": {
+          "case_id": "CASE-WDR-912",
+          "note_id": "NOTE-8B070AAC",
+          "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+          "stored": true
+        },
+        "error": null,
+        "simulated": true
+      },
+      {
+        "tool_execution_id": "toolrun_72e17169a8e9",
+        "tool_name": "mock_customer_system.attach_transcript",
+        "operation": "attach_transcript",
+        "access_type": "write",
+        "status": "success",
+        "authorization": "mock_rbac_authorized",
+        "role": "sarvagun_support_agent",
+        "idempotency_key": "run_20260712153158_28afa7a3:attach_transcript:CASE-WDR-912",
+        "attempt": 1,
+        "timeout_ms": 3000,
+        "latency_ms": 0,
+        "approval_required": false,
+        "audit_id": "audit_46b345b169c3",
+        "before_state": {},
+        "after_state": {
+          "case_id": "CASE-WDR-912",
+          "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+          "attached": true
+        },
+        "result": {
+          "case_id": "CASE-WDR-912",
+          "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+          "attached": true
+        },
+        "error": null,
+        "simulated": true
+      }
+    ],
+    "assurances": [
+      {
+        "assurance_given": true,
+        "assurance_type": "ownership",
+        "assurance_text": "I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+        "supported_by": [
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "deadline": null,
+        "commitment_owner": "Incident Manager queue",
+        "approval_required": false,
+        "fulfilment_status": "documented"
+      }
+    ],
+    "escalation": {
+      "escalation_id": "esc_158_28afa7a3",
+      "reason": "multi_customer_incident",
+      "severity": "high",
+      "destination": "incident_manager",
+      "sla_minutes": 15,
+      "supporting_evidence": [
+        "CASE-WDR-881",
+        "CASE-WDR-912",
+        "CS-002",
+        "INC-CASE-101",
+        "INC-CASE-102",
+        "INC-CASE-103",
+        "INC-CASE-104",
+        "INC-CASE-105",
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "status": "ESCALATED"
+    },
+    "incident": {
+      "incident_id": "INC-20260712-422",
+      "issue_signature": "support:withdrawal_processed_missing:in:web:v1",
+      "unique_customers": 6,
+      "window_minutes": 60,
+      "threshold": 5,
+      "detected": true,
+      "severity": "high",
+      "status": "investigating",
+      "linked_cases": [
+        "CS-002",
+        "INC-CASE-101",
+        "INC-CASE-102",
+        "INC-CASE-103",
+        "INC-CASE-104",
+        "INC-CASE-105"
+      ],
+      "recommended_action": "notify_incident_manager"
+    },
+    "satisfaction": {
+      "predicted_satisfaction": 0.45,
+      "predicted_label": "dissatisfied",
+      "explicit_csat": 2,
+      "explicit_resolution": "partially",
+      "resolution_status": "escalated",
+      "customer_effort_score": 0.65,
+      "dissatisfaction_reasons": [
+        "repeat_contact",
+        "previous_commitment_missed",
+        "issue_not_resolved_during_chat"
+      ],
+      "rubric": {
+        "correctness": 0.9,
+        "evidence_grounding": 1.0,
+        "empathy": 1.0,
+        "acknowledgement": 0.4,
+        "assurance_validity": 1.0,
+        "actionability": 1.0,
+        "tone": 0.92,
+        "policy_compliance": 1.0,
+        "completeness": 0.9,
+        "repetition": 0.92,
+        "escalation_compliance": 1.0,
+        "overall_quality": 0.913
+      }
+    },
+    "response_quality_gate": {
+      "decision": "human_review_required",
+      "passed": true,
+      "checks": {
+        "evidence_grounded": true,
+        "policy_checked": true,
+        "no_unsupported_outcome_guarantee": true,
+        "no_private_reasoning": true,
+        "emotion_acknowledged": true,
+        "assurance_supported": true,
+        "escalation_claim_supported": true,
+        "concise_enough": true
+      },
+      "score": 1.0,
+      "original_length": 417,
+      "final_length": 417,
+      "rewrite_applied": true,
+      "blocking_reasons": []
+    },
+    "provenance": [
+      {
+        "response_id": "RESP-run_20260712153158_28afa7a3",
+        "sources": [
+          {
+            "source_id": "POL-CS-PAY-002",
+            "title": "Processed withdrawal not received proof gate",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_policies"
+          },
+          {
+            "source_id": "PROC-CS-WDR-001",
+            "title": "Processed withdrawal not received",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_procedures"
+          },
+          {
+            "source_id": "TMPL-CS-WDR-002",
+            "title": "Processed withdrawal proof request",
+            "section": null,
+            "version": "demo-v1",
+            "category": "kb_templates"
+          },
+          {
+            "source_id": "VIS-002-01",
+            "title": "Attachment evidence: bank-response-redacted.pdf",
+            "section": null,
+            "version": "demo-v1",
+            "category": "document"
+          }
+        ],
+        "tool_executions": [
+          {
+            "tool_execution_id": "toolrun_1979db2e1df4",
+            "tool_name": "mock_customer_system.find_customer",
+            "operation": "find_customer",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:find_customer:CS-C002",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_ba7a4fda3019",
+            "before_state": {},
+            "after_state": {
+              "customer_id": "CS-C002",
+              "customer_name": "Priya Shah",
+              "plan": "pro",
+              "region": "IN",
+              "preferred_channel": "chat",
+              "identity_status": "verified",
+              "crm_account_id": "CRM-CS-002"
+            },
+            "result": {
+              "customer_id": "CS-C002",
+              "customer_name": "Priya Shah",
+              "plan": "pro",
+              "region": "IN",
+              "preferred_channel": "chat",
+              "identity_status": "verified",
+              "crm_account_id": "CRM-CS-002"
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_8b1a3077aff3",
+            "tool_name": "mock_customer_system.get_open_cases",
+            "operation": "get_open_cases",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:open_cases:CS-C002",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_c3787b7c524d",
+            "before_state": {},
+            "after_state": {
+              "records": [
+                {
+                  "case_id": "CASE-WDR-881",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "ESCALATED",
+                  "contacted_at": "2026-07-05T11:00:00Z",
+                  "commitment_deadline": "2026-07-06T11:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                },
+                {
+                  "case_id": "CASE-WDR-912",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-09T15:00:00Z",
+                  "commitment_deadline": "2026-07-10T15:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                }
+              ]
+            },
+            "result": {
+              "records": [
+                {
+                  "case_id": "CASE-WDR-881",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "ESCALATED",
+                  "contacted_at": "2026-07-05T11:00:00Z",
+                  "commitment_deadline": "2026-07-06T11:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                },
+                {
+                  "case_id": "CASE-WDR-912",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-09T15:00:00Z",
+                  "commitment_deadline": "2026-07-10T15:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                }
+              ]
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_c3f7196e8ff4",
+            "tool_name": "mock_customer_system.get_interaction_history",
+            "operation": "get_interaction_history",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:history:CS-C002",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_6436621442a3",
+            "before_state": {},
+            "after_state": {
+              "records": [
+                {
+                  "case_id": "CASE-WDR-881",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "ESCALATED",
+                  "contacted_at": "2026-07-05T11:00:00Z",
+                  "commitment_deadline": "2026-07-06T11:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                },
+                {
+                  "case_id": "CASE-WDR-912",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-09T15:00:00Z",
+                  "commitment_deadline": "2026-07-10T15:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                }
+              ]
+            },
+            "result": {
+              "records": [
+                {
+                  "case_id": "CASE-WDR-881",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "ESCALATED",
+                  "contacted_at": "2026-07-05T11:00:00Z",
+                  "commitment_deadline": "2026-07-06T11:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                },
+                {
+                  "case_id": "CASE-WDR-912",
+                  "customer_id": "CS-C002",
+                  "issue_type": "withdrawal_processed_missing",
+                  "status": "IN_PROGRESS",
+                  "contacted_at": "2026-07-09T15:00:00Z",
+                  "commitment_deadline": "2026-07-10T15:00:00Z",
+                  "commitment_met": false,
+                  "transaction_id": "WDR-2291"
+                }
+              ]
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_91d62cf0d286",
+            "tool_name": "mock_customer_system.lookup_operational_status",
+            "operation": "lookup_operational_status",
+            "access_type": "read",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:status:withdrawal_processed_missing",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_1d77ef96e525",
+            "before_state": {},
+            "after_state": {
+              "status": "bank_trace_under_review",
+              "outcome_confirmed": false,
+              "reference": "WDR-2291",
+              "next_system_action": "senior_financial_review"
+            },
+            "result": {
+              "status": "bank_trace_under_review",
+              "outcome_confirmed": false,
+              "reference": "WDR-2291",
+              "next_system_action": "senior_financial_review"
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_9d8140f25d6e",
+            "tool_name": "mock_customer_system.create_escalation",
+            "operation": "create_escalation",
+            "access_type": "write",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:create_escalation:CASE-WDR-912:multi_customer_incident",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_fe6931bfdf42",
+            "before_state": {},
+            "after_state": {
+              "escalation_id": "esc_158_28afa7a3",
+              "reason": "multi_customer_incident",
+              "severity": "high",
+              "destination": "incident_manager",
+              "sla_minutes": 15,
+              "supporting_evidence": [
+                "CASE-WDR-881",
+                "CASE-WDR-912",
+                "CS-002",
+                "INC-CASE-101",
+                "INC-CASE-102",
+                "INC-CASE-103",
+                "INC-CASE-104",
+                "INC-CASE-105",
+                "POL-CS-PAY-002",
+                "PROC-CS-WDR-001",
+                "TMPL-CS-WDR-002",
+                "VIS-002-01"
+              ],
+              "status": "ESCALATED",
+              "case_id": "CASE-WDR-912",
+              "created": true
+            },
+            "result": {
+              "escalation_id": "esc_158_28afa7a3",
+              "reason": "multi_customer_incident",
+              "severity": "high",
+              "destination": "incident_manager",
+              "sla_minutes": 15,
+              "supporting_evidence": [
+                "CASE-WDR-881",
+                "CASE-WDR-912",
+                "CS-002",
+                "INC-CASE-101",
+                "INC-CASE-102",
+                "INC-CASE-103",
+                "INC-CASE-104",
+                "INC-CASE-105",
+                "POL-CS-PAY-002",
+                "PROC-CS-WDR-001",
+                "TMPL-CS-WDR-002",
+                "VIS-002-01"
+              ],
+              "status": "ESCALATED",
+              "case_id": "CASE-WDR-912",
+              "created": true
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_72d8a0a5f30a",
+            "tool_name": "mock_customer_system.add_case_note",
+            "operation": "add_case_note",
+            "access_type": "write",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:case_note:CASE-WDR-912",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_c39fa12ca484",
+            "before_state": {},
+            "after_state": {
+              "case_id": "CASE-WDR-912",
+              "note_id": "NOTE-8B070AAC",
+              "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+              "stored": true
+            },
+            "result": {
+              "case_id": "CASE-WDR-912",
+              "note_id": "NOTE-8B070AAC",
+              "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+              "stored": true
+            },
+            "error": null,
+            "simulated": true
+          },
+          {
+            "tool_execution_id": "toolrun_72e17169a8e9",
+            "tool_name": "mock_customer_system.attach_transcript",
+            "operation": "attach_transcript",
+            "access_type": "write",
+            "status": "success",
+            "authorization": "mock_rbac_authorized",
+            "role": "sarvagun_support_agent",
+            "idempotency_key": "run_20260712153158_28afa7a3:attach_transcript:CASE-WDR-912",
+            "attempt": 1,
+            "timeout_ms": 3000,
+            "latency_ms": 0,
+            "approval_required": false,
+            "audit_id": "audit_46b345b169c3",
+            "before_state": {},
+            "after_state": {
+              "case_id": "CASE-WDR-912",
+              "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+              "attached": true
+            },
+            "result": {
+              "case_id": "CASE-WDR-912",
+              "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+              "attached": true
+            },
+            "error": null,
+            "simulated": true
+          }
+        ],
+        "answer_confidence": 0.54,
+        "customer_view": "Based on the verified case history and the applicable support policy.",
+        "auditor_view": "Sources: POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01. Tool executions: mock_customer_system.find_customer, mock_customer_system.get_open_cases, mock_customer_system.get_interaction_history, mock_customer_system.lookup_operational_status, mock_customer_system.create_escalation, mock_customer_system.add_case_note, mock_customer_system.attach_transcript."
+      }
+    ],
+    "transcript": {
+      "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+      "conversation_id": "conv_158_28afa7a3",
+      "customer_id": "CS-C002",
+      "started_at": "2026-07-12T15:31:58.422429+00:00",
+      "ended_at": "2026-07-12T15:31:58.425272+00:00",
+      "turns": [
+        {
+          "turn_id": "turn_7d7c878404",
+          "role": "customer",
+          "content": "This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.",
+          "created_at": "2026-07-12T15:31:58.422502+00:00",
+          "delivery_status": "recorded"
+        },
+        {
+          "turn_id": "turn_7f2fd9c7dc",
+          "role": "agent",
+          "content": "I\u2019m sorry you\u2019ve had to contact us again about this, Priya Shah. I checked the case history and the current status is bank trace under review. I created an escalation to incident manager with the related cases and policy evidence attached. I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "created_at": "2026-07-12T15:31:58.425257+00:00",
+          "delivery_status": "recorded"
+        }
+      ],
+      "detected_issue": "withdrawal_processed_missing",
+      "customer_intent": "COMPLAINT",
+      "emotion_timeline": [
+        {
+          "primary_emotion": "frustration",
+          "intensity": 0.82,
+          "irritation_detected": true,
+          "repeat_contact_contribution": 0.5,
+          "requires_acknowledgement": true,
+          "requires_apology": true,
+          "escalation_risk": 0.698,
+          "signals": [
+            "frustration_or_repeated_contact_language",
+            "repeat_contact_history"
+          ]
+        }
+      ],
+      "previous_related_cases": [
+        "CASE-WDR-881",
+        "CASE-WDR-912"
+      ],
+      "knowledge_sources_used": [
+        "POL-CS-PAY-002",
+        "PROC-CS-WDR-001",
+        "TMPL-CS-WDR-002",
+        "VIS-002-01"
+      ],
+      "tools_called": [
+        "mock_customer_system.find_customer",
+        "mock_customer_system.get_open_cases",
+        "mock_customer_system.get_interaction_history",
+        "mock_customer_system.lookup_operational_status",
+        "mock_customer_system.create_escalation",
+        "mock_customer_system.add_case_note",
+        "mock_customer_system.attach_transcript"
+      ],
+      "assurances": [
+        {
+          "assurance_given": true,
+          "assurance_type": "ownership",
+          "assurance_text": "I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "supported_by": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "deadline": null,
+          "commitment_owner": "Incident Manager queue",
+          "approval_required": false,
+          "fulfilment_status": "documented"
+        }
+      ],
+      "escalation": {
+        "escalation_id": "esc_158_28afa7a3",
+        "reason": "multi_customer_incident",
+        "severity": "high",
+        "destination": "incident_manager",
+        "sla_minutes": 15,
+        "supporting_evidence": [
+          "CASE-WDR-881",
+          "CASE-WDR-912",
+          "CS-002",
+          "INC-CASE-101",
+          "INC-CASE-102",
+          "INC-CASE-103",
+          "INC-CASE-104",
+          "INC-CASE-105",
+          "POL-CS-PAY-002",
+          "PROC-CS-WDR-001",
+          "TMPL-CS-WDR-002",
+          "VIS-002-01"
+        ],
+        "status": "ESCALATED"
+      },
+      "resolution_status": "escalated",
+      "unresolved_questions": [
+        "Verify processed date, request bank proof or official response, and escalate tracking evidence. CX policy requires incident manager within 15 minutes."
+      ],
+      "satisfaction": {
+        "predicted_satisfaction": 0.45,
+        "predicted_label": "dissatisfied",
+        "explicit_csat": 2,
+        "explicit_resolution": "partially",
+        "resolution_status": "escalated",
+        "customer_effort_score": 0.65,
+        "dissatisfaction_reasons": [
+          "repeat_contact",
+          "previous_commitment_missed",
+          "issue_not_resolved_during_chat"
+        ],
+        "rubric": {
+          "correctness": 0.9,
+          "evidence_grounding": 1.0,
+          "empathy": 1.0,
+          "acknowledgement": 0.4,
+          "assurance_validity": 1.0,
+          "actionability": 1.0,
+          "tone": 0.92,
+          "policy_compliance": 1.0,
+          "completeness": 0.9,
+          "repetition": 0.92,
+          "escalation_compliance": 1.0,
+          "overall_quality": 0.913
+        }
+      },
+      "follow_up_owner": "Incident Manager queue",
+      "redaction_status": "synthetic_data_no_pii"
+    },
+    "resolution_stage": "closed"
+  },
+  "superturiya": {
+    "system_name": "SuperTuriya",
+    "platform": "Anirvium AI",
+    "observed_system": "Sarvagun",
+    "role": "core_trajectory_intelligence",
+    "lifecycle": [
+      "observe",
+      "trace",
+      "discover",
+      "evaluate",
+      "diagnose",
+      "recommend",
+      "store",
+      "recall",
+      "improve"
+    ],
+    "trace_count": 13,
+    "event_count": 44,
+    "events": [
+      {
+        "event_id": "evt_695d1e474229",
+        "event_type": "conversation.started",
+        "timestamp": "2026-07-12T15:31:58.423701+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "execution_mode": "hybrid"
+        }
+      },
+      {
+        "event_id": "evt_af7eff389607",
+        "event_type": "message.received",
+        "timestamp": "2026-07-12T15:31:58.423710+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "customer",
+        "payload": {
+          "message_type": "COMPLAINT"
+        }
+      },
+      {
+        "event_id": "evt_bda5a6f15529",
+        "event_type": "emotion.detected",
+        "timestamp": "2026-07-12T15:31:58.423719+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "primary_emotion": "frustration",
+          "intensity": 0.82,
+          "irritation_detected": true,
+          "repeat_contact_contribution": 0.5,
+          "requires_acknowledgement": true,
+          "requires_apology": true,
+          "escalation_risk": 0.698,
+          "signals": [
+            "frustration_or_repeated_contact_language",
+            "repeat_contact_history"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_1b63b66cdd89",
+        "event_type": "memory.recalled",
+        "timestamp": "2026-07-12T15:31:58.423724+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "SuperTuriya",
+        "payload": {
+          "memory_ids": [
+            "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+            "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+            "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+          ],
+          "accepted_influences": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "policy_override_allowed": false
+        }
+      },
+      {
+        "event_id": "evt_9d1904999b08",
+        "event_type": "recontact.detected",
+        "timestamp": "2026-07-12T15:31:58.423731+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "customer_id": "CS-C002",
+          "current_issue": "withdrawal_processed_missing",
+          "related_cases": [
+            "CASE-WDR-881",
+            "CASE-WDR-912"
+          ],
+          "contacts_last_24_hours": 2,
+          "contacts_last_7_days": 3,
+          "contacts_last_14_days": 3,
+          "contacts_last_30_days": 3,
+          "recontact_detected": true,
+          "previous_commitment_missed": true,
+          "semantic_similarity": 0.96,
+          "recommended_action": "manager_or_senior_support_escalation"
+        }
+      },
+      {
+        "event_id": "evt_dda5da91ef4c",
+        "event_type": "incident.detected",
+        "timestamp": "2026-07-12T15:31:58.423739+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "incident_id": "INC-20260712-422",
+          "issue_signature": "support:withdrawal_processed_missing:in:web:v1",
+          "unique_customers": 6,
+          "window_minutes": 60,
+          "threshold": 5,
+          "detected": true,
+          "severity": "high",
+          "status": "investigating",
+          "linked_cases": [
+            "CS-002",
+            "INC-CASE-101",
+            "INC-CASE-102",
+            "INC-CASE-103",
+            "INC-CASE-104",
+            "INC-CASE-105"
+          ],
+          "recommended_action": "notify_incident_manager"
+        }
+      },
+      {
+        "event_id": "evt_e48c3959f98b",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.423744+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.find_customer",
+        "payload": {
+          "tool_execution_id": "toolrun_1979db2e1df4",
+          "operation": "find_customer",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:find_customer:CS-C002"
+        }
+      },
+      {
+        "event_id": "evt_89bc1f9a4adf",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.423753+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.find_customer",
+        "payload": {
+          "tool_execution_id": "toolrun_1979db2e1df4",
+          "tool_name": "mock_customer_system.find_customer",
+          "operation": "find_customer",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:find_customer:CS-C002",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_ba7a4fda3019",
+          "before_state": {},
+          "after_state": {
+            "customer_id": "CS-C002",
+            "customer_name": "Priya Shah",
+            "plan": "pro",
+            "region": "IN",
+            "preferred_channel": "chat",
+            "identity_status": "verified",
+            "crm_account_id": "CRM-CS-002"
+          },
+          "result": {
+            "customer_id": "CS-C002",
+            "customer_name": "Priya Shah",
+            "plan": "pro",
+            "region": "IN",
+            "preferred_channel": "chat",
+            "identity_status": "verified",
+            "crm_account_id": "CRM-CS-002"
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_351d74ce210c",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.423759+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.get_open_cases",
+        "payload": {
+          "tool_execution_id": "toolrun_8b1a3077aff3",
+          "operation": "get_open_cases",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:open_cases:CS-C002"
+        }
+      },
+      {
+        "event_id": "evt_8f99faa009d3",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.423767+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.get_open_cases",
+        "payload": {
+          "tool_execution_id": "toolrun_8b1a3077aff3",
+          "tool_name": "mock_customer_system.get_open_cases",
+          "operation": "get_open_cases",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:open_cases:CS-C002",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_c3787b7c524d",
+          "before_state": {},
+          "after_state": {
+            "records": [
+              {
+                "case_id": "CASE-WDR-881",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "ESCALATED",
+                "contacted_at": "2026-07-05T11:00:00Z",
+                "commitment_deadline": "2026-07-06T11:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              },
+              {
+                "case_id": "CASE-WDR-912",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-09T15:00:00Z",
+                "commitment_deadline": "2026-07-10T15:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              }
+            ]
+          },
+          "result": {
+            "records": [
+              {
+                "case_id": "CASE-WDR-881",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "ESCALATED",
+                "contacted_at": "2026-07-05T11:00:00Z",
+                "commitment_deadline": "2026-07-06T11:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              },
+              {
+                "case_id": "CASE-WDR-912",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-09T15:00:00Z",
+                "commitment_deadline": "2026-07-10T15:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              }
+            ]
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_9b8e09c01bf0",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.423772+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.get_interaction_history",
+        "payload": {
+          "tool_execution_id": "toolrun_c3f7196e8ff4",
+          "operation": "get_interaction_history",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:history:CS-C002"
+        }
+      },
+      {
+        "event_id": "evt_7faa475239fb",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.423779+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.get_interaction_history",
+        "payload": {
+          "tool_execution_id": "toolrun_c3f7196e8ff4",
+          "tool_name": "mock_customer_system.get_interaction_history",
+          "operation": "get_interaction_history",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:history:CS-C002",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_6436621442a3",
+          "before_state": {},
+          "after_state": {
+            "records": [
+              {
+                "case_id": "CASE-WDR-881",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "ESCALATED",
+                "contacted_at": "2026-07-05T11:00:00Z",
+                "commitment_deadline": "2026-07-06T11:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              },
+              {
+                "case_id": "CASE-WDR-912",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-09T15:00:00Z",
+                "commitment_deadline": "2026-07-10T15:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              }
+            ]
+          },
+          "result": {
+            "records": [
+              {
+                "case_id": "CASE-WDR-881",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "ESCALATED",
+                "contacted_at": "2026-07-05T11:00:00Z",
+                "commitment_deadline": "2026-07-06T11:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              },
+              {
+                "case_id": "CASE-WDR-912",
+                "customer_id": "CS-C002",
+                "issue_type": "withdrawal_processed_missing",
+                "status": "IN_PROGRESS",
+                "contacted_at": "2026-07-09T15:00:00Z",
+                "commitment_deadline": "2026-07-10T15:00:00Z",
+                "commitment_met": false,
+                "transaction_id": "WDR-2291"
+              }
+            ]
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_0ce50a90c443",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.423784+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.lookup_operational_status",
+        "payload": {
+          "tool_execution_id": "toolrun_91d62cf0d286",
+          "operation": "lookup_operational_status",
+          "access_type": "read",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:status:withdrawal_processed_missing"
+        }
+      },
+      {
+        "event_id": "evt_b25ce479d284",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.423791+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.lookup_operational_status",
+        "payload": {
+          "tool_execution_id": "toolrun_91d62cf0d286",
+          "tool_name": "mock_customer_system.lookup_operational_status",
+          "operation": "lookup_operational_status",
+          "access_type": "read",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:status:withdrawal_processed_missing",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_1d77ef96e525",
+          "before_state": {},
+          "after_state": {
+            "status": "bank_trace_under_review",
+            "outcome_confirmed": false,
+            "reference": "WDR-2291",
+            "next_system_action": "senior_financial_review"
+          },
+          "result": {
+            "status": "bank_trace_under_review",
+            "outcome_confirmed": false,
+            "reference": "WDR-2291",
+            "next_system_action": "senior_financial_review"
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_d280539206dd",
+        "event_type": "plan.created",
+        "timestamp": "2026-07-12T15:31:58.423828+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Planner Agent",
+        "payload": {
+          "execution_mode": "hybrid",
+          "decision_authority": "governed_plan_with_bounded_autonomy",
+          "policy_guardian": "deterministic_policy_and_compliance_gates",
+          "autonomous_scope": [
+            "tool_selection",
+            "response_composition",
+            "clarification"
+          ],
+          "mandatory_capabilities": [
+            "Planner Agent",
+            "Knowledge Retrieval Agent",
+            "Policy Checker Agent",
+            "Response Drafting Agent",
+            "Compliance Agent",
+            "Critic / Evaluator Agent",
+            "Reflection Agent",
+            "Learning Extraction Agent",
+            "Optimizer Agent"
+          ],
+          "selected_tools": [
+            "mock_customer_system.get_open_cases",
+            "mock_customer_system.get_interaction_history",
+            "mock_customer_system.lookup_operational_status",
+            "mock_customer_system.create_escalation",
+            "superturiya.trajectory_memory_search"
+          ],
+          "stop_conditions": [
+            "unsupported_commitment_without_evidence",
+            "policy_or_identity_bypass",
+            "unauthorized_enterprise_write",
+            "maximum_agent_steps_exceeded"
+          ],
+          "maximum_agent_steps": 13,
+          "replan_limit": 1,
+          "recalled_intelligence_ids": [
+            "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+            "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+            "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+          ],
+          "memory_influenced_decisions": [
+            "review_prior_failure_patterns_before_planning",
+            "extend_evidence_checklist_with_recalled_trajectory_intelligence"
+          ],
+          "autonomous_decisions": [
+            {
+              "iteration": 1,
+              "observation": {
+                "issue_type": "withdrawal_processed_missing",
+                "emotion_intensity": 0.82,
+                "recontact": true
+              },
+              "decision": "select_allowlisted_context_and_domain_tools",
+              "selected_tools": [
+                "mock_customer_system.get_open_cases",
+                "mock_customer_system.get_interaction_history",
+                "mock_customer_system.lookup_operational_status",
+                "mock_customer_system.create_escalation",
+                "superturiya.trajectory_memory_search"
+              ],
+              "policy_supervisor": "accepted",
+              "executed_tool_ids": [
+                "toolrun_8b1a3077aff3",
+                "toolrun_c3f7196e8ff4",
+                "toolrun_91d62cf0d286"
+              ],
+              "mandatory_context_tool_ids": [
+                "toolrun_1979db2e1df4"
+              ],
+              "observed_tool_statuses": {
+                "find_customer": "success",
+                "get_open_cases": "success",
+                "get_interaction_history": "success",
+                "lookup_operational_status": "success"
+              }
+            },
+            {
+              "iteration": 2,
+              "observation": {
+                "required_policy_gate": true
+              },
+              "decision": "commit_existing_agent_plan_inside_safety_envelope",
+              "policy_supervisor": "accepted"
+            }
+          ],
+          "termination_reason": "bounded_plan_committed_before_agent_execution"
+        }
+      },
+      {
+        "event_id": "evt_511ba2b7a6bd",
+        "event_type": "source.retrieved",
+        "timestamp": "2026-07-12T15:31:58.424400+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Knowledge Retrieval Agent",
+        "payload": {
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "source_count": 4
+        }
+      },
+      {
+        "event_id": "evt_62ae194a6e49",
+        "event_type": "policy.checked",
+        "timestamp": "2026-07-12T15:31:58.424436+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Policy Checker Agent",
+        "payload": {
+          "approval_state": "APPROVAL_REQUIRED",
+          "risk_flags": [
+            "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_ab0edbdbae44",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.424677+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.create_escalation",
+        "payload": {
+          "tool_execution_id": "toolrun_9d8140f25d6e",
+          "operation": "create_escalation",
+          "access_type": "write",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:create_escalation:CASE-WDR-912:multi_customer_incident"
+        }
+      },
+      {
+        "event_id": "evt_211950807465",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.424688+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.create_escalation",
+        "payload": {
+          "tool_execution_id": "toolrun_9d8140f25d6e",
+          "tool_name": "mock_customer_system.create_escalation",
+          "operation": "create_escalation",
+          "access_type": "write",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:create_escalation:CASE-WDR-912:multi_customer_incident",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_fe6931bfdf42",
+          "before_state": {},
+          "after_state": {
+            "escalation_id": "esc_158_28afa7a3",
+            "reason": "multi_customer_incident",
+            "severity": "high",
+            "destination": "incident_manager",
+            "sla_minutes": 15,
+            "supporting_evidence": [
+              "CASE-WDR-881",
+              "CASE-WDR-912",
+              "CS-002",
+              "INC-CASE-101",
+              "INC-CASE-102",
+              "INC-CASE-103",
+              "INC-CASE-104",
+              "INC-CASE-105",
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ],
+            "status": "ESCALATED",
+            "case_id": "CASE-WDR-912",
+            "created": true
+          },
+          "result": {
+            "escalation_id": "esc_158_28afa7a3",
+            "reason": "multi_customer_incident",
+            "severity": "high",
+            "destination": "incident_manager",
+            "sla_minutes": 15,
+            "supporting_evidence": [
+              "CASE-WDR-881",
+              "CASE-WDR-912",
+              "CS-002",
+              "INC-CASE-101",
+              "INC-CASE-102",
+              "INC-CASE-103",
+              "INC-CASE-104",
+              "INC-CASE-105",
+              "POL-CS-PAY-002",
+              "PROC-CS-WDR-001",
+              "TMPL-CS-WDR-002",
+              "VIS-002-01"
+            ],
+            "status": "ESCALATED",
+            "case_id": "CASE-WDR-912",
+            "created": true
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_cc3fdcc04131",
+        "event_type": "escalation.created",
+        "timestamp": "2026-07-12T15:31:58.424696+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun escalation policy engine",
+        "payload": {
+          "escalation_id": "esc_158_28afa7a3",
+          "reason": "multi_customer_incident",
+          "severity": "high",
+          "destination": "incident_manager",
+          "sla_minutes": 15,
+          "supporting_evidence": [
+            "CASE-WDR-881",
+            "CASE-WDR-912",
+            "CS-002",
+            "INC-CASE-101",
+            "INC-CASE-102",
+            "INC-CASE-103",
+            "INC-CASE-104",
+            "INC-CASE-105",
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "status": "ESCALATED",
+          "tool_execution_id": "toolrun_9d8140f25d6e",
+          "tool_status": "success"
+        }
+      },
+      {
+        "event_id": "evt_ef6d071f66bc",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.424933+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.add_case_note",
+        "payload": {
+          "tool_execution_id": "toolrun_72d8a0a5f30a",
+          "operation": "add_case_note",
+          "access_type": "write",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:case_note:CASE-WDR-912"
+        }
+      },
+      {
+        "event_id": "evt_f031d40e8be3",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.424941+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.add_case_note",
+        "payload": {
+          "tool_execution_id": "toolrun_72d8a0a5f30a",
+          "tool_name": "mock_customer_system.add_case_note",
+          "operation": "add_case_note",
+          "access_type": "write",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:case_note:CASE-WDR-912",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_c39fa12ca484",
+          "before_state": {},
+          "after_state": {
+            "case_id": "CASE-WDR-912",
+            "note_id": "NOTE-8B070AAC",
+            "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+            "stored": true
+          },
+          "result": {
+            "case_id": "CASE-WDR-912",
+            "note_id": "NOTE-8B070AAC",
+            "note": "Sarvagun prepared a governed response for CS-002 with evidence POL-CS-PAY-002, PROC-CS-WDR-001, TMPL-CS-WDR-002, VIS-002-01.",
+            "stored": true
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_c1a38c4ee523",
+        "event_type": "assurance.created",
+        "timestamp": "2026-07-12T15:31:58.424988+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun assurance policy engine",
+        "payload": {
+          "assurance_given": true,
+          "assurance_type": "ownership",
+          "assurance_text": "I have documented the complete case history for Incident Manager queue. I cannot confirm the final outcome until the responsible team completes its evidence and approval checks.",
+          "supported_by": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "deadline": null,
+          "commitment_owner": "Incident Manager queue",
+          "approval_required": false,
+          "fulfilment_status": "documented"
+        }
+      },
+      {
+        "event_id": "evt_6ce0719c0c67",
+        "event_type": "response.quality_checked",
+        "timestamp": "2026-07-12T15:31:58.425056+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "SuperTuriya response quality gate",
+        "payload": {
+          "decision": "human_review_required",
+          "passed": true,
+          "checks": {
+            "evidence_grounded": true,
+            "policy_checked": true,
+            "no_unsupported_outcome_guarantee": true,
+            "no_private_reasoning": true,
+            "emotion_acknowledged": true,
+            "assurance_supported": true,
+            "escalation_claim_supported": true,
+            "concise_enough": true
+          },
+          "score": 1.0,
+          "original_length": 417,
+          "final_length": 417,
+          "rewrite_applied": true,
+          "blocking_reasons": []
+        }
+      },
+      {
+        "event_id": "evt_288abc945c1a",
+        "event_type": "compliance.checked",
+        "timestamp": "2026-07-12T15:31:58.425062+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Compliance Agent",
+        "payload": {
+          "approval_state": "APPROVAL_REQUIRED",
+          "risk_flags": [
+            "COMPLIANCE_APPROVAL_REQUIRED_BEFORE_SEND",
+            "FINANCIAL_REVIEW_APPROVAL_REQUIRED"
+          ]
+        }
+      },
+      {
+        "event_id": "evt_7f7308c0340b",
+        "event_type": "tool.called",
+        "timestamp": "2026-07-12T15:31:58.425497+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.attach_transcript",
+        "payload": {
+          "tool_execution_id": "toolrun_72e17169a8e9",
+          "operation": "attach_transcript",
+          "access_type": "write",
+          "authorization": "mock_rbac_authorized",
+          "idempotency_key": "run_20260712153158_28afa7a3:attach_transcript:CASE-WDR-912"
+        }
+      },
+      {
+        "event_id": "evt_66d80780a0c2",
+        "event_type": "tool.completed",
+        "timestamp": "2026-07-12T15:31:58.425506+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "mock_customer_system.attach_transcript",
+        "payload": {
+          "tool_execution_id": "toolrun_72e17169a8e9",
+          "tool_name": "mock_customer_system.attach_transcript",
+          "operation": "attach_transcript",
+          "access_type": "write",
+          "status": "success",
+          "authorization": "mock_rbac_authorized",
+          "role": "sarvagun_support_agent",
+          "idempotency_key": "run_20260712153158_28afa7a3:attach_transcript:CASE-WDR-912",
+          "attempt": 1,
+          "timeout_ms": 3000,
+          "latency_ms": 0,
+          "approval_required": false,
+          "audit_id": "audit_46b345b169c3",
+          "before_state": {},
+          "after_state": {
+            "case_id": "CASE-WDR-912",
+            "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+            "attached": true
+          },
+          "result": {
+            "case_id": "CASE-WDR-912",
+            "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3",
+            "attached": true
+          },
+          "error": null,
+          "simulated": true
+        }
+      },
+      {
+        "event_id": "evt_7c2c040618a6",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425528+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Planner Agent",
+        "payload": {
+          "step_id": "step_001",
+          "tools": [
+            "plan_policy_router",
+            "risk_stop_condition_builder",
+            "workflow_contract_generator",
+            "sarvagun.hybrid_execution_controller",
+            "superturiya.memory_guidance"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.9
+        }
+      },
+      {
+        "event_id": "evt_85b835d54fd4",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425533+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Attachment Evidence Agent",
+        "payload": {
+          "step_id": "step_002",
+          "tools": [
+            "attachment_metadata_parser",
+            "evidence_card_generator"
+          ],
+          "evidence_ids": [
+            "VIS-002-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_4e1ee2a80a9d",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425537+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Intake / Triage Agent",
+        "payload": {
+          "step_id": "step_003",
+          "tools": [
+            "priority_rules",
+            "sentiment_rules",
+            "sla_window_rules"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.9
+        }
+      },
+      {
+        "event_id": "evt_da86fbfca7cb",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425542+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Knowledge Retrieval Agent",
+        "payload": {
+          "step_id": "step_004",
+          "tools": [
+            "local_kb_search",
+            "policy_catalog_lookup",
+            "visual_evidence_lookup"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.92
+        }
+      },
+      {
+        "event_id": "evt_494fc4179f85",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425546+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Policy Checker Agent",
+        "payload": {
+          "step_id": "step_005",
+          "tools": [
+            "policy_rules_engine",
+            "approval_state_classifier"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.91
+        }
+      },
+      {
+        "event_id": "evt_f9b547c12bfa",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425550+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Escalation Agent",
+        "payload": {
+          "step_id": "step_006",
+          "tools": [
+            "escalation_matrix",
+            "customer_success_owner_lookup",
+            "mock_customer_system.create_escalation"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.88
+        }
+      },
+      {
+        "event_id": "evt_0fb40b7484f3",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425555+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Response Drafting Agent",
+        "payload": {
+          "step_id": "step_007",
+          "tools": [
+            "safe_response_template",
+            "approval_gate_check",
+            "trajectory_memory_recall",
+            "mock_customer_system.add_case_note"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_9197611437b3",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425559+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Compliance Agent",
+        "payload": {
+          "step_id": "step_008",
+          "tools": [
+            "deterministic_compliance_rules",
+            "safe_rewrite_filter",
+            "evidence_support_check"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.91
+        }
+      },
+      {
+        "event_id": "evt_8323c7bbf509",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425563+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Human Escalation Agent",
+        "payload": {
+          "step_id": "step_009",
+          "tools": [
+            "confidence_gate",
+            "human_queue_router",
+            "handoff_summary_builder"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.89
+        }
+      },
+      {
+        "event_id": "evt_8072c4a876b0",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425568+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Critic / Evaluator Agent",
+        "payload": {
+          "step_id": "step_010",
+          "tools": [
+            "deterministic_eval_rules",
+            "failure_diagnosis_engine"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.87
+        }
+      },
+      {
+        "event_id": "evt_1734578eb3da",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425572+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Reflection Agent",
+        "payload": {
+          "step_id": "step_011",
+          "tools": [
+            "post_run_reflection_rules",
+            "repeated_mistake_detector"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.86
+        }
+      },
+      {
+        "event_id": "evt_d6332cf08147",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425576+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Learning Extraction Agent",
+        "payload": {
+          "step_id": "step_012",
+          "tools": [
+            "handoff_log_extractor",
+            "transcript_signal_mapper",
+            "eval_case_generator"
+          ],
+          "evidence_ids": [
+            "POL-CS-PAY-002",
+            "PROC-CS-WDR-001",
+            "TMPL-CS-WDR-002",
+            "VIS-002-01"
+          ],
+          "confidence": 0.83
+        }
+      },
+      {
+        "event_id": "evt_a55a78b2f1bd",
+        "event_type": "agent.completed",
+        "timestamp": "2026-07-12T15:31:58.425580+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Optimizer Agent",
+        "payload": {
+          "step_id": "step_013",
+          "tools": [
+            "optimization_rules",
+            "workflow_change_mapper"
+          ],
+          "evidence_ids": [],
+          "confidence": 0.84
+        }
+      },
+      {
+        "event_id": "evt_59997d8bf220",
+        "event_type": "response.drafted",
+        "timestamp": "2026-07-12T15:31:58.425585+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "response_id": "RESP-run_20260712153158_28afa7a3"
+        }
+      },
+      {
+        "event_id": "evt_5b39aa63b2ac",
+        "event_type": "response.ready_for_review",
+        "timestamp": "2026-07-12T15:31:58.425592+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "SuperTuriya response quality gate",
+        "payload": {
+          "decision": "human_review_required",
+          "passed": true,
+          "checks": {
+            "evidence_grounded": true,
+            "policy_checked": true,
+            "no_unsupported_outcome_guarantee": true,
+            "no_private_reasoning": true,
+            "emotion_acknowledged": true,
+            "assurance_supported": true,
+            "escalation_claim_supported": true,
+            "concise_enough": true
+          },
+          "score": 1.0,
+          "original_length": 417,
+          "final_length": 417,
+          "rewrite_applied": true,
+          "blocking_reasons": []
+        }
+      },
+      {
+        "event_id": "evt_03281643f9c9",
+        "event_type": "conversation.closed",
+        "timestamp": "2026-07-12T15:31:58.425597+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "Sarvagun",
+        "payload": {
+          "resolution_status": "escalated"
+        }
+      },
+      {
+        "event_id": "evt_f1c0beb33883",
+        "event_type": "transcript.generated",
+        "timestamp": "2026-07-12T15:31:58.425601+00:00",
+        "conversation_id": "conv_158_28afa7a3",
+        "run_id": "run_20260712153158_28afa7a3",
+        "correlation_id": null,
+        "actor": "SuperTuriya",
+        "payload": {
+          "transcript_id": "TRANSCRIPT-run_20260712153158_28afa7a3"
+        }
+      }
+    ],
+    "discovered_path": [
+      "Planner Agent",
+      "Attachment Evidence Agent",
+      "Intake / Triage Agent",
+      "Knowledge Retrieval Agent",
+      "Policy Checker Agent",
+      "Escalation Agent",
+      "Response Drafting Agent",
+      "Compliance Agent",
+      "Human Escalation Agent",
+      "Critic / Evaluator Agent",
+      "Reflection Agent",
+      "Learning Extraction Agent",
+      "Optimizer Agent"
+    ],
+    "successes": [
+      "evidence_grounded",
+      "policy_compliant",
+      "escalation_routed",
+      "customer_safe_tone",
+      "assurance_valid"
+    ],
+    "failures": [
+      "MISSING_CUSTOMER_UPDATE_CADENCE"
+    ],
+    "intelligence": [
+      "Add mandatory next_update_at or update_cadence fields for critical and high-priority tickets."
+    ],
+    "improvement_recommendation_ids": [
+      "OPT-002"
+    ],
+    "recalled_memory_ids": [
+      "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+      "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+      "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+    ],
+    "applied_memory_ids": [
+      "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+      "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+      "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+    ],
+    "created_memory_ids": [
+      "TRAJ-run_20260712153158_28afa7a3",
+      "LTM-run_20260712153158_28afa7a3",
+      "TRANSCRIPT-MEM-run_20260712153158_28afa7a3"
+    ],
+    "feedback_loop_status": "closed",
+    "automatic_policy_mutation": false
+  },
+  "metadata": {
+    "created_at": "2026-07-12T15:31:58.449804+00:00",
+    "llm_provider": "mock",
+    "model_name": "mock-trajectory-model",
+    "runtime_profile": "text",
+    "dataset": "customer_support",
+    "customer_query": "This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.",
+    "correlation_id": null,
+    "system_identity": {
+      "platform": "Anirvium AI",
+      "execution_system": "Sarvagun",
+      "intelligence_system": "SuperTuriya"
+    },
+    "execution_mode": "hybrid",
+    "conversation_id": "conv_158_28afa7a3",
+    "query_resolution": {
+      "requested_ticket_ids": [
+        "CS-002"
+      ],
+      "resolved_ticket_ids": [
+        "CS-002"
+      ],
+      "resolved_issue_type": "withdrawal_processed_missing",
+      "confidence": 0.8999999999999999,
+      "query_routed": false,
+      "customer_identity_preserved": true,
+      "routing_strategy": "selected_case_or_priority_selection"
+    },
+    "model_routes": {
+      "sarvagun_text": {
+        "active_model": "mock-trajectory-model",
+        "provider": "mock",
+        "active": false
+      },
+      "superturiya_critic": {
+        "active_model": "deterministic-trajectory-evaluator-v1",
+        "configured_optional_model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        "llm_review_active": false
+      },
+      "embedding": {
+        "active_model": "deterministic-token-hash-64d",
+        "configured_optional_model": "Qwen/Qwen3-Embedding-4B",
+        "external_model_active": false
+      },
+      "reranker": {
+        "active_model": "deterministic-hybrid-rank-fusion",
+        "configured_optional_model": "Qwen/Qwen3-Reranker-4B",
+        "external_model_active": false
+      },
+      "classification_and_guardrails": {
+        "active_model": "deterministic-rules",
+        "external_model_active": false
+      }
+    },
+    "image_video_model_status": "deferred_text_first",
+    "memory_backend": "local",
+    "vector_collections": {
+      "kb": "anirvium_sarvagun_kb",
+      "memory": "anirvium_superturiya_memory",
+      "trajectory": "anirvium_superturiya_trajectories"
+    },
+    "observability": {
+      "trace_schema_version": "anirvium.trajectory.v1",
+      "primary_trace_store": "custom_json_trajectory_logger",
+      "span_count": 13,
+      "event_sources": [
+        "planner_contract",
+        "agent_span",
+        "tool_action",
+        "evidence_card",
+        "policy_decision",
+        "compliance_decision",
+        "human_handoff",
+        "evaluation_signal",
+        "reflection_signal",
+        "learning_artifact",
+        "optimizer_recommendation",
+        "trajectory_property_graph",
+        "sarvagun_conversation_event",
+        "enterprise_tool_execution",
+        "superturiya_intelligence_event"
+      ],
+      "production_export_path": "otel_otlp_optional_after_gpu_validation"
+    },
+    "synthetic_data_only": true,
+    "learning_loop": {
+      "mode": "retrieve_evaluate_recommend_reuse",
+      "prior_memories_recalled": 3,
+      "recalled_memory_ids": [
+        "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+        "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+        "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+      ],
+      "applied_learning_ids": [
+        "TRANSCRIPT-MEM-run_20260712153158_b56cc72e",
+        "TRANSCRIPT-MEM-run_20260712153158_ea69c82f",
+        "TRANSCRIPT-MEM-run_20260712153158_20cabcc2"
+      ],
+      "reuse_stage": "pre_plan_strategy_and_response_drafting",
+      "writes_trajectory_memory": true,
+      "automatic_policy_mutation": false
+    },
+    "relational_persistence": {
+      "backend": "sqlite",
+      "schema_version": "sarvagun-operational-v1",
+      "run_id": "run_20260712153158_28afa7a3",
+      "persisted": true
+    }
+  }
+}

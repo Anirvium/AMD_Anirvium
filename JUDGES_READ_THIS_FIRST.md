@@ -1,147 +1,78 @@
-# Judges Read This First
+# Judges: Read This First
 
-## What Anirvium AI Is
+## The product in one sentence
 
-Anirvium AI has two connected systems. **Sarvagun** is the governed customer-support agentic system. **SuperTuriya** is its trajectory-intelligence heart: it observes, traces, evaluates, diagnoses, stores, recalls, and applies trusted execution intelligence to future Sarvagun plans.
+**Anirvium AI is a trajectory-intelligence control plane: Sarvagun executes governed customer-support work, and SuperTuriya makes the full decision path observable, evaluable, comparable, and safely reusable.**
 
-## Why It Matters
+## Five-minute evaluation path
 
-Enterprise AI agents can fail silently. A support agent may miss an SLA escalation, cite weak evidence, promise a refund without approval, mishandle a security request, or produce a vague customer response. Anirvium AI gives support leaders a structured way to inspect and improve those decisions.
+Public static resilience demo: [https://anirvium.github.io/AMD_Anirvium/](https://anirvium.github.io/AMD_Anirvium/) (precomputed synthetic trajectories, no live backend). Complete reproducible product path:
 
-## Live Demo Scenario
+1. Run `docker compose up --build` and open `http://localhost:5173`.
+2. Select synthetic case `CS-002`.
+3. Submit: `This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.`
+4. Inspect the safe response draft, evidence IDs, tool provenance, escalation, and approval hold.
+5. Open **SuperTuriya** and inspect the 13-step trace graph, trajectory health, failure signals, improvement plan, and evaluated memory loop.
 
-Start with “Hi,” then submit the synthetic `CS-002` withdrawal complaint. Sarvagun identifies Priya Shah, detects frustration and third-contact recontact, checks the mock case and payment status, retrieves governed evidence, and triggers the sixth-unique-customer incident rule. SuperTuriya observes the complete execution and closes the memory loop.
+Direct Docker API alternative. Agent execution is asynchronous so it survives ordinary browser/proxy request limits:
 
-Before the long run, demonstrate the hybrid router with three fast prompts:
+```bash
+curl http://localhost:8000/health/ready
+curl http://localhost:8000/platform/status
+curl -X POST http://localhost:8000/runs/async \
+  -H 'Content-Type: application/json' \
+  -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-002"],"customer_query":"This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.","execution_mode":"hybrid"}'
+```
 
-- `List all customers` returns normalized SQLite customer rows.
-- `Show all payment-failure cases` returns the matching seeded support cases.
-- `What is a capital market?` uses the live AMD model without leaking customer records.
+Poll the returned `job_id` at `GET http://localhost:8000/runs/jobs/{job_id}` until `status` is `completed`.
 
-The workflow shows:
+## What the canonical scenario proves
 
-- SLA risk detected.
-- KB and policy evidence retrieved.
-- Policy gates applied.
-- Correct financial, verification, security, bonus, or priority-support owner selected.
-- Safe customer response drafted.
-- Approval state used for sensitive cases.
-- Trajectory evaluated.
-- Audited mock tool executions and response provenance shown.
-- Explicit CSAT kept separate from AI-predicted satisfaction.
-- Transcript generated and attached through the mock connector.
-- Trusted trajectory intelligence stored for the next similar plan.
-- Failure diagnosed.
-- Concrete workflow optimization recommended.
+- Sarvagun preserves the selected synthetic customer identity and linked operational context.
+- It detects third-contact recontact, frustration, a missed commitment, and escalation risk.
+- It retrieves reviewed policy, procedure, and response-template evidence.
+- Simulated enterprise tools are fully labelled and include audit, authorization, idempotency, latency, and before/after state.
+- Financial or identity-sensitive commitments remain drafts until approval.
+- SuperTuriya observes nine Sarvagun execution spans and adds four intelligence spans.
+- Evaluation, diagnosis, recommendation, graph discovery, and evaluated advisory memory are connected to the same run.
+- Current policy always overrides recalled memory; automatic policy mutation is disabled.
 
-## Run Backend
+## AMD use
 
-Fastest containerized path:
+The live path served `Qwen/Qwen3-8B` as `anirvium-text` through vLLM/ROCm on the AMD Developer Cloud allocation actually observed by the team (47.98 GiB visible VRAM, `gfx1100`). Qwen was used for customer-response drafting and routed public knowledge. Policy, guardrails, internal evaluation, deterministic embeddings, and reranking remained intentionally deterministic in the verified path.
+
+Evidence:
+
+- [amd/benchmark_results_real.md](amd/benchmark_results_real.md)
+- [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md)
+- [amd/RUNTIME_PROFILES.md](amd/RUNTIME_PROFILES.md)
+
+The repository does not contain the ephemeral notebook's ignored raw JSON logs. The committed human-readable result is the durable evidence artifact. No MI300X result, Fireworks use, Gemma use, or official τ score is claimed.
+
+## Reproducibility
 
 ```bash
 docker compose up --build
 ```
 
-Open:
+This starts frontend, backend, Redis, and Qdrant in deterministic synthetic-data mode. GitHub Actions independently runs backend tests, the frontend build, and a Docker Compose smoke test.
 
-```text
-http://localhost:5173
-```
+Current verified release checks:
 
-The Docker path runs the full dashboard, FastAPI backend, Redis, and Qdrant in deterministic synthetic-data mode.
+- 95 backend tests pass.
+- Normal and static frontend production builds pass.
+- Repository is public.
+- MIT license is present.
+- No API credential pattern was found in tracked source.
 
-Manual backend path:
+## Submission and product source of truth
 
-```bash
-cd backend
-uv run uvicorn app.main:app --port 8000
-```
+- [README.md](README.md)
+- [docs/PRODUCT_0_1.md](docs/PRODUCT_0_1.md)
+- [docs/FINAL_SUBMISSION_FORM.md](docs/FINAL_SUBMISSION_FORM.md)
+- [docs/JUDGE_WALKTHROUGH.md](docs/JUDGE_WALKTHROUGH.md)
+- [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md)
 
-Health check:
+## Honest boundary
 
-```bash
-curl http://localhost:8000/health
-curl http://localhost:8000/health/ready
-```
-
-## Run Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
-## Trigger A Recoverable Agent Run
-
-```bash
-curl -X POST http://localhost:8000/runs/async \
-  -H 'Content-Type: application/json' \
-  -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My account is restricted for KYC. Unblock it immediately."}'
-```
-
-Poll the returned job ID at `GET /runs/jobs/{job_id}`. The verification issue profile routes the selected `CS-001` customer to the Verification review queue while preserving `CS-C001` identity and excluding unrelated payment and `EVAL-*` evidence. For the full CX scenario use `CS-002` and `execution_mode=hybrid`.
-
-The full implementation and its honest demo boundaries are documented in [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md).
-
-## Inspect Trajectory JSON
-
-Use:
-
-```bash
-curl http://localhost:8000/demo/winning-run
-```
-
-Or after a run:
-
-```bash
-curl http://localhost:8000/runs/latest/trajectory
-curl http://localhost:8000/platform/status
-```
-
-Compare any two persisted runs with `GET /runs/compare?baseline_run_id=...&candidate_run_id=...`.
-Inspect the complete normalized synthetic context for the withdrawal demo with `GET /data/cases/CS-002/context`.
-
-The persisted mock run JSON is written locally under:
-
-```text
-backend/app/data/runs/
-```
-
-This directory is ignored by Git to avoid generated output churn.
-
-## Inspect Evaluation Output
-
-Use:
-
-```bash
-curl http://localhost:8000/demo/winning-run
-curl http://localhost:8000/runs/latest/evaluation
-```
-
-The evaluation contains scorecard metrics, rich failure diagnosis, and concrete optimizer recommendations.
-
-## AMD Usage Proof
-
-Current status:
-
-```text
-Real AMD/vLLM benchmark completed on the observed 48GB AMD Developer Cloud runtime.
-```
-
-Evidence paths:
-
-- `amd/benchmark_results_real.md`
-- `amd/logs/benchmark_llm_20260709210044.json`
-- `amd/logs/benchmark_llm_20260709212533.json`
-- API proof: `/runs/latest/trajectory/graph-discovery`
-
-See [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md).
-
-Note: generated JSON logs may be present only in the AMD notebook workspace because `amd/logs/*.json` is ignored to avoid committing generated output churn. The verified metrics are summarized in [amd/benchmark_results_real.md](amd/benchmark_results_real.md).
+This is a competition-grade, synthetic-data prototype—not a production deployment. Real CRM/payment/identity connectors, production auth and tenancy, durable distributed jobs, token streaming, managed databases, and automated policy/code deployment are future work.

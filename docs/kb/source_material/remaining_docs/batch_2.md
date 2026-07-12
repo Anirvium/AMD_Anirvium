@@ -233,7 +233,7 @@ Dear Customer,
  
 Hamein sampark karne ke liye shukriya. Reply mein deri ke liye maafi chahunga. Mera naam Support Specialist hai. Mujhe aaj aapki madad karne mein khushi hogi.
  
-Aapka account block kar diya gaya hai kyunki verification process complete nahi hua tha. Iske baare mein ek e-mail aapke registered e-mail address par aaj bheji gayi hai. Kripya apne payment methods verify karein — jaise ki aapka card jiska last 4 digits ****0847 hai aur aapka UPI payment method 126171799_UPI.
+Aapka account block kar diya gaya hai kyunki verification process complete nahi hua tha. Iske baare mein ek e-mail aapke registered e-mail address par aaj bheji gayi hai. Kripya apne payment methods verify karein — jaise ki aapka card jiska last 4 digits [REDACTED_CARD_LAST4] hai aur aapka UPI payment method [REDACTED_PAYMENT_METHOD].
 
 Web version ka use karte hue niche diye gaye link par jaake verification complete karein:
 [link removed]

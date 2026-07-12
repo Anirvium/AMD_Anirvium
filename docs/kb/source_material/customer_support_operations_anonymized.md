@@ -984,7 +984,7 @@ This violation occurs when a client refuses to complete the verification process
 
 Later in this course, we will discuss how to deal with such violations.
 
-Extra duplicates blocking (for verification of ______) or Violation: multiple accounts (2.32) and comment for verification (11111111)
+Extra duplicates blocking (for verification of ______) or Violation: multiple accounts (2.32) and comment for verification ([EXAMPLE_ACCOUNT_NUMBER])
 
 
 In these cases, the account is blocked because the customer should pass the verification process on another duplicate account. 

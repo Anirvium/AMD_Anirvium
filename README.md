@@ -1,360 +1,431 @@
 Anirvium AI
 
-Sarvagun customer-support execution, continuously improved by SuperTuriya trajectory intelligence.
+### The trajectory-intelligence control plane for enterprise AI agents
 
-Anirvium AI contains two connected systems. **Sarvagun** is the complete governed customer-support agentic system. **SuperTuriya** is its trajectory-intelligence heart: it observes every step, evaluates failures and successes, discovers execution paths, stores trusted intelligence, and influences future Sarvagun plans without mutating safety policy.
+[![CI](https://github.com/Anirvium/AMD_Anirvium/actions/workflows/ci.yml/badge.svg)](https://github.com/Anirvium/AMD_Anirvium/actions/workflows/ci.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-72e6d1.svg)](LICENSE)
+[![Track](https://img.shields.io/badge/AMD_ACT_II-Track_3_Unicorn-8b7cff.svg)](https://lablab.ai/ai-hackathons/amd-developer-hackathon-act-ii)
 
-The demo uses synthetic enterprise support data only.
+![Anirvium AI cover](docs/assets/anirvium-cover-16x9.png)
 
+Anirvium AI combines two connected systems:
 
-Sarvagun routes a free-form customer message, reads synthetic customer/case history, detects emotion and recontact, retrieves governed evidence, executes audited mock enterprise tools, applies deterministic policy/escalation rules, and drafts a safe response on AMD vLLM. SuperTuriya captures the 13-step trajectory, applies a post-compliance response gate, scores and diagnoses the run, stores trusted memory, and recalls it before future planning.
+- **Sarvagun** is a governed customer-support agentic system. It routes customer requests, reads exact synthetic operational records, retrieves reviewed evidence, invokes audited tools, applies policy and approval gates, and drafts a safe response.
+- **SuperTuriya** is the trajectory-intelligence system. It observes the complete execution path, evaluates outcomes, diagnoses failures, compares runs, and stores evaluated advisory intelligence for future planning.
 
-What to inspect first:
+The product does not automatically rewrite policy or deploy code. It turns agent behavior into an inspectable, testable, and safely reusable operational asset.
 
-1. [JUDGES_READ_THIS_FIRST.md](JUDGES_READ_THIS_FIRST.md)
-2. The live **Sarvagun** workspace and **SuperTuriya** intelligence tab
-3. `POST /runs/async` followed by `GET /runs/jobs/{job_id}`
-4. [architecture_diagram.md](architecture_diagram.md)
-5. [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md)
-6. [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md)
+> **Data boundary:** all customers, cases, transactions, tools, and feedback in this repository are synthetic. Enterprise connectors are simulated and labelled as such.
 
-Fast API proof path:
+## Judge path
+
+### URL map — use the row that matches your runtime
+
+| Runtime | Product frontend | Backend/API | What it proves |
+| --- | --- | --- | --- |
+| Static judge demo deployment target | [https://anirvium.github.io/AMD_Anirvium/](https://anirvium.github.io/AMD_Anirvium/) | No live backend; verified synthetic snapshots are bundled | UI, routing, Sarvagun trajectories, SuperTuriya evaluation, and presentation flow when the AMD notebook is unavailable. Verify the latest Pages workflow before using this URL in the form. |
+| Docker Compose — recommended complete run | `http://localhost:5173` | `http://localhost:8000` | Complete containerized product with FastAPI, Redis, Qdrant, and deterministic model fallback. |
+| Local development | `http://127.0.0.1:5173` | `http://127.0.0.1:8000` | Same complete application with frontend and backend hot reload. |
+| AMD Jupyter port proxy | `https://radeon-global.anruicloud.com/spaces/<instance-id>/8501/` | Browser API: `<frontend-url>api`; VM-only FastAPI: `http://127.0.0.1:8000` | Live AMD/Qwen path when the team notebook instance is active. |
+
+The browser should normally call the backend through the frontend's same-origin `/api` proxy. For example, Docker health is `http://localhost:5173/api/health`; AMD proxy health is `https://radeon-global.anruicloud.com/spaces/<instance-id>/8501/api/health`. Do **not** open the VM's `localhost` URL on another computer.
+
+The GitHub Pages URL is a deliberately labelled resilience demo. It remains interactive but uses precomputed, synthetic trajectory artifacts and never claims that a live AMD model is attached. Use Docker for the complete reproducible backend workflow.
+
+### 1. Run the complete containerized product
+
+The official ACT II requirements call for a containerized, runnable submission. Prerequisites are Git plus Docker Desktop or Docker Engine with the Compose v2 plugin; no API key or `.env` file is required for the default judge path.
 
 ```bash
-cd backend
-uv run uvicorn app.main:app --port 8000
-curl http://localhost:8000/health/ready
-```
-
-Then start the frontend, select a prompt chip, and submit one customer request.
-
-Current AMD status: real AMD GPU execution has been validated on AMD Developer Cloud through vLLM/ROCm with the 48GB Qwen3-8B profile. The benchmark logs in `amd/logs/benchmark_llm_*.json` capture the verified run metrics; older `benchmark_mock_*` files remain deterministic local samples.
-
-Do not use real customer data. No secrets are committed; use `.env.example` only.
-
-## One-Command Docker Demo
-
-Judges can run the product from GitHub without installing Python or Node locally:
-
-```bash
+git clone https://github.com/Anirvium/AMD_Anirvium.git
+cd AMD_Anirvium
 docker compose up --build
 ```
 
-Open:
+Wait until all four containers are running and the HTTP checks below succeed, then open:
 
-```text
-Frontend: http://localhost:5173
-Backend:  http://localhost:8000
+| Purpose | URL |
+| --- | --- |
+| Product UI | `http://localhost:5173` |
+| Backend through the frontend proxy | `http://localhost:5173/api/health` |
+| Direct backend health | `http://localhost:8000/health` |
+| Runtime/provider readiness | `http://localhost:8000/health/ready` |
+| Interactive OpenAPI/Swagger | `http://localhost:8000/docs` |
+| OpenAPI JSON | `http://localhost:8000/openapi.json` |
+| Qdrant dashboard (optional inspection) | `http://localhost:6333/dashboard` |
+
+Docker Compose starts the React/Nginx frontend, FastAPI backend, Redis, and Qdrant. It intentionally uses deterministic mock-model mode so judges can reproduce the complete workflow without private GPU credentials.
+
+In a second terminal, verify the chain before using the UI:
+
+```bash
+docker compose ps
+curl -fsS http://localhost:8000/health
+curl -fsS http://localhost:8000/health/ready
+curl -fsS http://localhost:5173/api/health
 ```
 
-This default container path runs the full product in deterministic mock mode with synthetic data, Redis, and Qdrant. It is the safest GitHub evaluation path. The AMD/vLLM GPU path is a separate runtime mode described in [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md).
+All three HTTP checks must return JSON. The Docker readiness response reports the deterministic local provider; that is expected and does not mean the AMD evidence is simulated. The recorded live AMD run is documented separately under [AMD execution evidence](#amd-execution-evidence).
 
-## Why This Matters
+To inspect logs or stop the stack:
 
-Enterprises are deploying AI support agents faster than they can inspect them. When an agent mishandles a refund, misses an SLA, hallucinates evidence, or promises a security action without approval, support leaders need more than a transcript. They need a trajectory: steps, evidence, risk flags, approval states, scores, and concrete fixes.
+```bash
+docker compose logs --tail=200 backend frontend redis qdrant
+docker compose logs -f backend frontend redis qdrant
+docker compose down
+```
 
-Anirvium AI turns agent behavior into measurable infrastructure.
+If ports `5173`, `8000`, or `6333` are already occupied, stop the conflicting service before starting Compose. A `502` from the frontend means the UI is running but cannot reach FastAPI; check `docker compose ps` and the backend logs. A long agent run uses `POST /runs/async` plus job polling, so judges should not call the older synchronous route through a short-timeout proxy.
 
-## Architecture
+### 2. Run the canonical scenario
 
-See [docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md) for the current implementation contract, [repo-structure.txt](repo-structure.txt) for the repository map, and [architecture_diagram.md](architecture_diagram.md) for renderable diagrams.
+Select `CS-002` and submit:
+
+> This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.
+
+Expected proof:
+
+- customer identity and linked case remain consistent;
+- recontact, frustration, missed commitment, and escalation risk are detected;
+- curated policy, procedure, and template evidence is retrieved;
+- audited mock case/payment tools execute with provenance;
+- a sensitive commitment is held for human approval;
+- thirteen structured spans are visible;
+- SuperTuriya scores, diagnoses, and recommends a measurable fix;
+- evaluated intelligence is stored for later advisory recall without changing policy.
+
+### 3. Inspect SuperTuriya
+
+Open the **SuperTuriya** tab after the run. Inspect trajectory health, metric cards, the discovered trace graph, failure signals, improvement recommendations, storage state, and the closed intelligence loop.
+
+![Sarvagun presentation render](docs/assets/anirvium-main-ui-render.png)
+
+![SuperTuriya presentation render](docs/assets/anirvium-superturiya-ui-render.png)
+
+The two images above are presentation renders built from the implemented interface structure and current synthetic demo output. They are deliberately labelled in-image and are not represented as live AMD screenshots.
+
+## Why this belongs in the Unicorn Track
+
+ACT II Track 3 judges creativity/originality, product/market potential, completeness, and meaningful AMD use. Anirvium is built around those four dimensions:
+
+| Criterion | Submission evidence |
+| --- | --- |
+| Creativity and originality | A support agent and a separate trajectory-intelligence plane; evaluated memory is advisory and policy-bounded rather than an opaque self-modification loop. |
+| Product/market potential | A control plane for support and AI-operations leaders deploying agents in regulated, financial, security-sensitive, or SLA-sensitive workflows. |
+| Completeness | Interactive React product, typed API, normalized synthetic operational store, governed KB, audited tool boundary, asynchronous execution, trace graph, evaluator, memory, tests, Docker, and CI. |
+| AMD platform use | Qwen3-8B served through vLLM/ROCm on the observed AMD Developer Cloud GPU for response drafting and routed public knowledge; real run evidence is recorded in `amd/benchmark_results_real.md`. |
+
+Track 3 has no fixed speed, token, or accuracy benchmark. Internal metrics are product observability signals, not an official leaderboard score.
+
+## Product architecture
 
 ```mermaid
 flowchart LR
-  UI[React Dashboard] --> API[FastAPI API]
-  API --> Runner[Agent Runner]
-  Runner --> Planner[Planner Agent]
-  Planner --> Attachment[Attachment Evidence Agent]
-  Attachment --> Triage[Intake / Triage Agent]
-  Triage --> Retrieval[Knowledge Retrieval Agent]
-  Retrieval --> Policy[Policy Checker Agent]
-  Policy --> Escalation[Escalation Agent]
-  Escalation --> Response[Response Drafting Agent]
-  Response --> Compliance[Compliance Agent]
-  Compliance --> Handoff[Human Escalation Agent]
-  Handoff --> Critic[Critic / Evaluator Agent]
-  Critic --> Reflection[Reflection Agent]
-  Reflection --> Learning[Learning Extraction Agent]
-  Learning --> Optimizer[Optimizer Agent]
-  Runner --> Logger[Trajectory Logger JSON]
-  Logger --> GraphDiscovery[Property Graph Discovery Export]
-  Critic --> Eval[Deterministic Evaluation Engine]
-  Eval --> Diagnosis[Failure Diagnosis Engine]
-  Diagnosis --> Reflection
-  Diagnosis --> Optimizer
-  Runner --> Data[(Synthetic tickets, KB, policies)]
-  Runner --> LLM[OpenAI-compatible LLM Client]
-  LLM --> AMD[vLLM/ROCm on AMD Developer Cloud]
+  U[Customer or support operator] --> UI[React product UI]
+  UI --> API[FastAPI]
+  API --> R{Typed capability router}
+  R --> F[Conversation fast path]
+  R --> SQL[Exact relational read]
+  R --> AN[Deterministic analytics]
+  R --> GK[Public knowledge model]
+  R --> S[Sarvagun governed execution]
+
+  S --> KB[Curated KB + vector retrieval]
+  S --> TOOLS[Audited synthetic enterprise tools]
+  S --> LLM[Qwen3 via vLLM / ROCm]
+  S --> GATE[Policy + compliance + approval gates]
+  GATE --> D[Safe draft or human review]
+
+  S --> ST[SuperTuriya]
+  ST --> TRACE[Spans + lifecycle events + graph]
+  ST --> EVAL[Metrics + diagnosis + recommendations]
+  ST --> MEM[Evaluated advisory memory]
+  MEM --> S
+
+  SQL --> DB[(SQLite demo truth)]
+  MEM --> REDIS[(Redis operational memory)]
+  MEM --> QDRANT[(Qdrant semantic memory)]
+  LLM --> AMD[AMD Developer Cloud GPU]
 ```
 
-## Features
+### Request routing
 
-- Sarvagun conversation manager for greetings, support queries, complaints, follow-ups, escalation requests, confirmations, and conversation endings.
-- Governed `policy_driven`, `plan_driven`, `autonomous`, and `hybrid` execution modes with a bounded two-iteration autonomous trace.
-- Emotion/frustration analysis, recontact detection, deterministic escalation state, and a sixth-unique-customer emerging-incident demo.
-- Audited mock enterprise connector calls with authorization, idempotency, timeout, status, before/after state, and simulation labels.
-- SuperTuriya post-compliance response quality gate, CX rubric, explicit-versus-predicted satisfaction separation, provenance, and transcript generation.
-- Redis operational memory and trusted vector trajectory memory with explicit local fallbacks and no automatic policy mutation.
-- Multi-agent support queue analysis.
-- Plan-driven Planner Agent with evidence contracts, stop conditions, and public reasoning summaries.
-- Attachment evidence extraction for images, screenshots, documents, logs, and metadata without loading an image/video model in the text-first GPU path.
-- Structured JSON span logging for every agent step.
-- Property graph discovery export for trajectory paths, evidence, tools, risks, diagnosis, and final actions.
-- Text and visual evidence IDs attached to retrieval, policy checks, responses, and evaluations.
-- Approval-state model for sensitive refund, security, deletion, compensation, and SLA cases.
-- Compliance agent for legal, regulatory, company policy, privacy, and evidence-grounding checks.
-- Human escalation agent that routes low-confidence, approval-required, or compliance-review cases with handoff summaries.
-- Learning extraction agent that turns human handoffs, transcripts, satisfaction signals, and resolution logs into reusable improvement artifacts.
-- Recoverable asynchronous jobs with actual agent-step progress and browser refresh resumption.
-- Free-form query routing to the correct customer-support case before planning.
-- Typed hybrid capability routing for conversation, relational customer/case reads, deterministic analytics, public general knowledge, and the governed Sarvagun workflow.
-- Normalized SQLite operational truth for customers, cases, queues, conversations, runs, evaluations, tools, and feedback; Redis and vector memory have separate roles.
-- Truthful platform inventory at `GET /platform/status`, including active models, storage backends, collection roles, benchmark claim boundaries, and production limitations.
-- Deterministic stored-run comparison at `GET /runs/compare` with path signatures, metric/latency/token/tool/evidence deltas, failure/risk changes, and safety-aware verdicts.
-- Generation-safe hybrid retrieval that keeps evaluation-only records out of answer evidence.
-- Advisory recall of similar prior trajectories without automatic policy mutation.
-- Reflection agent that reviews completed responses and repeated mistake patterns before optimization.
-- Deterministic evaluation metrics for grounding, policy, hallucination risk, escalation, actionability, tone, tokens, and latency.
-- Failure diagnosis for missing evidence, weak responses, missed escalation, unsafe actions, low confidence, and excessive token usage.
-- Optimization recommendations with target agent, root cause, concrete fix, implementation hint, and expected metric lift.
-- React dashboard with chat-first support console, trajectory timeline, tool traces, compliance/handoff guardrails, evidence, final safe drafts, scorecards, diagnosis, and optimizer recommendations.
-- AMD benchmark scripts for vLLM/ROCm OpenAI-compatible inference.
+The system avoids running thirteen agents for every prompt.
 
-## Demo Flow
+| Request | Route | Behavior |
+| --- | --- | --- |
+| Greeting or transition | conversation fast path | Deterministic, low-cost response. |
+| `List all customers` | customer directory | Exact read-only SQLite query. |
+| `Show all payment-failure cases` | case directory | Filtered read-only operational query. |
+| `Open CS-001` | case lookup | Exact linked record and context. |
+| Aggregate support question | support analytics | Deterministic aggregation. |
+| Public definition | general knowledge | Configured live model; no customer records are sent. |
+| Personal support problem | Sarvagun | Governed asynchronous agent pipeline followed by SuperTuriya. |
 
-The primary scenario:
+### Sarvagun execution spans
 
-> Analyze today's high-priority customer support queue. Identify SLA risks, policy-sensitive cases, escalation needs, and draft safe customer responses. Then evaluate the agent trajectory and recommend how the support agent can improve.
+1. Planner Agent
+2. Attachment Evidence Agent
+3. Intake / Triage Agent
+4. Knowledge Retrieval Agent
+5. Policy Checker Agent
+6. Escalation Agent
+7. Response Drafting Agent
+8. Compliance Agent
+9. Human Escalation Agent
 
-The mock run selects high-priority synthetic tickets:
+Sarvagun supports `policy_driven`, `plan_driven`, `autonomous`, and `hybrid` execution modes. Autonomous behavior is bounded by allowlisted actions, stop conditions, a two-decision loop, policy supervision, and human approval.
 
-- `T-001` enterprise production outage with severe SLA risk.
-- `T-002` billing dispute and refund request.
-- `T-003` angry churn-risk customer.
-- `T-004` security/data deletion request.
-- `T-008` enterprise integration failure.
+### SuperTuriya intelligence spans
 
-## Local Setup
+10. Critic / Evaluator Agent
+11. Reflection Agent
+12. Learning Extraction Agent
+13. Optimizer Agent
 
-Containerized setup:
+SuperTuriya records safe public decision summaries, tools, evidence, latency, token estimates, confidence, risk flags, approval state, evaluation metrics, diagnosis, recommendations, memory IDs, and graph relationships. It does not expose hidden chain-of-thought.
 
-```bash
-docker compose up --build
+## Storage and memory contract
+
+Each store has one job:
+
+- **SQLite** is the hackathon source of truth for exact synthetic customers, cases, accounts, transactions, verification records, approvals, escalations, workflow states, runs, evaluations, tool executions, and feedback.
+- **Redis** is short-term operational memory for sessions and active execution context. Local in-process fallback is explicit when Redis is unavailable.
+- **Qdrant** holds semantic KB, evaluated memory, and trajectory collections. Local deterministic vectors are the offline fallback.
+- **JSON trajectory files** preserve full-fidelity run artifacts for debugging and graph export.
+
+Vector collections:
+
+- `anirvium_sarvagun_kb`
+- `anirvium_superturiya_memory`
+- `anirvium_superturiya_trajectories`
+
+Only artifacts marked as evaluated SuperTuriya memory may influence future planning, and current policy is always revalidated.
+
+## AMD execution evidence
+
+The live text path was exercised on AMD Developer Cloud with the runtime that was actually exposed to the team:
+
+```text
+visible VRAM: 51,522,830,336 bytes / 47.98 GiB
+ROCm target: gfx1100
+vLLM endpoint: OpenAI-compatible /v1
+served model: anirvium-text
+underlying model: Qwen/Qwen3-8B
 ```
 
-Open `http://localhost:5173`.
+Verified internal run summary:
 
-Backend:
-
-```bash
-cd backend
-uv run pytest
-uv run uvicorn app.main:app --reload --port 8000
+```text
+13 trajectory spans
+72.53 average tokens/second across the recorded benchmark
+190.18 seconds average benchmark latency
+1.0 policy compliance
+1.0 evidence grounding
+70.9 average internal trajectory score
 ```
 
-If you prefer `pip`:
+These numbers are not an official hackathon score and are not presented as MI300X results. The larger 192GB profile is documented only as a target runtime profile.
+
+Evidence and runbooks:
+
+- [Real AMD results](amd/benchmark_results_real.md)
+- [AMD usage and reproduction](amd/README_AMD_USAGE.md)
+- [Runtime profiles](amd/RUNTIME_PROFILES.md)
+- [Benchmark runner](amd/benchmark_agent_eval.py)
+
+## Manual development setup
+
+### Backend
+
+Python 3.10+ is supported; CI uses Python 3.11.
 
 ```bash
 cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+LLM_PROVIDER=mock uvicorn app.main:app --reload --port 8000
 ```
 
-Frontend:
+### Frontend
+
+Node 20 is recommended.
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
-Open:
+Open `http://127.0.0.1:5173`. Confirm `http://127.0.0.1:5173/api/health` before starting a run. Vite proxies `/api` to `http://127.0.0.1:8000`; the production Docker image serves the frontend with Nginx and proxies `/api` to the backend service.
 
-```text
-http://localhost:5173
+### Live AMD model mode
+
+On AMD Developer Cloud, first use the Python environment that contains ROCm vLLM. Do not install vLLM inside the lightweight FastAPI virtual environment.
+
+```bash
+source /opt/venv/bin/activate
+python -c 'import vllm; print(vllm.__version__)'
+export PYTHON_BIN=/opt/venv/bin/python
+export PROFILE=text_48gb
+bash amd/run_runtime_profile.sh 2>&1 | tee /workspace/anirvium_vllm.log
 ```
 
-## API Setup
+If `/opt/venv` differs on the current AMD image, activate the platform-provided ROCm/vLLM environment and repeat the `import vllm` preflight. Never launch vLLM from `backend/.venv`; that lightweight environment intentionally contains only the FastAPI application dependencies.
 
-The API runs fully in mock mode without secrets.
+Then start the backend with:
+
+```bash
+cd backend
+source .venv/bin/activate
+export LLM_BASE_URL=http://localhost:8001/v1
+export LLM_API_KEY=dummy
+export LLM_MODEL=anirvium-text
+export LLM_PROVIDER=openai_compatible
+export AMD_RUNTIME_PROFILE=text_48gb
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+The AMD Jupyter frontend gateway instructions are in [docs/LIVE_PRODUCT_DEMO_RUNBOOK.md](docs/LIVE_PRODUCT_DEMO_RUNBOOK.md).
+
+For an active AMD instance, the judge-facing frontend is:
+
+```text
+https://radeon-global.anruicloud.com/spaces/<instance-id>/8501/
+```
+
+Replace `<instance-id>` with the current notebook ID. Start the gateway with the matching base path:
+
+```bash
+cd /workspace/AMD_Anirvium/frontend
+export FRONTEND_PORT=8501
+export FRONTEND_HOST=0.0.0.0
+export BACKEND_BASE_URL=http://127.0.0.1:8000
+export FRONTEND_BASE_PATH=/spaces/<instance-id>/8501
+npm ci
+npm run serve:amd
+```
+
+The browser-visible API health URL is `https://radeon-global.anruicloud.com/spaces/<instance-id>/8501/api/health`. Ports `8000` and `8001` remain internal to the VM. The proxy frontend is the only browser URL for a currently authorized, live AMD session; it is ephemeral and is not the durable submission URL. External AMD API inspection should use `<frontend-url>api/openapi.json`; nested Swagger HTML is not advertised because its root-relative schema URL is incompatible with this notebook base path.
+
+## API proof path
+
+Health and inventory:
 
 ```bash
 curl http://localhost:8000/health
 curl http://localhost:8000/health/ready
-curl http://localhost:8000/tickets
-curl -X POST http://localhost:8000/runs/async \
-  -H "Content-Type: application/json" \
-  -d '{"dataset":"customer_support","selection_mode":"selected","selected_ticket_ids":["CS-001"],"customer_query":"My UPI deposit is missing."}'
+curl http://localhost:8000/platform/status
+curl http://localhost:8000/data/status
 ```
 
-Key endpoints:
-
-- `GET /health`
-- `GET /health/ready`
-- `POST /conversations/turn`
-- `GET /conversations/{conversation_id}`
-- `GET /tickets`
-- `GET /demo/winning-run`
-- `POST /runs`
-- `POST /runs/async`
-- `GET /runs/jobs/{job_id}`
-- `GET /runs/latest`
-- `GET /runs/latest/trajectory`
-- `GET /runs/latest/evaluation`
-- `GET /runs/{run_id}`
-- `GET /runs/{run_id}/trajectory`
-- `GET /runs/{run_id}/evaluation`
-- `GET /runs/compare?baseline_run_id=...&candidate_run_id=...`
-- `GET /benchmarks/amd`
-- `GET /demo/customer-support-run`
-- `GET /kb/layers`
-- `GET /kb/search?q=withdrawal%20processed`
-- `GET /kb/vector/status`
-- `POST /kb/vector/reindex`
-- `GET /cx/operations`
-- `GET /cx/transcripts/{run_id}`
-- `POST /cx/feedback`
-- `GET /platform/status`
-- `GET /data/status`
-- `GET /data/customers`
-- `GET /data/cases?status=OPEN&queue=financial_operations`
-- `GET /data/cases/{case_id}/context`
-- `GET /data/accounts`
-- `GET /data/transactions`
-
-Fast hybrid-router proof:
+Fast typed routes:
 
 ```bash
 curl -sS -X POST http://localhost:8000/conversations/turn \
   -H 'Content-Type: application/json' \
   -d '{"message":"List all customers"}'
+
 curl -sS -X POST http://localhost:8000/conversations/turn \
   -H 'Content-Type: application/json' \
   -d '{"message":"Show all payment-failure cases"}'
-curl -sS -X POST http://localhost:8000/conversations/turn \
+```
+
+Recoverable agent execution:
+
+```bash
+curl -sS -X POST http://localhost:8000/runs/async \
   -H 'Content-Type: application/json' \
-  -d '{"message":"What is a capital market?"}'
+  -d '{
+    "dataset":"customer_support",
+    "selection_mode":"selected",
+    "selected_ticket_ids":["CS-002"],
+    "customer_query":"This is my third contact. My withdrawal is processed but the bank has not received it, nobody replied to the promised update, and I am extremely frustrated.",
+    "execution_mode":"hybrid"
+  }'
 ```
 
-The first two responses come from exact synthetic relational records. The third uses the configured live model; mock mode reports the missing live model truthfully instead of inventing an answer.
-
-## Mock Mode
-
-Mock mode is the default:
+Poll the returned job at `GET /runs/jobs/{job_id}`. Then inspect:
 
 ```bash
-LLM_PROVIDER=mock uv run uvicorn app.main:app --reload --port 8000
+curl http://localhost:8000/runs/latest
+curl http://localhost:8000/runs/latest/trajectory
+curl http://localhost:8000/runs/latest/evaluation
+curl http://localhost:8000/runs/latest/trajectory/graph-discovery
 ```
 
-It uses deterministic local rules, synthetic data, and the same trajectory/evaluation structures as the LLM path. This keeps the demo reliable without external keys.
+## Evaluation
 
-## AMD Developer Cloud Usage
+The deterministic product evaluator covers:
 
-Anirvium AI is designed for AMD Developer Cloud GPU-backed inference through vLLM/ROCm exposing an OpenAI-compatible API. On a single MI300X 192GB notebook, use runtime profiles rather than trying to load every heavy model concurrently.
+- task completion;
+- evidence grounding;
+- policy compliance;
+- hallucination risk;
+- escalation quality;
+- actionability;
+- missing information;
+- customer tone;
+- token efficiency;
+- latency efficiency;
+- overall trajectory health.
 
-```bash
-PROFILE=text bash amd/run_runtime_profile.sh
+These internal metrics support regression testing and run comparison. Anirvium has not run an official τ-bench, τ²-bench, or τ³-bench evaluation; no such score is claimed.
+
+## Verification
+
+Local release checks on the submission working tree:
+
+```text
+backend: 95 tests passed
+frontend: TypeScript + Vite production build passed
+static judge mode: TypeScript + Vite production build passed
+secret-pattern scan: no committed API credential pattern found
+GitHub repository: public
+license: MIT
 ```
 
-Then run the benchmark:
+GitHub Actions runs backend tests, the frontend build, and a complete Docker Compose smoke test.
 
-```bash
-LLM_BASE_URL=http://localhost:8001/v1 \
-LLM_API_KEY=dummy \
-LLM_MODEL=anirvium-text \
-DATASET=customer_support \
-MODE=llm \
-TICKETS=8 \
-REPEATS=3 \
-bash amd/run_agent_benchmark.sh
-```
+## Honest prototype boundary
 
-Runtime profiles (only one served model is active in the current 48GB live path):
+Implemented and demonstrable:
 
-- `text_48gb`: `Qwen/Qwen3-8B` reliable 48GB profile
-- `text_48gb_14b`: `Qwen/Qwen3-14B` target 48GB profile
-- `text`: `Qwen/Qwen3-30B-A3B-Instruct-2507` full 192GB profile
-- `critic`: optional future `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` 192GB profile; it is not active in the current Qwen3-8B demo
+- synthetic end-to-end support execution;
+- typed routing and exact operational reads;
+- governed 13-span workflow;
+- AMD/Qwen response-generation path with safe fallback;
+- audited simulated enterprise connectors;
+- policy, compliance, approval, CX, provenance, and transcript state;
+- asynchronous jobs with progress polling;
+- SuperTuriya evaluation, trace graph, run comparison, and evaluated memory loop;
+- containerized local stack and CI.
 
-Image/video model loading is deferred until the text trajectory benchmark is verified.
+Not production-complete:
 
-See [amd/RUNTIME_PROFILES.md](amd/RUNTIME_PROFILES.md).
+- live CRM, ticketing, payment, identity, Slack, or Citrix adapters;
+- production authentication, tenant isolation, and reviewer authorization;
+- durable distributed job orchestration and cancellation;
+- token-by-token streaming;
+- managed PostgreSQL and production Qdrant/Redis operations;
+- OpenTelemetry export and centralized monitoring;
+- automatic prompt, policy, or code deployment;
+- official external benchmark results.
 
-The benchmark records:
+## Product and submission documents
 
-- tokens/sec
-- latency
-- throughput
-- support tickets processed
-- agent steps evaluated
-- average trajectory score
-- token efficiency
+- [PRODUCT_0_1 — complete product story and delivery plan](docs/PRODUCT_0_1.md)
+- [Judges read this first](JUDGES_READ_THIS_FIRST.md)
+- [Judge walkthrough](docs/JUDGE_WALKTHROUGH.md)
+- [Final submission form copy](docs/FINAL_SUBMISSION_FORM.md)
+- [Sarvagun/SuperTuriya architecture](docs/SARVAGUN_SUPERTURIYA_ARCHITECTURE.md)
+- [Principal engineering audit](docs/PRINCIPAL_AGENTIC_AI_AUDIT_2026-07-12.md)
+- [τ-bench and storage strategy](docs/TAU_BENCH_AND_STORAGE_STRATEGY.md)
+- [Final pitch deck source](docs/FINAL_TEAM_PITCH_DECK.md)
+- [Final ACT II presentation deck](docs/assets/Anirvium_AI_ACT_II_Deck.pptx)
+- [Narrated ACT II fallback video — 4:08, 5.4 MB](docs/assets/Anirvium_AI_ACT_II_Video.mp4)
 
-See [amd/README_AMD_USAGE.md](amd/README_AMD_USAGE.md) for the claim boundary and final submission evidence list.
+## License
 
-## Example Trajectory JSON
-
-```json
-{
-  "nodes": [
-    {
-      "id": "step_001",
-      "label": "Intake / Triage Agent",
-      "status": "risk",
-      "score": 0.9,
-      "risk_flags": ["SLA_BREACH_RISK", "CUSTOMER_SENTIMENT_RISK"]
-    }
-  ],
-  "edges": [
-    {
-      "source": "step_001",
-      "target": "step_002",
-      "label": "passes structured context"
-    }
-  ]
-}
-```
-
-Full sample artifacts live in `examples/`.
-
-## Evaluation Metrics
-
-Metrics are deterministic in the default path:
-
-- `task_completion`
-- `evidence_grounding`
-- `policy_compliance`
-- `hallucination_risk`
-- `escalation_quality`
-- `actionability`
-- `missing_information`
-- `customer_tone`
-- `token_efficiency`
-- `latency_efficiency`
-- `overall_score`
-
-For `hallucination_risk` and `missing_information`, lower raw values are better. The overall score inverts those risk metrics.
-
-## Hackathon Submission Notes
-
-Required Track 3 artifacts:
-
-- GitHub repository URL.
-- Demo video.
-- Slide deck PDF.
-- Live hosted URL if available.
-
-This repository is optimized for automated pre-screening: the README, docs, AMD folder, example JSON, synthetic data, and dashboard all explain the product even if the video is not processed.
-
-Do not commit secrets. Use `.env.example` as the only environment template.
-
-## Roadmap
-
-- Add LLM-as-judge scoring behind the deterministic evaluator.
-- Upgrade the SQLite demo store to managed PostgreSQL with migrations and tenant isolation.
-- Add hosted demo deployment profile.
-- Add human approval UI for billing/security workflows.
-- Add model routing rules across small/large AMD-hosted models.
-- Add regression benchmarks for prompt and workflow changes.
+Code and project-authored documentation are released under the [MIT License](LICENSE). Team-supplied anonymized reference material is not used as raw generation context; reviewed runtime records under `backend/app/data/kb_layers/` are the product KB. See [knowledge-base provenance](docs/kb/README.md) before reusing source material.
