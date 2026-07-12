@@ -1,4 +1,4 @@
-# Anirvium AI
+Anirvium AI
 
 Sarvagun customer-support execution, continuously improved by SuperTuriya trajectory intelligence.
 
@@ -6,7 +6,6 @@ Anirvium AI contains two connected systems. **Sarvagun** is the complete governe
 
 The demo uses synthetic enterprise support data only.
 
-## 60-Second Judge Summary
 
 Sarvagun routes a free-form customer message, reads synthetic customer/case history, detects emotion and recontact, retrieves governed evidence, executes audited mock enterprise tools, applies deterministic policy/escalation rules, and drafts a safe response on AMD vLLM. SuperTuriya captures the 13-step trajectory, applies a post-compliance response gate, scores and diagnoses the run, stores trusted memory, and recalls it before future planning.
 
