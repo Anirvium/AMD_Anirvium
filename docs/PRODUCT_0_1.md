@@ -15,7 +15,7 @@
 **Audit date:** 2026-07-13
 
 **Audited implementation SHA:** `f1d518566ac08bbdd4cafdb34dcb2891ba5dfe7e`
-**Final submission SHA:** unresolved until submission assets and this document are committed
+**Release validation SHA:** `f6a292a44026442627ec823c04a0c2d079af920f` (a status-only documentation follow-up may be newer)
 
 ## 1. Submission control block
 
@@ -67,9 +67,9 @@ The general lablab.ai guide currently specifies:
 | Team eligibility/registration | Must be confirmed by the registered team lead in lablab.ai | **Unresolved blocker** |
 | Submission deadline | Must be checked in the live Event Schedule in the team’s timezone | **Unresolved blocker** |
 | Public repository | `https://github.com/Anirvium/AMD_Anirvium` visibility was verified as public through GitHub metadata | Ready; recheck the final SHA |
-| Containerization | Backend and frontend Dockerfiles, `docker-compose.yml`, and a CI container smoke job exist | Confirm the final Actions run |
+| Containerization | Backend and frontend Dockerfiles, `docker-compose.yml`, and a green CI container smoke job exist | Ready |
 | README/setup | Judge-first URL map, startup, health, log, API, and recovery instructions are present | Ready |
-| Application URL | GitHub Pages target `https://anirvium.github.io/AMD_Anirvium/` is prepared | **Enable and externally verify after push** |
+| Application URL | `https://anirvium.github.io/AMD_Anirvium/` deployed; public HTML/assets/data externally verified | Ready; final incognito click-through remains |
 | Video | Narrated 4:08, 5.4 MB MP4 prepared at `docs/assets/Anirvium_AI_ACT_II_Video.mp4` | Upload/attach and verify playback |
 | Slide presentation | Reviewed PowerPoint exists at `docs/assets/Anirvium_AI_ACT_II_Deck.pptx` | Upload/attach in the form |
 | Cover image | Prepared at `docs/assets/anirvium-cover-16x9.png` | Upload in the form |
@@ -696,8 +696,8 @@ Manual platform actions still required:
 
 1. Upload or attach `docs/assets/Anirvium_AI_ACT_II_Video.mp4` and verify playback.
 2. Upload or attach `docs/assets/Anirvium_AI_ACT_II_Deck.pptx` and verify public access if a URL is required.
-3. Enable/verify GitHub Pages and test the application URL without team authentication.
-4. Verify the final public GitHub SHA and green Actions checks.
+3. Perform a final private/incognito click-through of the deployed GitHub Pages URL.
+4. Verify the newest status-only commit and Actions checks.
 5. Confirm redistribution rights for the team-supplied anonymized reference corpus.
 6. Complete the lablab.ai form and save the submission confirmation.
 
@@ -734,12 +734,12 @@ Manual platform actions still required:
 | Slide presentation | Yes | Reviewed ten-slide deck at `docs/assets/Anirvium_AI_ACT_II_Deck.pptx`; overflow QA passed | Attach/upload and verify access |
 | Public GitHub | Yes | Repository metadata verified public | Recheck final SHA without authentication |
 | Demo platform | Yes | Static GitHub Pages workflow, Docker, and AMD gateway paths exist | Verify Pages and select it in the form |
-| Application URL | Yes | Pages target prepared; external verification pending | Enable/verify target URL in incognito |
-| Container | Yes | Dockerfiles, Compose, and CI container smoke job present | Confirm the final GitHub Actions run |
+| Application URL | Yes | Pages deployed and externally HTTP-verified | Final incognito click-through |
+| Container | Yes | Dockerfiles, Compose, and green CI container smoke job | Ready |
 | README/setup | Yes | Judge-first URL map, commands, health checks, logs, and recovery path present | Final link check |
 | MIT license | Event compliance | Root `LICENSE` prepared | Include in final commit |
 | AMD proof | Track criterion | Summary present; raw logs/screenshots unresolved | Attach sanitized evidence or hashes |
-| Backend verification | Completeness evidence | 95 local tests passed on the release working tree | Confirm final CI |
+| Backend verification | Completeness evidence | 95 local tests and release CI passed | Ready |
 | Frontend verification | Completeness evidence | Normal and static production builds passed | Browser-test final Pages URL |
 | Canonical demo | Completeness evidence | `CS-002` defined here | Use in UI, video, deck, README, and narration |
 | Claim boundary | Credibility | Defined here and in platform API | Preserve verbatim in final review |
@@ -750,7 +750,7 @@ Manual platform actions still required:
 | --- | --- | --- | --- |
 | Creativity and originality | Two-plane Sarvagun/SuperTuriya design; typed cost-aware routing; trace evaluation; trusted memory; safety-aware comparison | No named competitive analysis or generalized second integration | Show why this is a trajectory control plane, not chatbot or generic trace viewer |
 | Product/market potential | Clear support/AI-operations buyer; regulated/SLA-sensitive wedge; reusable intelligence thesis | No interviews, design partners, pricing validation, or measured ROI | State beachhead, workflow pain, pricing hypothesis, and validation plan honestly |
-| Completeness | Working React/FastAPI product, 13-step run, data APIs, graph, evaluation, memory, Docker, 95 tests, reviewed deck, and static resilience build | Verified app URL, video, final CI, and real connectors | Demonstrate one coherent `CS-002` journey end to end |
+| Completeness | Working React/FastAPI product, 13-step run, data APIs, graph, evaluation, memory, Docker, 95 tests, reviewed deck, deployed resilience demo, and green container smoke | Media upload, final incognito click-through, and real connectors | Demonstrate one coherent `CS-002` journey end to end |
 | Use of AMD platforms | Qwen3-8B served through vLLM/ROCm on AMD Developer Cloud with summarized measured evidence | Raw evidence absent; Docker defaults to mock; only generation role is live | Show model ID/runtime, exact Qwen role, and AMD proof without implying all steps are model calls |
 
 ## 18. Final release rule

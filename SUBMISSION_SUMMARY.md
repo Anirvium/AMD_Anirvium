@@ -33,8 +33,8 @@ Use `CS-002`, a third unresolved withdrawal contact. Sarvagun retrieves linked c
 - 95 backend tests pass.
 - Normal frontend build passes.
 - Static resilience frontend build passes.
-- Existing CI run for the prior implementation commit succeeded; final release CI must be checked after push.
-- Docker and Compose definitions are present; final GitHub CI includes a full Compose smoke test.
+- Release CI succeeded at `f6a292a`, including the Docker Compose build and frontend-to-backend smoke test.
+- GitHub Pages deployed successfully; HTML, JavaScript, CSS, tickets, and the canonical 13-step trajectory were externally verified.
 - MIT license added.
 - No official τ score, Gemma use, or Fireworks use is claimed.
 
@@ -54,6 +54,6 @@ Use `CS-002`, a third unresolved withdrawal contact. Sarvagun retrieves linked c
 
 - Upload the prepared narrated video and incognito-test playback or its public URL.
 - Attach/upload the prepared slide deck and incognito-test its public URL if the form requires one.
-- Enable and verify the GitHub Pages resilience demo, or provide another stable application URL.
+- Perform one final private/incognito click-through of the verified GitHub Pages resilience demo.
 - Confirm rights to redistribute all team-supplied anonymized reference material.
 - Complete the lablab.ai form before the platform deadline.

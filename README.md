@@ -23,7 +23,7 @@ The product does not automatically rewrite policy or deploy code. It turns agent
 
 | Runtime | Product frontend | Backend/API | What it proves |
 | --- | --- | --- | --- |
-| Static judge demo deployment target | [https://anirvium.github.io/AMD_Anirvium/](https://anirvium.github.io/AMD_Anirvium/) | No live backend; verified synthetic snapshots are bundled | UI, routing, Sarvagun trajectories, SuperTuriya evaluation, and presentation flow when the AMD notebook is unavailable. Verify the latest Pages workflow before using this URL in the form. |
+| Static judge demo — deployed | [https://anirvium.github.io/AMD_Anirvium/](https://anirvium.github.io/AMD_Anirvium/) | No live backend; verified synthetic snapshots are bundled | UI, routing, Sarvagun trajectories, SuperTuriya evaluation, and presentation flow when the AMD notebook is unavailable. Public HTML, assets, tickets, and the canonical trajectory were externally verified. |
 | Docker Compose — recommended complete run | `http://localhost:5173` | `http://localhost:8000` | Complete containerized product with FastAPI, Redis, Qdrant, and deterministic model fallback. |
 | Local development | `http://127.0.0.1:5173` | `http://127.0.0.1:8000` | Same complete application with frontend and backend hot reload. |
 | AMD Jupyter port proxy | `https://radeon-global.anruicloud.com/spaces/<instance-id>/8501/` | Browser API: `<frontend-url>api`; VM-only FastAPI: `http://127.0.0.1:8000` | Live AMD/Qwen path when the team notebook instance is active. |

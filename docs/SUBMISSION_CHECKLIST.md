@@ -23,8 +23,8 @@ Status reflects the repository release working tree on 2026-07-13. Items requiri
 - [x] Deterministic synthetic-data mode works without private credentials.
 - [x] GitHub CI runs backend and frontend checks.
 - [x] Final CI adds a complete Docker Compose smoke test.
-- [ ] Final pushed commit CI is green.
-- [ ] Clean-machine `docker compose up --build` is independently reproduced or the final CI smoke job is green.
+- [x] Release CI is green at `f6a292a`.
+- [x] Final CI Docker Compose build and smoke job is green.
 
 ## Product verification
 
@@ -64,7 +64,8 @@ Status reflects the repository release working tree on 2026-07-13. Items requiri
 - [ ] Video presentation is uploaded/public and incognito-tested.
 - [ ] `docs/assets/Anirvium_AI_ACT_II_Deck.pptx` is attached/uploaded and incognito-tested if a public URL is required.
 - [x] GitHub Pages resilience workflow exists.
-- [ ] GitHub Pages is enabled and `https://anirvium.github.io/AMD_Anirvium/` is incognito-tested.
+- [x] GitHub Pages is enabled and the public HTML/assets/data are externally HTTP-verified.
+- [ ] `https://anirvium.github.io/AMD_Anirvium/` receives a final private/incognito click-through.
 - [ ] Final application URL is entered in the form.
 
 ## Security, privacy, and claims
@@ -80,9 +81,8 @@ Status reflects the repository release working tree on 2026-07-13. Items requiri
 
 ## Recommended final external sequence
 
-1. Push the final commit.
-2. Wait for CI and Pages workflows.
-3. If Pages fails because the site is disabled, choose Repository Settings → Pages → Source: GitHub Actions and rerun the workflow.
-4. Open repository, Pages URL, slides, and video in a private/incognito window.
-5. Paste the exact copy from `docs/FINAL_SUBMISSION_FORM.md`.
-6. Submit and save the confirmation page.
+1. Push this status-only follow-up and confirm CI and Pages remain green.
+2. Open the repository, Pages URL, slides, and video in a private/incognito window.
+3. Upload/attach the prepared MP4 and PowerPoint.
+4. Paste the exact copy from `docs/FINAL_SUBMISSION_FORM.md`.
+5. Submit and save the confirmation page.

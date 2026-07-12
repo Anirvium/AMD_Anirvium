@@ -125,27 +125,21 @@ Repository visibility was verified as public through GitHub metadata.
 
 ### Demo application platform
 
-If GitHub Pages deployment is enabled and verified, enter:
+Enter:
 
 ```text
 GitHub Pages — interactive static resilience demo; live model path validated on AMD Developer Cloud
 ```
 
-Otherwise enter:
-
-```text
-AMD Developer Cloud + containerized Docker Compose reproduction
-```
-
 ### Demo application URL
 
-Target static resilience URL:
+Verified static resilience URL:
 
 ```text
 https://anirvium.github.io/AMD_Anirvium/
 ```
 
-**Do not submit this URL until it returns the product in a private/incognito browser.** The workflow is included in `.github/workflows/pages.yml`, but GitHub Pages may still need to be enabled under Repository Settings → Pages → Source: GitHub Actions.
+GitHub Pages is enabled in GitHub Actions mode. The deployment workflow succeeded, and the public HTML, JavaScript, CSS, ticket snapshot, and canonical trajectory JSON were externally verified. Perform one final private/incognito click-through before pressing Submit.
 
 Do not use the expired/private AMD Jupyter URL as the judge-facing application URL.
 
@@ -166,6 +160,7 @@ Anirvium AI uses synthetic support data and simulated enterprise connectors. The
 - [x] Containerized reproduction documented
 - [x] Video file prepared within duration and size limits
 - [ ] Video uploaded/URL added and incognito-tested
-- [ ] Slide URL/PDF uploaded and incognito-tested
-- [ ] Application URL deployed and incognito-tested
+- [ ] Slide deck attached/uploaded and incognito-tested if a URL is used
+- [x] Application URL deployed and externally HTTP-verified
+- [ ] Application URL private/incognito click-through completed
 - [ ] Final submission button completed before the platform deadline
